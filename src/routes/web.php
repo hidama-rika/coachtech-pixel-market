@@ -13,6 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// 開発用表示ルート Route::view('URI', 'ビュー名');
+Route::view('/login', 'login');
+Route::view('/register', 'register');
