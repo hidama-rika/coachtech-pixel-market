@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 // 開発用表示ルート Route::view('URI', 'ビュー名');
 Route::view('/login', 'login');
 Route::view('/register', 'register');
+Route::view('/address', 'shipping-address_edit');
+Route::view('/index', 'index');
+Route::view('/mypage/profile', 'profile_edit');

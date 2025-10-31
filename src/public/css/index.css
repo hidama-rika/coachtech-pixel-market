@@ -1,0 +1,326 @@
+* {
+    box-sizing: border-box;
+}
+
+/* 横スクロールを強制的に有効にする */
+html {
+    overflow-x: hidden;
+}
+
+/*  ヘッダー共通スタイル */
+
+.header-shadow {
+    display: flex;
+    background-color: #000000;
+    width: 100%;
+    height: 82px;
+    top: 0;
+    left: 0;
+    padding: 10px 20px;
+    border-bottom-width: 1px;
+    position: fixed;
+    z-index: 100;
+}
+
+.header-content {
+    width: 100%;
+    max-width: 1515px;
+    margin: 0 auto;
+    /* コンテンツをヘッダーの幅の中央に配置 */
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    width: auto;
+    height: 36px;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+/* ロゴアイコンのコンテナ */
+.logo-icon {
+    width: auto;
+    height: auto;
+}
+
+/* ロゴテキストのコンテナ */
+.logo-text {
+    width: auto;
+    height: auto;
+}
+
+/* ロゴ画像自体に高さを設定してサイズを制御 */
+.logo img.icon {
+    /* 親要素の高さに合わせるか、固定値を設定 */
+    height: 36px;
+    /* 親要素の高さ 36px に合わせる */
+    width: auto;
+    display: block;
+}
+
+/* 検索フォームのコンテナ */
+.search-form-container {
+    flex-grow: 1;
+    /* 成長させて中央の空きスペースを埋める */
+    max-width: 600px;
+    /* 検索フォームの最大幅を設定（デザインに合わせて調整） */
+    margin: 0 50px;
+    /* 左右に適切な余白を設定（デザインに合わせて調整） */
+}
+
+/* 検索入力欄 */
+.search-input {
+    width: 100%;
+    height: 44px;
+    /* ナビゲーションボタンと高さを揃える */
+    padding: 10px 15px;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.nav-menu {
+    display: flex;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+/* ログアウトとマイページのスタイルを統合し、リンクのような見た目にする */
+.logout-button,
+.mypage-button {
+    width: 140px;
+    height: 44px;
+    color: #FFFFFF;
+    background-color: transparent;
+    /* 背景色を透明にする */
+    border: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-decoration: none;
+}
+
+/* ❗ 修正: 出品ボタンのスタイルを画像に合わせる */
+.sell-button {
+    width: 100px;
+    height: 44px;
+    color: #333333;
+    background-color: #FFFFFF;
+    border: 1px solid #333333;
+    border-radius: 5px;
+    margin-left: 20px;
+    padding: 0;
+    line-height: 1;
+    /* ❗ 追加: flexコンテナとして文字を中央に配置する */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 垂直方向の中央寄せ */
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.nav-text {
+    color: #FFFFFF;
+    font-size: 1.25rem;
+    display: block;
+    margin: auto 0;
+    white-space: nowrap;
+}
+
+.sell-text {
+    color: #333333;
+    font-size: 1.25rem;
+    display: block;
+    margin-right: 15px;
+    white-space: nowrap;
+}
+
+.nav-link,
+.nav-button {
+    text-align: center;
+    font-weight: 500;
+    text-decoration: none;
+    height: 44px;
+    cursor: pointer;
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.index-container {
+    background-color: #FFFFFF;
+    text-align: center;
+    max-width: 1515px;
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 82px;
+    /* ヘッダーの高さ分、コンテンツを下にずらす */
+
+    margin: 0 auto;
+
+    /* 子要素（ロゴからリンクまで）を縦に並べるためのflex設定 */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.index-form-container {
+    background-color: #FFFFFF;
+    text-align: center;
+    width: 100%;
+    height: auto;
+
+    /* 子要素（ロゴからリンクまで）を縦に並べるためのflex設定 */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    border-bottom: 2px solid #5F5F5F;
+}
+
+/* タブメニュー */
+/* 非アクティブなコンテンツを非表示にする */
+.hidden-content {
+    display: none;
+}
+
+/* アクティブなコンテンツを表示する */
+.active-content {
+    display: block;
+}
+
+.tab-menu {
+    display: flex;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding: 0 50px;
+    width: 100%;
+}
+
+.tab-text {
+    color: #5F5F5F;
+    font-size: 1.5rem;
+    font-weight: bold;
+    left: 429px;
+}
+
+.tab-link {
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: #000000;
+    padding: 10px 20px;
+    position: relative;
+}
+
+.tab-link:not(:last-child) {
+    margin-right: 50px;
+    margin-left: 100px;
+    /* タブ間のスペース */
+}
+
+/* 選択中のタブのスタイル */
+.tab-link.active .tab-text {
+    color: #FF5555;
+}
+
+.tab-link.active::after {
+    color: #FF5555;
+}
+
+/* 商品一覧グリッド */
+.index-grid-container {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    max-width: 1374.52px;
+    width: 100%;
+
+    /* ❗ 追加: 左右に余白（パディング）を追加して、デザインの空白を確保 */
+    /* タブメニューのパディングと合わせるため、ここでは左右50pxを設定（適宜調整） */
+    padding: 0 50px;
+    box-sizing: border-box;
+    /* paddingを含めて幅を計算させる */
+    justify-content: center;
+}
+
+
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* 4列均等幅 */
+    gap: 50px;
+}
+
+/* 商品カード */
+.item-card {
+    width: 100%;
+    height: 320px;
+    text-align: left;
+}
+
+.item-image-placeholder {
+    max-width: 240px;
+    height: 231.27px;
+    padding-top: 75%;
+    background-color: #D9D9D9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000000;
+    font-size: 40px;
+    position: relative;
+    padding: 0;
+}
+
+.item-name {
+    font-size: 1.5625rem;
+    font-weight: 400;
+    color: #000000;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+/* ---------------------------------------------------------------------- */
+/* 3. レスポンシブ対応のためのメディアクエリ */
+/* ---------------------------------------------------------------------- */
+
+/* 1. 超広幅PCモニター対応 (1541px以上) */
+/* 非常に広い画面幅でコンテンツを広げる、または特定の要素のサイズを拡大する場合に利用 */
+@media screen and (min-width: 1541px) {
+
+    /* 1515pxのコンテンツ幅を、例えば1800pxに広げる場合 */
+    .header-content {
+        max-width: 1800px;
+        /* 必要に応じてコンテンツの最大幅を広げる */
+    }
+
+    /* その他、超広幅画面でのデザイン調整があれば追記 */
+}
+
+
+/* 2. 狭いPC画面対応 (1399px以下) */
+/* ターゲット範囲の最も狭い境界線で、レイアウト崩れを防ぐための微調整を行う */
+@media screen and (max-width: 1399px) {
+    .search-form-container {
+        max-width: 400px;
+        /* 検索窓を600pxから400pxに縮小し、ナビゲーションとの間隔を確保 */
+        margin: 0 30px;
+        /* 左右の余白も調整 */
+    }
+
+    /* その他、この画面幅でのデザイン調整があれば追記 */
+}

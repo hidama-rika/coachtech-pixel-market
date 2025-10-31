@@ -48,7 +48,7 @@ html {
     height: auto;
 }
 
-/* 修正：ロゴテキストのコンテナ */
+/* ロゴテキストのコンテナ */
 .logo-text {
     width: auto;
     height: auto;
@@ -63,16 +63,109 @@ html {
     display: block;
 }
 
+/* 検索フォームのコンテナ */
+.search-form-container {
+    flex-grow: 1;
+    /* 成長させて中央の空きスペースを埋める */
+    max-width: 600px;
+    /* 検索フォームの最大幅を設定（デザインに合わせて調整） */
+    margin: 0 50px;
+    /* 左右に適切な余白を設定（デザインに合わせて調整） */
+}
+
+/* 検索入力欄 */
+.search-input {
+    width: 100%;
+    height: 44px;
+    /* ナビゲーションボタンと高さを揃える */
+    padding: 10px 15px;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.nav-menu {
+    display: flex;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+/* ログアウトとマイページのスタイルを統合し、リンクのような見た目にする */
+.logout-button,
+.mypage-button {
+    width: 140px;
+    /* 幅をテキストに合わせる */
+    height: 44px;
+    color: #FFFFFF;
+    background-color: transparent;
+    /* 背景色を透明にする */
+    border: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-decoration: none;
+}
+
+/* ❗ 修正: 出品ボタンのスタイルを画像に合わせる */
+.sell-button {
+    width: 100px;
+    height: 44px;
+    color: #333333;
+    background-color: #FFFFFF;
+    border: 1px solid #333333;
+    border-radius: 5px;
+    margin-left: 20px;
+    /* 他のボタンとの間に少しスペースを空ける */
+    padding: 0;
+    line-height: 1;
+    /* ❗ 追加: flexコンテナとして文字を中央に配置する */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 垂直方向の中央寄せ */
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.nav-text {
+    color: #FFFFFF;
+    font-size: 1rem;
+    display: block;
+    margin: auto 0;
+    white-space: nowrap;
+}
+
+.sell-text {
+    color: #333333;
+    font-size: 1rem;
+    display: block;
+    margin-right: 15px;
+    white-space: nowrap;
+}
+
+.nav-link,
+.nav-button {
+    text-align: center;
+    font-weight: 500;
+    text-decoration: none;
+    height: 44px;
+    cursor: pointer;
+}
+
 body {
     margin: 0;
     font-family: sans-serif;
 }
 
-.register-container {
+.shipping-address_edit-container {
     background-color: #FFFFFF;
     text-align: center;
     max-width: 1515px;
-    width: 100%;
     min-height: 100vh;
     padding-top: 82px;
     /* ヘッダーの高さ分、コンテンツを下にずらす */
@@ -84,7 +177,7 @@ body {
     align-items: center;
 }
 
-.register-form-container {
+.shipping-address_edit-form-container {
     background-color: #FFFFFF;
     text-align: center;
     max-width: 680px;
@@ -104,7 +197,7 @@ body {
 }
 
 .form-title {
-    /* 会員登録 の文字スタイル */
+    /* プロフィール設定 の文字スタイル */
     display: flex;
     justify-content: center;
     margin-bottom: 70px;
@@ -153,8 +246,8 @@ body {
     border-width: 3px;
 }
 
-.register-btn {
-    /* 登録するボタンのグラデーションとスタイル */
+.update-btn {
+    /* 更新するボタンのグラデーションとスタイル */
     width: 100%;
     height: 65.25px;
     padding: 10px;
@@ -171,31 +264,12 @@ body {
     /* 👈 これを追加: 利用可能な幅を最大化 */
 }
 
-.register-btn:hover {
+.update-btn:hover {
     opacity: 0.9;
     box-shadow: 0 10px 15px -3px rgba(201, 79, 3, 0.5);
 }
 
-.login-link {
-    /* ログインはこちら のリンクスタイル */
-    width: 100%;
-    height: 53.29px;
-    display: block;
-    justify-content: center;
-    align-items: center;
-    margin-top: 50px;
-    font-weight: 400;
-    font-size: 1.25rem;
-    color: #0073CC;
-    text-decoration: none;
-    gap: 10px;
-}
-
-.register-link:hover {
-    text-decoration: underline;
-}
-
-.register-form__error-message {
+.profile_edit-form__error-message {
     color: #e53935;
     font-size: 0.875rem;
     margin-top: 5px;
@@ -221,29 +295,14 @@ body {
 
 
 /* 2. 狭いPC画面対応 (1399px以下) */
+/* ターゲット範囲の最も狭い境界線で、レイアウト崩れを防ぐための微調整を行う */
 @media screen and (max-width: 1399px) {
-
-    /* ❗ フォームの幅を柔軟な設定で上書きする */
-    .register-form-container {
-        width: 90%;
-        /* 1399px以下で90%幅に */
-        max-width: 680px;
-        /* 念のため最大幅は680pxに制限 */
-        padding: 30px;
-        /* パディングを詰める（任意） */
-        margin-top: 20px;
-        /* 上部のマージンを詰める（任意） */
-    }
-
-    /* フォーム内の要素も親に合わせて柔軟にする（再確認） */
-    .form-group,
-    .form-control,
-    .login-btn {
-        width: 100%;
+    .search-form-container {
+        max-width: 400px;
+        /* 検索窓を600pxから400pxに縮小し、ナビゲーションとの間隔を確保 */
+        margin: 0 30px;
+        /* 左右の余白も調整 */
     }
 
     /* その他、この画面幅でのデザイン調整があれば追記 */
-    .header-content {
-        padding: 12px 10px;
-    }
 }
