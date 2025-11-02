@@ -17,5 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::view('/login', 'login');
 Route::view('/register', 'register');
 Route::view('/address', 'shipping-address_edit');
-Route::view('/index', 'index');
+Route::view('/', 'index');
 Route::view('/mypage/profile', 'profile_edit');
+Route::view('/sell', 'new_items');
+Route::view('/purchase', 'new_purchases');

@@ -1,0 +1,547 @@
+* {
+    box-sizing: border-box;
+}
+
+/* 横スクロールを強制的に有効にする */
+html {
+    overflow-x: hidden;
+}
+
+/*  ヘッダー共通スタイル */
+
+.header-shadow {
+    display: flex;
+    background-color: #000000;
+    width: 100%;
+    height: 82px;
+    top: 0;
+    left: 0;
+    padding: 10px 20px;
+    border-bottom-width: 1px;
+    position: fixed;
+    z-index: 100;
+}
+
+.header-content {
+    width: 100%;
+    max-width: 1515px;
+    margin: 0 auto;
+    /* コンテンツをヘッダーの幅の中央に配置 */
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    width: auto;
+    height: 36px;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+/* ロゴアイコンのコンテナ */
+.logo-icon {
+    width: auto;
+    height: auto;
+}
+
+/* ロゴテキストのコンテナ */
+.logo-text {
+    width: auto;
+    height: auto;
+}
+
+/* ロゴ画像自体に高さを設定してサイズを制御 */
+.logo img.icon {
+    /* 親要素の高さに合わせるか、固定値を設定 */
+    height: 36px;
+    /* 親要素の高さ 36px に合わせる */
+    width: auto;
+    display: block;
+}
+
+/* 検索フォームのコンテナ */
+.search-form-container {
+    flex-grow: 1;
+    /* 成長させて中央の空きスペースを埋める */
+    max-width: 600px;
+    /* 検索フォームの最大幅を設定（デザインに合わせて調整） */
+    margin: 0 50px;
+    /* 左右に適切な余白を設定（デザインに合わせて調整） */
+}
+
+/* 検索入力欄 */
+.search-input {
+    width: 100%;
+    height: 44px;
+    /* ナビゲーションボタンと高さを揃える */
+    padding: 10px 15px;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.nav-menu {
+    display: flex;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+/* ログアウトとマイページのスタイルを統合し、リンクのような見た目にする */
+.logout-button,
+.mypage-button {
+    width: 140px;
+    /* 幅をテキストに合わせる */
+    height: 44px;
+    color: #FFFFFF;
+    background-color: transparent;
+    /* 背景色を透明にする */
+    border: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-decoration: none;
+}
+
+/* ❗ 修正: 出品ボタンのスタイルを画像に合わせる */
+.sell-button {
+    width: 100px;
+    height: 44px;
+    color: #333333;
+    background-color: #FFFFFF;
+    border: 1px solid #333333;
+    border-radius: 5px;
+    margin-left: 20px;
+    /* 他のボタンとの間に少しスペースを空ける */
+    padding: 0;
+    line-height: 1;
+    /* ❗ 追加: flexコンテナとして文字を中央に配置する */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 垂直方向の中央寄せ */
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.nav-text {
+    color: #FFFFFF;
+    font-size: 1.25rem;
+    display: block;
+    margin: auto 0;
+    white-space: nowrap;
+}
+
+.sell-text {
+    color: #333333;
+    font-size: 1.25rem;
+    display: block;
+    margin-right: 15px;
+    white-space: nowrap;
+}
+
+.nav-link,
+.nav-button {
+    text-align: center;
+    font-weight: 500;
+    text-decoration: none;
+    height: 44px;
+    cursor: pointer;
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.new_purchases-container {
+    background-color: #FFFFFF;
+    text-align: center;
+    max-width: 1515px;
+    min-height: 100vh;
+    padding-top: 82px;
+    /* ヘッダーの高さ分、コンテンツを下にずらす */
+
+    /* 子要素（ロゴからリンクまで）を縦に並べるためのflex設定 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ❗ フォームコンテナ (左右2ブロックを格納) ❗ */
+.new_purchases-form-container {
+    background-color: #FFFFFF;
+    text-align: center;
+    max-width: 1100px;
+    width: 100%;
+    height: auto;
+
+    /* フォームを上下の余白で配置する */
+    margin-top: 100px;
+    margin-bottom: 50px;
+
+    /* 子要素（ロゴからリンクまで）を縦に並べるためのflex設定 */
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 60px;
+}
+
+/* ❗ 左側: 商品詳細と配送情報 ❗ */
+.purchase-details-container {
+    width: 100%;
+    max-width: 600px;
+    padding: 0;
+}
+
+/* ❗ 右側: 価格情報とボタン ❗ */
+.purchase-summary-container {
+    width: 100%;
+    max-width: 360px;
+    padding: 0;
+}
+
+/* --- A. 商品情報 --- */
+
+.item-info {
+    display: flex;
+    align-items: center;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #000000;
+    /* 下線 */
+}
+
+.item-image-area {
+    width: 177.53px;
+    height: 177.53px;
+    margin-right: 20px;
+    background-color: #E0E0E0;
+    /* 画像プレースホルダー */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #5F5F5F;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.item-text {
+    width: 326px;
+    height: 187px;
+    text-align: left;
+}
+
+.item-name {
+    font-size: 30px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0 0 5px 0;
+}
+
+.item-price {
+    font-size: 27px;
+    font-weight: 400;
+    color: #000000;
+    margin: 0;
+}
+
+
+/* --- B. 支払い方法・配送先 --- */
+
+/* 支払い方法のセクション (リストの基準点にする) */
+.payment-method-section {
+    position: relative;
+    /* その他のスタイルは維持 (padding, border-bottom) */
+    padding: 30px 0;
+    border-bottom: 1px solid #5F5F5F;
+    text-align: left;
+}
+
+.section-divider {
+    padding: 30px 0;
+    border-bottom: 1px solid #000000;
+    /* セクション間の下線 */
+    text-align: left;
+}
+
+.section-title-small {
+    width: 326px;
+    height: 85px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0 0 15px 20px;
+}
+
+/* 支払い方法のセレクトボックス */
+.custom-payment-select {
+    width: 269px;
+    height: 31px;
+    padding: 0 10px;
+    margin-top: 0;
+    margin-left: 176px;
+    margin-bottom: 40px;
+    color: #5F5F5F;
+    border: 1px solid #5F5F5F;
+    border-radius: 4px;
+    font-size: 16px;
+    appearance: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%235F5F5F' d='M10 13l-5-5h10l-5 5z'/%3E%3C/svg%3E") no-repeat right 10px center;
+    background-size: 10px 10px;
+}
+
+
+/* ❗ 追加: カスタムドロップダウンの表示エリアのスタイル ❗ */
+.custom-select-control {
+    /* 既存の .form-control のスタイルを継承しつつ */
+    width: 269px;
+    position: relative;
+    padding-left: 15px;
+    margin-left: 50px;
+    margin-bottom: 40px;
+    line-height: 31px;
+    /* form-controlの高さに合わせる */
+    cursor: pointer;
+    text-align: left;
+    color: #5F5F5F;
+    /* 初期値の色（選択してください） */
+    border: 1px solid #5F5F5F;
+
+    /* 右側の矢印を追加 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%235F5F5F' d='M10 13l-5-5h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 10px 10px;
+    padding-right: 35px;
+}
+
+/* 選択済みの値のスタイル */
+.custom-select-control.selected {
+    color: #333333;
+    /* 選択後は濃い色に */
+}
+
+/* リストが開いているときのスタイル */
+.custom-select-control.active {
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+}
+
+/* ❗ 追加: ドロップダウンリスト全体のスタイル ❗ */
+.custom-select-options {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-left: 50px;
+    position: absolute;
+    width: 269px;
+    /* form-controlと同じ幅 */
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #5F5F5F;
+    top: 32px;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    background-color: #5F5F5F;
+    /* 画像のような濃いグレーの背景 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    /* ❗ 修正点: top プロパティを追加または修正 ❗ */
+    /* リストを上にずらして、白いフォームエリアの開始位置に合わせます。 */
+    /* 白いフォームエリアの高さが 57.09px なので、その分上に移動します。 */
+    top: 50%;
+    /* フォームの枠線が重ならないように -1px に調整（または 0） */
+    z-index: 100;
+    /* 他の要素の上に表示 */
+    display: none;
+    /* 初期状態では非表示 */
+}
+
+/* ❗ 追加: リスト項目のスタイル ❗ */
+.custom-select-options li {
+    padding: 10px 15px;
+    /* チェックマークが表示される時のpadding-left: 45px に合わせて、 */
+    /* デフォルトのパディングを大きくして、テキストを右にずらします。 */
+    padding-left: 45px;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+    line-height: 1.5;
+    list-style-type: none;
+    /* 標準マーカーを消す */
+    position: relative;
+    /* チェックマーク配置のため */
+}
+
+.custom-select-options li:hover,
+.custom-select-options li.highlighted {
+    background-color: #4299E1;
+}
+
+.custom-select-options li.selected {
+    background-color: #4299E1;
+    color: #FFFFFF;
+    background-image: url("/storage/img/Vector 1 (Stroke) (1).png");
+    background-repeat: no-repeat;
+    background-position: 15px center;
+    background-size: 15px 15px;
+    padding-left: 45px;
+}
+
+/* 配送先セクション */
+.shipping-address-section {
+    position: relative;
+}
+
+.change-link {
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    font-size: 20px;
+    font-weight: 400;
+    color: #0073CC;
+    text-decoration: none;
+}
+
+.address-post-code,
+.address-detail {
+    font-size: 20px;
+    font-weight: bold;
+    color: #000000;
+    margin-left: 76px;
+}
+
+
+/* --- C. 右側ブロック (価格サマリー/ボタン) --- */
+
+.price-summary-box {
+    border: 1px solid #000000;
+    width: 440px;
+    height: 230px;
+    padding: 0;
+    background-color: #FFFFFF;
+    margin-bottom: 50px;
+
+    /* ❗ 追加: Flexboxで2つの price-row を縦に並べる ❗ */
+    display: flex;
+    flex-direction: column;
+    /* ❗ 追加: 2行分の高さを固定 (例として120px) ❗ */
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0;
+    padding: 0;
+    border-bottom: 1px solid #000000;
+    /* ❗ 修正: price-summary-box の高さ (120px) を2行で均等に分ける ❗ */
+    flex-grow: 1;
+    /* 親要素の残りのスペースを均等に埋める */
+}
+
+/* 1段目の下線 (商品代金) */
+.price-row:nth-child(1) {
+    border-bottom: 1px solid #000000;
+    /* 実線 */
+}
+
+/* 2段目の下線 (支払い方法) */
+.price-row:nth-child(2) {
+    border-bottom: none;
+    /* 下線なし */
+}
+
+/* 最終行の設定をリセット */
+.price-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.summary-label,
+.summary-value {
+    color: #000000;
+    font-weight: 400;
+    margin: 0;
+    /* 左右のパディングを個別に設定 */
+    padding: 40px 20px;
+}
+
+.summary-label {
+    font-size: 20px;
+}
+
+.summary-value {
+    font-size: 24px;
+}
+
+/* 購入ボタン */
+.purchase-button-area {
+    margin-top: 20px;
+}
+
+.purchase-btn {
+    width: 440px;
+    height: 60px;
+    border: none;
+    border-radius: 5px;
+    background-color: #FF5555;
+    color: #FFFFFF;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.purchase-btn:hover {
+    background-color: #E64C4C;
+}
+
+.new_purchases-form__error-message {
+    color: #e53935;
+    font-size: 14px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* 3. レスポンシブ対応のためのメディアクエリ */
+/* ---------------------------------------------------------------------- */
+
+/* 1. 超広幅PCモニター対応 (1541px以上) */
+/* 非常に広い画面幅でコンテンツを広げる、または特定の要素のサイズを拡大する場合に利用 */
+@media screen and (min-width: 1541px) {
+
+    /* 1515pxのコンテンツ幅を、例えば1800pxに広げる場合 */
+    .header-content,
+    .shipping-address_edit-container {
+        max-width: 1800px;
+        /* 必要に応じてコンテンツの最大幅を広げる */
+    }
+
+    /* その他、超広幅画面でのデザイン調整があれば追記 */
+}
+
+
+/* 2. 狭いPC画面対応 (1399px以下) */
+/* ターゲット範囲の最も狭い境界線で、レイアウト崩れを防ぐための微調整を行う */
+@media screen and (max-width: 1399px) {
+    .search-form-container {
+        max-width: 400px;
+        /* 検索窓を600pxから400pxに縮小し、ナビゲーションとの間隔を確保 */
+        margin: 0 30px;
+        /* 左右の余白も調整 */
+    }
+
+    /* その他、この画面幅でのデザイン調整があれば追記 */
+}

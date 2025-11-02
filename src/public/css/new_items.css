@@ -1,0 +1,562 @@
+* {
+    box-sizing: border-box;
+}
+
+/* 横スクロールを強制的に有効にする */
+html {
+    overflow-x: hidden;
+}
+
+/*  ヘッダー共通スタイル */
+
+.header-shadow {
+    display: flex;
+    background-color: #000000;
+    width: 100%;
+    height: 82px;
+    top: 0;
+    left: 0;
+    padding: 10px 20px;
+    border-bottom-width: 1px;
+    position: fixed;
+    z-index: 100;
+}
+
+.header-content {
+    width: 100%;
+    max-width: 1515px;
+    margin: 0 auto;
+    /* コンテンツをヘッダーの幅の中央に配置 */
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    width: auto;
+    height: 36px;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+/* ロゴアイコンのコンテナ */
+.logo-icon {
+    width: auto;
+    height: auto;
+}
+
+/* ロゴテキストのコンテナ */
+.logo-text {
+    width: auto;
+    height: auto;
+}
+
+/* ロゴ画像自体に高さを設定してサイズを制御 */
+.logo img.icon {
+    /* 親要素の高さに合わせるか、固定値を設定 */
+    height: 36px;
+    /* 親要素の高さ 36px に合わせる */
+    width: auto;
+    display: block;
+}
+
+/* 検索フォームのコンテナ */
+.search-form-container {
+    flex-grow: 1;
+    /* 成長させて中央の空きスペースを埋める */
+    max-width: 600px;
+    /* 検索フォームの最大幅を設定（デザインに合わせて調整） */
+    margin: 0 50px;
+    /* 左右に適切な余白を設定（デザインに合わせて調整） */
+}
+
+/* 検索入力欄 */
+.search-input {
+    width: 100%;
+    height: 44px;
+    /* ナビゲーションボタンと高さを揃える */
+    padding: 10px 15px;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.nav-menu {
+    display: flex;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+/* ログアウトとマイページのスタイルを統合し、リンクのような見た目にする */
+.logout-button,
+.mypage-button {
+    width: 140px;
+    /* 幅をテキストに合わせる */
+    height: 44px;
+    color: #FFFFFF;
+    background-color: transparent;
+    /* 背景色を透明にする */
+    border: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-decoration: none;
+}
+
+/* ❗ 修正: 出品ボタンのスタイルを画像に合わせる */
+.sell-button {
+    width: 100px;
+    height: 44px;
+    color: #333333;
+    background-color: #FFFFFF;
+    border: 1px solid #333333;
+    border-radius: 5px;
+    margin-left: 20px;
+    /* 他のボタンとの間に少しスペースを空ける */
+    padding: 0;
+    line-height: 1;
+    /* ❗ 追加: flexコンテナとして文字を中央に配置する */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 垂直方向の中央寄せ */
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.nav-text {
+    color: #FFFFFF;
+    font-size: 1.25rem;
+    display: block;
+    margin: auto 0;
+    white-space: nowrap;
+}
+
+.sell-text {
+    color: #333333;
+    font-size: 1.25rem;
+    display: block;
+    margin-right: 15px;
+    white-space: nowrap;
+}
+
+.nav-link,
+.nav-button {
+    text-align: center;
+    font-weight: 500;
+    text-decoration: none;
+    height: 44px;
+    cursor: pointer;
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.new_items-container {
+    background-color: #FFFFFF;
+    text-align: center;
+    max-width: 1515px;
+    min-height: 100vh;
+    padding-top: 82px;
+    /* ヘッダーの高さ分、コンテンツを下にずらす */
+
+    /* 子要素（ロゴからリンクまで）を縦に並べるためのflex設定 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.new_items-form-container {
+    background-color: #FFFFFF;
+    text-align: center;
+    max-width: 680px;
+    width: 100%;
+    height: auto;
+    border-radius: 24px;
+    /* padding: 40px; */
+
+    /* フォームを上下の余白で配置する */
+    margin-top: 100px;
+    margin-bottom: 50px;
+
+    /* 子要素（ロゴからリンクまで）を縦に並べるためのflex設定 */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+/* ❗ 追加: 商品画像セクション全体のコンテナ */
+.item-image-section {
+    height: 186px;
+    text-align: left;
+    margin-bottom: 50px;
+    /* 次の「商品の詳細」セクションとの余白 */
+}
+
+.image-section-title {
+    display: block;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #333333;
+    margin-bottom: 5px;
+}
+
+/* ❗ 修正: 商品画像セクションのタイトル (既存の.section-titleを流用し、マージンのみ調整) */
+.item-image-section .section-title {
+    border-bottom: none;
+    /* 商品画像セクションのタイトルには下線を引かない */
+    margin-bottom: 25px;
+    /* アップロードエリアとの余白 */
+    padding-bottom: 0;
+}
+
+/* ❗ 追加: 画像アップロードエリアのスタイル */
+.image-upload-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 150px;
+    /* 画像に合わせて高さを設定 */
+    border: 1px dashed #5F5F5F;
+    /* 灰色の点線枠 */
+    border-radius: 4px;
+    background-color: #FFFFFF;
+    /* ボタンの配置のために必要 */
+}
+
+/* ❗ 追加: 実際のファイル入力（input type="file"）を非表示にする */
+.item-image-input {
+    display: none;
+}
+
+/* ❗ 追加: 画像選択ボタンのスタイル */
+.image-select-button {
+    width: 180px;
+    height: 43.46px;
+    margin-right: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #FF5555;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    color: #FF5555;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.image-select-button:hover {
+    background-color: #FFF0F0;
+    /* ホバー時にわずかに背景色を変更 */
+}
+
+/* ❗ 追加: カテゴリーセクション全体のコンテナ */
+.category-section {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 40px;
+    /* 次のセクションとの余白 */
+}
+
+/* ❗ 追加: カテゴリーのタイトル（「カテゴリー」） */
+.category-label {
+    display: block;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #333333;
+    margin-bottom: 15px;
+    /* タグとの間に余白を空ける */
+}
+
+/* ❗ 追加: タグを格納するコンテナ */
+.category-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    /* 複数のタグを次の行に折り返す */
+    gap: 15px;
+    /* タグ同士の間隔 */
+}
+
+/* ❗ 追加: 個々のタグのラッパー（チェックボックス用ラベル） */
+.tag-checkbox-label {
+    /* ラベル全体をボタンとして機能させる */
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+    line-height: 1;
+    /* 行の高さを調整 */
+}
+
+/* ❗ 追加: 実際のチェックボックス要素を隠す */
+.tag-checkbox {
+    display: none;
+}
+
+/* ❗ 追加: タグのテキスト部分の見た目（デフォルト） */
+.tag-text {
+    display: block;
+    padding: 8px 15px;
+    border: 2px solid #FF5555;
+    /* 赤い細い枠線 */
+    border-radius: 18px;
+    /* 角丸 */
+    color: #FF5555;
+    /* 赤い文字色 */
+    font-size: 1rem;
+    font-weight: 500;
+    white-space: nowrap;
+    /* テキストの折り返しを防ぐ */
+    transition: all 0.2s ease;
+}
+
+/* ❗ 追加: チェックが入った時（選択された時）のタグのスタイル */
+.tag-checkbox:checked+.tag-text {
+    background-color: #FF5555;
+    /* 赤い背景 */
+    color: #FFFFFF;
+    /* 白い文字色 */
+}
+
+.form-title {
+    /* 商品の出品 の文字スタイル */
+    display: flex;
+    justify-content: center;
+    margin-bottom: 70px;
+    opacity: 1;
+    color: #333333;
+
+    font-family: Inter;
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 2.5rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+}
+
+/* ❗ 追加: 「商品名と説明」セクションタイトルのスタイル */
+.section-title {
+    /* .form-group の幅に合わせる */
+    max-width: 680px;
+    width: 100%;
+    text-align: left;
+    color: #5F5F5F;
+    font-size: 2.25rem;
+    font-weight: 700;
+    padding-bottom: 5px;
+    /* 下線とテキストの間に少しスペースを空ける */
+    margin-top: 40px;
+    margin-bottom: 40px;
+    /* 次の要素との間に余白を空ける */
+    border-bottom: 1px solid #5F5F5F;
+    /* 画像の細い下線 */
+}
+
+/* ❗ 修正: カスタムドロップダウンの表示エリアのスタイル ❗ */
+.custom-select-control {
+    /* 既存の .form-control のスタイルを継承しつつ */
+    max-width: 680px;
+    width: 100%;
+    position: relative;
+    margin-bottom: 40px;
+    line-height: 57.09px;
+    cursor: pointer;
+    text-align: left;
+    color: #5F5F5F;
+    /* 初期値の色（選択してください） */
+    border: 1px solid #5F5F5F;
+
+    /* 右側の矢印を追加 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%235F5F5F' d='M10 13l-5-5h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 10px 10px;
+}
+
+/* 選択済みの値のスタイル */
+.custom-select-control.selected {
+    color: #333333;
+    /* 選択後は濃い色に */
+}
+
+/* リストが開いているときのスタイル */
+.custom-select-control.active {
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+}
+
+/* ❗ 修正: ドロップダウンリスト全体のスタイル ❗ */
+.custom-select-options {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    max-width: 680px;
+    width: 100%;
+    /* form-controlと同じ幅 */
+    max-height: 300px;
+    overflow-y: auto;
+
+    /* 画像のデザインに合わせ、白背景に変更 */
+    background-color: #FFFFFF;
+    border: 1px solid #5F5F5F;
+    border-top: none;
+    /* 上の枠線は custom-select-control が持つ */
+    border-radius: 0 0 4px 4px;
+    background-color: #5F5F5F;
+    /* 影を追加 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    /* フォームコントロールの真下に配置 */
+    top: 163%;
+    /* .custom-select-control の高さに合わせる */
+    z-index: 200;
+    /* 他の要素の上に表示 */
+    display: none;
+    /* 初期状態では非表示 */
+    box-sizing: border-box;
+}
+
+/* ❗ 追加: リスト項目のスタイル ❗ */
+.custom-select-options li {
+    padding: 10px 15px;
+    /* チェックマークが表示される時のpadding-left: 45px に合わせて、 */
+    /* デフォルトのパディングを大きくして、テキストを右にずらします。 */
+    padding-left: 45px;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+    line-height: 1.5;
+    list-style-type: none;
+    /* 標準マーカーを消す */
+    position: relative;
+    /* チェックマーク配置のため */
+}
+
+/* ❗ 追加: ホバー時のスタイル (青い背景) ❗ */
+.custom-select-options li:hover,
+.custom-select-options li.highlighted {
+    background-color: #4299E1;
+}
+
+/* ❗ 追加: 選択されたリスト項目のスタイル (青い背景とチェックマーク) ❗ */
+.custom-select-options li.selected {
+    background-color: #4299E1;
+    color: #FFFFFF;
+    background-image: url("/storage/img/Vector 1 (Stroke) (1).png");
+    background-repeat: no-repeat;
+    background-position: 15px center;
+    background-size: 15px 15px;
+    padding-left: 45px;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 60px;
+    height: auto;
+    flex-grow: 1;
+    /* 👈 これを追加: 利用可能な幅を最大化 */
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #333333;
+    margin-bottom: 3px;
+}
+
+.form-control {
+    width: 100%;
+    height: 57.09px;
+    border: 1px solid #5F5F5F;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    flex-grow: 1;
+    /* 👈 これを追加: 利用可能な幅を最大化 */
+}
+
+.form-control:hover {
+    border-color: #A3A6E1;
+    border-width: 3px;
+}
+
+.sell-btn {
+    /* 更新するボタンのグラデーションとスタイル */
+    width: 100%;
+    height: 65.25px;
+    padding: 10px;
+    margin-top: 50px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.625rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    cursor: pointer;
+    background-color: #FF5555;
+    transition: opacity 0.3s;
+    flex-grow: 1;
+    /* 👈 これを追加: 利用可能な幅を最大化 */
+}
+
+.sell-btn:hover {
+    opacity: 0.9;
+    box-shadow: 0 10px 15px -3px rgba(201, 79, 3, 0.5);
+}
+
+.new_items-form__error-message {
+    color: #e53935;
+    font-size: 0.875rem;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* 3. レスポンシブ対応のためのメディアクエリ */
+/* ---------------------------------------------------------------------- */
+
+/* 1. 超広幅PCモニター対応 (1541px以上) */
+/* 非常に広い画面幅でコンテンツを広げる、または特定の要素のサイズを拡大する場合に利用 */
+@media screen and (min-width: 1541px) {
+
+    /* 1515pxのコンテンツ幅を、例えば1800pxに広げる場合 */
+    .header-content,
+    .shipping-address_edit-container {
+        max-width: 1800px;
+        /* 必要に応じてコンテンツの最大幅を広げる */
+    }
+
+    /* その他、超広幅画面でのデザイン調整があれば追記 */
+}
+
+
+/* 2. 狭いPC画面対応 (1399px以下) */
+/* ターゲット範囲の最も狭い境界線で、レイアウト崩れを防ぐための微調整を行う */
+@media screen and (max-width: 1399px) {
+    .search-form-container {
+        max-width: 400px;
+        /* 検索窓を600pxから400pxに縮小し、ナビゲーションとの間隔を確保 */
+        margin: 0 30px;
+        /* 左右の余白も調整 */
+    }
+
+    /* その他、この画面幅でのデザイン調整があれば追記 */
+}

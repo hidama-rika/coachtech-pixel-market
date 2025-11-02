@@ -18,6 +18,29 @@
                 <img src="{{ asset('storage/img/Group (2).png') }}" alt="logoテキスト" class="icon logo-text-img">
             </div>
 
+            <div class="search-form-container">
+                <input type="text" class="search-input" placeholder="なにをお探しですか？">
+            </div>
+
+            <nav class="nav-menu">
+
+                <form method="POST" action="/logout">
+                    @csrf
+                    <button type="submit" class="nav-button logout-button">
+                        <span class="nav-text">ログアウト</span>
+                    </button>
+                </form>
+
+                <a href="/mypage" class="nav-button mypage-button">
+                    <span class="nav-text">マイページ</span>
+                </a>
+
+                <a href="/sell" class="nav-button sell-button">
+                    <span class="sell-text">出品</span>
+                </a>
+
+            </nav>
+
         </div>
     </header>
 
