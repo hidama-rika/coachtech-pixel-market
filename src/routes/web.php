@@ -21,3 +21,5 @@ Route::view('/', 'index');
 Route::view('/mypage/profile', 'profile_edit');
 Route::view('/sell', 'new_items');
 Route::view('/purchase', 'new_purchases');
+Route::view('/mypage', 'mypage');
+Route::view('/item', 'show');

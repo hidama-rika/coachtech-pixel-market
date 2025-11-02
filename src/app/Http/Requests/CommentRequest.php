@@ -13,7 +13,7 @@ class CommentRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,24 @@ class CommentRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            // comment: 必須 (required)、文字列 (string)、最大255文字 (max:255)
+            'comment' => ['required', 'string', 'max:255'],
+            // item_id: コメント対象の商品ID。実アプリケーションでは必須。
+            // 今回のルール画像にはないが、コメント対象を特定するために追加しておくのが一般的らしい。
+            // 'item_id' => ['required', 'integer', 'exists:items,id'],
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'comment.required' => 'コメント内容は必ず入力してください。',
+            'comment.max' => 'コメント内容は255文字以内で入力してください。',
         ];
     }
 }

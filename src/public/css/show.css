@@ -1,0 +1,470 @@
+* {
+    box-sizing: border-box;
+}
+
+/* 横スクロールを強制的に有効にする */
+html {
+    overflow-x: hidden;
+}
+
+/*  ヘッダー共通スタイル */
+
+.header-shadow {
+    display: flex;
+    background-color: #000000;
+    width: 100%;
+    height: 82px;
+    top: 0;
+    left: 0;
+    padding: 10px 20px;
+    border-bottom-width: 1px;
+    position: fixed;
+    z-index: 100;
+}
+
+.header-content {
+    width: 100%;
+    max-width: 1515px;
+    margin: 0 auto;
+    /* コンテンツをヘッダーの幅の中央に配置 */
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    width: auto;
+    height: 36px;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+/* ロゴアイコンのコンテナ */
+.logo-icon {
+    width: auto;
+    height: auto;
+}
+
+/* ロゴテキストのコンテナ */
+.logo-text {
+    width: auto;
+    height: auto;
+}
+
+/* ロゴ画像自体に高さを設定してサイズを制御 */
+.logo img.icon {
+    /* 親要素の高さに合わせるか、固定値を設定 */
+    height: 36px;
+    /* 親要素の高さ 36px に合わせる */
+    width: auto;
+    display: block;
+}
+
+/* 検索フォームのコンテナ */
+.search-form-container {
+    flex-grow: 1;
+    /* 成長させて中央の空きスペースを埋める */
+    max-width: 600px;
+    /* 検索フォームの最大幅を設定（デザインに合わせて調整） */
+    margin: 0 50px;
+    /* 左右に適切な余白を設定（デザインに合わせて調整） */
+}
+
+/* 検索入力欄 */
+.search-input {
+    width: 100%;
+    height: 44px;
+    /* ナビゲーションボタンと高さを揃える */
+    padding: 10px 15px;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.nav-menu {
+    display: flex;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+/* ログアウトとマイページのスタイルを統合し、リンクのような見た目にする */
+.logout-button,
+.mypage-button {
+    width: 140px;
+    /* 幅をテキストに合わせる */
+    height: 44px;
+    color: #FFFFFF;
+    background-color: transparent;
+    /* 背景色を透明にする */
+    border: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-decoration: none;
+}
+
+/* ❗ 修正: 出品ボタンのスタイルを画像に合わせる */
+.sell-button {
+    width: 100px;
+    height: 44px;
+    color: #333333;
+    background-color: #FFFFFF;
+    border: 1px solid #333333;
+    border-radius: 5px;
+    margin-left: 20px;
+    /* 他のボタンとの間に少しスペースを空ける */
+    padding: 0;
+    line-height: 1;
+    /* ❗ 追加: flexコンテナとして文字を中央に配置する */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 垂直方向の中央寄せ */
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.nav-text {
+    color: #FFFFFF;
+    font-size: 1.25rem;
+    display: block;
+    margin: auto 0;
+    white-space: nowrap;
+}
+
+.sell-text {
+    color: #333333;
+    font-size: 1.25rem;
+    display: block;
+    margin-right: 15px;
+    white-space: nowrap;
+}
+
+.nav-link,
+.nav-button {
+    text-align: center;
+    font-weight: 500;
+    text-decoration: none;
+    height: 44px;
+    cursor: pointer;
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+/* 商品詳細画面全体 (show.blade.php)      */
+/* -------------------------------------- */
+
+/* メインコンテナ */
+.show-container {
+    background-color: #FFFFFF;
+    max-width: 1515px;
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 82px;
+    /* ヘッダーの高さ分、コンテンツを下にずらす */
+
+    margin: 0 auto;
+    /* ❗ 修正: 左右の余白をデザインに合わせて調整 ❗ */
+    padding: 100px 100px 50px 100px;
+}
+
+
+/* ❗ 修正: 2カラムレイアウトの親要素 ❗ */
+.item-detail-wrapper {
+    display: flex;
+    justify-content: center;
+    /* コンテンツ全体を中央に寄せる */
+    gap: 150px;
+    /* 画像エリアと情報エリアの間隔 */
+}
+
+/* 1. 左側: 商品画像エリア */
+.item-image-area {
+    max-width: 400px;
+    width: 100%;
+    flex-shrink: 0;
+    /* 画像が information area の top に揃うように調整 */
+    padding-top: 100px;
+}
+
+.show-image-container {
+    width: 100%;
+    height: 400px;
+    background-color: #D9D9D9;
+}
+
+.item-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    color: #333333;
+}
+
+/* 2. 右側: 商品情報エリア */
+.item-info-area {
+    max-width: 570px;
+    width: 100%;
+    /* 画像より広めの幅を確保 */
+    flex-shrink: 0;
+    padding-top: 50px;
+    /* ❗ 調整: 画像の上部との位置を調整 ❗ */
+}
+
+.item-name {
+    font-size: 2.25rem;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+}
+
+.item-brand {
+    font-size: 1.25rem;
+    color: #666666;
+    margin: 0 0 15px 0;
+}
+
+.item-price {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0 0 20px 0;
+}
+
+.tax-info {
+    font-size: 1.25rem;
+    font-weight: normal;
+}
+
+/* いいね/コメントアイコンと数値を囲むコンテナ */
+.reaction-buttons {
+    display: flex;
+    gap: 15px;
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+}
+
+/* 各リアクション要素 (アイコン+数値) のスタイル */
+.reaction-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-left: 30px;
+}
+
+.reaction-icon {
+    display: block;
+    /* spanをブロック要素にして高さを確保 */
+    margin-bottom: 5px;
+}
+
+/* アイコン画像自体 */
+.reaction-icon-img {
+    width: 35px;
+    height: 35px;
+    display: block;
+}
+
+/* リアクション数 (数値) のスタイル */
+.reaction-count {
+    font-size: 1rem;
+    color: #333333;
+    line-height: 1;
+}
+
+/* 購入手続きへ ボタン (情報エリア内) */
+.purchase-link {
+    display: block;
+    width: 570px;
+    background-color: #FF5555;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 15px 0;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 50px;
+}
+
+.section-title {
+    font-size: 2.25rem;
+    font-weight: bold;
+    margin: 50px 0 15px 0;
+    padding-bottom: 5px;
+}
+
+/* 商品の情報 (カテゴリ/状態) のコンテナ */
+.item-metadata {
+    margin-top: 15px;
+    /* 商品説明との間隔 */
+}
+
+.metadata-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    /* 各行の間隔 */
+}
+
+/* ラベル (カテゴリー、商品の状態) */
+.metadata-label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    /* ❗ 修正: 値との間隔を確保するため、最小幅を設定 ❗ */
+    min-width: 150px;
+    margin-right: 30px;
+    flex-shrink: 0;
+}
+
+/* 値 (良好、洋服、メンズ) */
+.metadata-value {
+    font-size: 1rem;
+    padding: 5px 15px;
+    /* ボックスのパディング */
+    margin-right: 20px;
+    /* 値同士の間隔 */
+    border-radius: 5px;
+    white-space: nowrap;
+    line-height: 1.5;
+    /* テキストの行高調整 */
+}
+
+/* ❗ 追加: カテゴリーの値にのみボックススタイルを適用 ❗ */
+/* 画像（image_9617c2.png）より、カテゴリーの値（洋服, メンズ）にのみグレーのボックスが付いています。*/
+.metadata-row:nth-child(1) .metadata-value {
+    background-color: #D9D9D9;
+    /* 薄いグレーの背景色 */
+    color: #000000;
+    font-size: 1.25rem;
+    font-weight: 400;
+    border-radius: 15px;
+    width: 101.99px;
+    height: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* ❗ 追加: 商品の状態の値はボックスなし ❗ */
+/* 画像（image_9617c2.png）より、商品の状態の値（良好）にはボックスがないため、背景色とパディングをリセット */
+.metadata-row:nth-child(2) .metadata-value {
+    background-color: transparent;
+    /* 背景色を透明に */
+    padding: 0;
+    /* パディングをリセット */
+    font-weight: normal;
+    font-size: 1.25rem;
+    /* ラベルと同じか少し大きめのサイズに調整 */
+}
+
+.comment-section-title {
+    font-size: 2.25rem;
+    font-weight: bold;
+    margin: 60px 0 15px 0;
+    padding-bottom: 5px;
+    color: #5F5F5F;
+}
+
+.comment-item {
+    display: flex;
+    text-align: center;
+}
+
+.profile-avatar {
+    width: 70px;
+    height: 70px;
+    background-color: #D9D9D9;
+    /* グレーの円形 */
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-right: 30px;
+}
+
+.comment-user {
+    color: #000000;
+    font-size: 1.875rem;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.comment-text {
+    background-color: #EFEFEF;
+    /* 薄いグレーの背景色 */
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 1rem;
+    line-height: 1.5;
+    width: 100%;
+}
+
+.comment-input {
+    width: 570px;
+    height: 246px;
+    border: 1.5px solid #5F5F5F;
+    margin-bottom: 30px;
+}
+
+.comment-submit-button {
+    display: block;
+    width: 570px;
+    background-color: #FF5555;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 15px 0;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 50px;
+    border: none;
+}
+
+
+
+/* ---------------------------------------------------------------------- */
+/* 3. レスポンシブ対応のためのメディアクエリ */
+/* ---------------------------------------------------------------------- */
+
+/* 1. 超広幅PCモニター対応 (1541px以上) */
+/* 非常に広い画面幅でコンテンツを広げる、または特定の要素のサイズを拡大する場合に利用 */
+@media screen and (min-width: 1541px) {
+
+    /* 1515pxのコンテンツ幅を、例えば1800pxに広げる場合 */
+    .header-content,
+    .shipping-address_edit-container {
+        max-width: 1800px;
+        /* 必要に応じてコンテンツの最大幅を広げる */
+    }
+
+    /* その他、超広幅画面でのデザイン調整があれば追記 */
+}
+
+
+/* 2. 狭いPC画面対応 (1399px以下) */
+/* ターゲット範囲の最も狭い境界線で、レイアウト崩れを防ぐための微調整を行う */
+@media screen and (max-width: 1399px) {
+    .search-form-container {
+        max-width: 400px;
+        /* 検索窓を600pxから400pxに縮小し、ナビゲーションとの間隔を確保 */
+        margin: 0 30px;
+        /* 左右の余白も調整 */
+    }
+
+    /* その他、この画面幅でのデザイン調整があれば追記 */
+}
