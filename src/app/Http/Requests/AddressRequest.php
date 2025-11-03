@@ -74,6 +74,9 @@ class AddressRequest extends FormRequest
             // 住所
             'address.required' => '住所を入力してください',
             'address.max' => '住所は255文字以内で入力してください',
+
+            // building_nameに関するメッセージ
+            'building_name.max' => '建物名は255文字以内で入力してください。',
         ];
     }
 }

@@ -85,6 +85,9 @@ class PurchaseRequest extends FormRequest
             // 送付先住所
             'shipping_address.required' => '送付先住所を入力してください',
             'shipping_address.max' => '送付先住所は255文字以内で入力してください',
+
+            // 送付先建物名
+            'shipping_building_name.max' => '送付先建物名は255文字以内で入力してください',
         ];
     }
 }
