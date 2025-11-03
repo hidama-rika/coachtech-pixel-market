@@ -52,7 +52,7 @@
                 <div class="profile-avatar"></div>
                 <div class="profile-info">
                     <div class="user-name">ユーザー名</div>
-                    <a href="/profile/edit" class="edit-button">プロフィールを編集</a>
+                    <a href="/mypage/profile" class="edit-button">プロフィールを編集</a>
                 </div>
             </div>
 

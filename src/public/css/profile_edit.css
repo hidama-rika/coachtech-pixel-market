@@ -134,7 +134,7 @@ html {
 
 .nav-text {
     color: #FFFFFF;
-    font-size: 1rem;
+    font-size: 1.25rem;
     display: block;
     margin: auto 0;
     white-space: nowrap;
@@ -142,7 +142,7 @@ html {
 
 .sell-text {
     color: #333333;
-    font-size: 1rem;
+    font-size: 1.25rem;
     display: block;
     margin-right: 15px;
     white-space: nowrap;
@@ -186,7 +186,6 @@ body {
     max-width: 680px;
     width: 100%;
     height: auto;
-    left: 416px;
     border-radius: 24px;
     padding: 40px;
 
@@ -270,12 +269,13 @@ body {
     height: 48.43px;
     justify-content: center;
     padding: 10px 15px;
+    margin-top: 50px;
     margin-left: 30px;
     border: 1px solid #FF5555;
     border-radius: 5px;
     background-color: #FFFFFF;
     color: #FF5555;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 700;
     cursor: pointer;
     transition: background-color 0.2s;
