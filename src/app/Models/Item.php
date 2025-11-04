@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+class Item extends Model
+{
+    use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'user_id',
+        'category_id',
+        'condition_id',
+        'name',
+        'description',
+        'price',
+        'image_path',
+        'is_sold',
+    ];
+
+    // =======================================================
+    // リレーションシップ定義
+    // =======================================================
+
+    // --- 参照元 (多 対 1) ---
+
+    /**
+     * 商品の出品者 (多 対 1)
+     * items.user_id が users.id を参照
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * 商品の状態 (多 対 1)
+     * items.condition_id が conditions.id を参照
+     */
+    public function condition(): BelongsTo
+    {
+        return $this->belongsTo(Condition::class, 'condition_id');
+    }
+
+    // --- 参照先 (多 対 多) ---
+
+    /**
+     * 商品が属するカテゴリ (多 対 多)
+     * item_category中間テーブルを使用
+     */
+    public function categories(): BelongsToMany
+    {
+        // 第二引数: 中間テーブル名, 第三引数: 自身の外部キー, 第四引数: 相手の外部キー
+        return $this->belongsToMany(Category::class, 'item_category', 'item_id', 'category_id')->withTimestamps();
+    }
+
+    // --- 参照先 (1 対 多) ---
+
+    /**
+     * 商品へのコメント一覧 (1 対 多)
+     * items.id が comments.item_id を参照
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'item_id');
+    }
+
+    /**
+     * 商品の購入履歴 (1 対 多)
+     * items.id が purchases.item_id を参照
+     */
+    public function purchases(): HasMany
+    {
+        return $this->hasMany(Purchase::class, 'item_id');
+    }
+}
