@@ -131,14 +131,22 @@ return [
 
     'custom' => [
         'name' => [
-            'required' => '名前を入力してください',
+            'required' => 'ユーザー名を入力してください',
         ],
         'email' => [
             'required' => 'メールアドレスを入力してください',
             'email' => 'メールアドレスは「ユーザー名@ドメイン」形式で入力してください',
+            'unique' => 'このメールアドレスは既に使用されています',
+        ],
+        // ★★★ 追記：FortifyのLoginRequestが内部で使用する「username」属性に対する定義 ★★★
+        'username' => [
+            'email' => 'メールアドレスは「ユーザー名@ドメイン」形式で入力してください',
+            'required' => 'メールアドレスを入力してください',
         ],
         'password' => [
             'required' => 'パスワードを入力してください',
+            'min' => 'パスワードは8文字以上で入力してください',
+            'confirmed' => 'パスワードと確認用パスワードが一致しません',
         ],
         // 確認用パスワード（password_confirmation）に対するカスタムメッセージを追加
         'password_confirmation' => [
@@ -161,7 +169,7 @@ return [
     */
 
     'attributes' => [
-        'name' => 'お名前',
+        'name' => 'ユーザー名',
         'email' => 'メールアドレス',
         'password' => 'パスワード',
         'password_confirmation' => '確認用パスワード',

@@ -62,13 +62,29 @@
             {{-- 商品一覧グリッド (image_6e1b35.png を参考に作成) --}}
             <div class="index-grid-container">
                 <div class="item-grid">
-                    {{-- 商品カードの繰り返しをBladeでシミュレーション --}}
-                    @for ($i = 0; $i < 8; $i++)
-                        <div class="item-card">
-                            <div class="item-image-placeholder">商品画像</div>
-                            <p class="item-name">商品名</p>
+                    {{-- コントローラから渡された $items (商品コレクション) をループ処理します --}}
+                    @if (isset($items) && $items->isNotEmpty())
+                        @foreach ($items as $item)
+
+                            {{-- 商品詳細ページへのリンクとして item-card をラップ --}}
+                            <a href="/item/{{ $item->id }}" class="item-card">
+
+                                {{-- 【画像表示】: item テーブルの image_path カラムを使用 --}}
+                                <div class="item-image-placeholder">
+                                    <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}">
+                                </div>
+
+                                {{-- 【商品名表示】: item テーブルの name カラムを使用 --}}
+                                <p class="item-name">{{ $item->name }}</p>
+
+                            </a>
+                        @endforeach
+                    @else
+                        {{-- 商品が存在しない場合の表示（CSSの崩れを防ぐため grid の外に配置推奨ですが、ここでは最小限の変更に留めます） --}}
+                        <div class="w-full text-center p-8">
+                            <p>商品がまだ登録されていません。</p>
                         </div>
-                    @endfor
+                    @endif
                 </div>
             </div>
 

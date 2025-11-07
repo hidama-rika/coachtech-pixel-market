@@ -14,17 +14,24 @@ class CreateItemCategoryTable extends Migration
     public function up()
     {
         Schema::create('item_category', function (Blueprint $table) {
-            // PRIMARY KEY
-            $table->id(); // unsigned bigint の主キー（id）を作成
-
+            // 注意: 中間テーブルでは、一般的に $table->id() は不要。
             // 外部キー (Foreign Keys)
-            // itemsテーブルを参照
-            $table->foreignId('item_id')->constrained('items')->comment('商品ID');
-            // categoriesテーブルを参照
-            $table->foreignId('category_id')->constrained('categories')->comment('カテゴリID');
 
-            // 複合ユニーク制約：同じ商品IDと同じカテゴリIDの組み合わせは一意
-            $table->unique(['item_id', 'category_id']);
+            // itemsテーブルを参照し、符号なしBIGINTとして定義
+            $table->foreignId('item_id')
+                ->constrained('items')
+                ->onDelete('cascade')
+                ->comment('商品ID');
+
+            // categoriesテーブルを参照し、符号なしBIGINTとして定義
+            $table->foreignId('category_id')
+                ->constrained('categories')
+                ->onDelete('cascade')
+                ->comment('カテゴリID');
+
+            // 複合主キーを設定して、同じ組み合わせの重複挿入を禁止する
+            // item_idとcategory_idの組み合わせが一意であることを保証します。
+            $table->primary(['item_id', 'category_id']);
 
             // タイムスタンプ
             $table->timestamps(); // created_at と updated_at

@@ -20,13 +20,12 @@ class CreateItemsTable extends Migration
             // 外部キー (Foreign Keys)
             // 商品を出品したユーザー
             $table->foreignId('user_id')->constrained('users')->comment('出品ユーザーID');
-            // カテゴリ (categoriesテーブルを参照)
-            $table->foreignId('category_id')->constrained('categories')->comment('カテゴリID');
             // 状態 (conditionsテーブルを参照)
             $table->foreignId('condition_id')->constrained('conditions')->comment('商品状態ID');
 
             // 商品基本情報
             $table->string('name', 255)->comment('商品名');
+            $table->string('brand', 255)->nullable()->comment('ブランド名');
             $table->text('description')->comment('商品説明'); // 長文対応のためTEXT型を採用
             $table->integer('price')->comment('価格');
             $table->string('image_path', 255)->comment('商品画像パス');

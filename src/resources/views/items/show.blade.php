@@ -32,12 +32,12 @@
                 </form>
 
                 <a href="/mypage" class="nav-button mypage-button">
-                    <span class="nav-text">マイページ</span>
-                </a>
+                    <span class="nav-text">マイページ</span>
+                </a>
 
                 <a href="/sell" class="nav-button sell-button">
-                    <span class="sell-text">出品</span>
-                </a>
+                    <span class="sell-text">出品</span>
+                </a>
 
             </nav>
 
@@ -53,15 +53,17 @@
                 {{-- 1. 左側: 商品画像 --}}
                 <div class="item-image-area">
                     <div class="show-image-container">
-                        <div class="item-image-placeholder">商品画像</div>
+                        <div class="item-image-placeholder">
+                            <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}">
+                        </div>
                     </div>
                 </div>
 
                 {{-- 2. 右側: 商品情報、商品説明、コメント --}}
                 <div class="item-info-area">
-                    <h1 class="item-name">商品名がここに入る</h1>
-                    <p class="item-brand">ブランド名</p>
-                    <p class="item-price">¥47,000<span class="tax-info">(税込)</span></p>
+                    <h1 class="item-name">{{ $item->name }}</h1>
+                    <p class="item-brand">{{ empty($item->brand) ? '' : $item->brand }}</p>
+                    <p class="item-price">¥{{ number_format($item->price) }}<span class="tax-info">(税込)</span></p>
 
                     {{-- いいね/コメントアイコン --}}
                     <div class="reaction-buttons">
@@ -77,7 +79,7 @@
                             <span class="reaction-icon">
                                 <img src="{{ asset('storage/img/ふきだしのアイコン.png') }}" alt="ふきだしアイコン" class="icon reaction-icon-img">
                             </span>
-                            <span class="reaction-count">1</span>
+                            <span class="reaction-count">{{ $item->comments->count() }}</span>
                         </div>
                     </div>
 
@@ -87,10 +89,7 @@
                     {{-- 商品説明 --}}
                     <h2 class="section-title">商品説明</h2>
                     <p class="item-description">
-                        カラー：グレー<br>
-                        新品<br>
-                        商品の状態は良好です。傷もありません。<br>
-                        購入後、即発送いたします。
+                        {{ $item->description }}
                     </p>
 
                     {{-- 商品の情報 (カテゴリ/状態) --}}
@@ -98,35 +97,66 @@
                     <div class="item-metadata">
                         <div class="metadata-row">
                             <span class="metadata-label">カテゴリー</span>
-                            <span class="metadata-value">洋服</span>
-                            <span class="metadata-value">メンズ</span>
+                            {{-- ❗ 修正: metadata-valueにタグを並べるためのflex-wrapクラスを追加 ❗ --}}
+                            <span class="metadata-value category-tags-wrapper">
+                                {{-- 多対多のリレーションなので、categoriesコレクションをループして表示します --}}
+                                @forelse ($item->categories as $category)
+                                    {{-- ❗ 修正: 各カテゴリを独立したタグ要素で囲む ❗ --}}
+                                    <span class="category-tag">
+                                        {{ $category->name }}
+                                    </span>
+                                @empty
+                                    カテゴリなし
+                                @endforelse
+                            </span>
                         </div>
                         <div class="metadata-row">
                             <span class="metadata-label">商品の状態</span>
-                            <span class="metadata-value">良好</span>
+                            <span class="metadata-value">
+                                {{ $item->condition?->name }}
+                            </span>
                         </div>
                     </div>
 
                     {{-- コメントセクション --}}
                     <div class="comment-section">
-                        <h2 class="comment-section-title">コメント(1)</h2>
+                        <h2 class="comment-section-title">コメント({{ $item->comments->count() }})</h2>
                         <div class="comment-list">
-                            <div class="comment-item">
-                                <div class="profile-avatar"></div>
-                                <span class="comment-user">admin</span>
-                            </div>
-                            <div class="comment-display">
-                                <p class="comment-text">こちらにコメントが入ります。</p>
-                            </div>
-                            {{-- コメントの繰り返し（省略） --}}
+                            {{-- 💡 $item->comments（コレクション）をループし、個々の $comment を取り出す 💡 --}}
+                            @forelse ($item->comments as $comment)
+                                <div class="comment-item">
+                                    {{-- 修正: $comment からユーザー情報にアクセス --}}
+                                    <div class="profile-avatar">
+                                        {{-- $comment->user は必ず存在し、profile_image には必ずデータがある前提 --}}
+                                        <img
+                                            src="{{ asset('storage/' . $comment->user->profile_image) }}"
+                                            alt="{{ $comment->user->name }}のアバター"
+                                        >
+                                    </div>
+
+                                    {{-- $comment からユーザー名にアクセス --}}
+                                    <span class="comment-user">{{ $comment->user->name }}</span>
+
+                                    <div class="comment-display">
+                                        {{-- $comment のコメント本文にアクセス --}}
+                                        <p class="comment-text">{{ $comment->body ?? $comment->comment }}</p>
+                                    </div>
+                                </div>
+                            @empty
+                                {{-- コメントがない場合の表示 --}}
+                                <p class="no-comment-message">まだコメントはありません。</p>
+                            @endforelse
                         </div>
                         <h2 class="section-title comment-form-title">商品へのコメント</h2>
-                        <textarea class="comment-input" placeholder="コメントを入力"></textarea>
-                    </div>
+                        <form method="POST" action="/comment/store/{{ $item->id }}">
+                            @csrf
+                            <textarea name="body" class="comment-input" placeholder="コメントを入力"></textarea>
 
-                    {{-- コメントを送信する ボタン --}}
-                    <div class="comment-button">
-                        <button type="submit" class="comment-submit-button">コメントを送信する</button>
+                            {{-- コメントを送信する ボタン --}}
+                            <div class="comment-button">
+                                <button type="submit" class="comment-submit-button">コメントを送信する</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 

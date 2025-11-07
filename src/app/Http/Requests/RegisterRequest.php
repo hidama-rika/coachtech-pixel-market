@@ -44,7 +44,7 @@ class RegisterRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name' => 'お名前',
+            'name' => 'ユーザー名',
             'email' => 'メールアドレス',
             'password' => 'パスワード',
             'password_confirmation' => '確認用パスワード',
@@ -61,7 +61,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             // name
-            'name.required' => 'お名前を入力してください',
+            'name.required' => 'ユーザー名を入力してください',
 
             // email
             'email.required' => 'メールアドレスを入力してください',
@@ -73,6 +73,6 @@ class RegisterRequest extends FormRequest
 
             // password_confirmation
             'password.confirmed' => 'パスワードと確認用パスワードが一致しません',
-            'confirmation_.min' => '確認パスワードは8文字以上で入力してください',
         ];
     }
+}

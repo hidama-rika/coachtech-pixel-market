@@ -31,8 +31,8 @@
 
                 {{-- お名前 --}}
                 <div class="form-group">
-                    <label for="name">お名前</label>
-                    <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus placeholder="名前を入力">
+                    <label for="name">ユーザー名</label>
+                    <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus placeholder="ユーザー名を入力">
                     <p class="register-form__error-message">
                         @error('name')
                         {{ $message }}
@@ -65,9 +65,9 @@
                 {{-- 確認用パスワード --}}
                 <div class="form-group">
                     <label for="confirmed-password">確認用パスワード</label>
-                    <input id="confirmed-password" type="confirmed-password" class="form-control" name="confirmed-password" required placeholder="確認用パスワードを入力">
+                    <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required placeholder="確認用パスワードを入力">
                     <p class="register-form__error-message">
-                        @error('confirmed-password')
+                        @error('password_confirmation')
                         {{ $message }}
                         @enderror
                     </p>

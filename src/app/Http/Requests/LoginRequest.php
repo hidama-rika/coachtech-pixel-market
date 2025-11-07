@@ -25,10 +25,10 @@ class LoginRequest extends FormRequest
     {
         return [
             // メールアドレス: 必須、メール形式、usersテーブル内でユニークであること
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255'],
 
             // パスワード: 必須、8文字以上、確認用パスワードと一致すること
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:8'],
         ];
     }
 
