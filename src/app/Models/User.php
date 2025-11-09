@@ -8,10 +8,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany; // ← 追加
+// ★★★ ここを「Laravel\Fortify」のパスに修正します ★★★
+use Laravel\Fortify\TwoFactorAuthenticatable; // 💡 これを修正
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    // ★★★ これで正しくFortifyのトレイトが読み込まれます ★★★
+    use TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -36,6 +40,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        // 💡 TwoFactorAuthenticatableトレイトを追加した場合、以下の属性も隠す必要があります。
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     /**

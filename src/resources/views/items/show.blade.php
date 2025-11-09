@@ -13,10 +13,10 @@
     <header class="header-shadow header">
         <div class="header-content">
 
-            <div class="logo">
+            <a class="logo" href="/">
                 <img src="{{ asset('storage/img/Vector (3).png') }}" alt="logoアイコン" class="icon logo-icon-img">
                 <img src="{{ asset('storage/img/Group (2).png') }}" alt="logoテキスト" class="icon logo-text-img">
-            </div>
+            </a>
 
             <div class="search-form-container">
                 <input type="text" class="search-input" placeholder="なにをお探しですか？">
@@ -84,7 +84,7 @@
                     </div>
 
                     {{-- 購入手続きへ ボタン (画像中央の右側エリアにあるため移動) --}}
-                    <a href="/purchase" class="purchase-link">購入手続きへ</a>
+                    <a href="{{ route('purchases.create', ['item_id' => $item->id]) }}" class="purchase-link">購入手続きへ</a>
 
                     {{-- 商品説明 --}}
                     <h2 class="section-title">商品説明</h2>

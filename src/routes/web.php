@@ -4,6 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CustomAuthenticatedSessionController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\MypageController;
+use App\Http\Controllers\ShippingAddressController;
+ // コントローラーをインポート
 
 /*
 |--------------------------------------------------------------------------
@@ -19,12 +24,12 @@ use App\Http\Controllers\CustomAuthenticatedSessionController;
 // 開発用表示ルート Route::view('URI', 'ビュー名');
 Route::view('/login', 'auth.login');
 Route::view('/register', 'auth.register');
-Route::view('/address', 'shipping-address_edit');
+// Route::view('/address', 'shipping-address_edit');
 // Route::view('/', 'index');
-Route::view('/mypage/profile', 'profile_edit');
+// Route::view('/mypage/profile', 'profile_edit');
 Route::view('/sell', 'new_items');
-Route::view('/purchase', 'new_purchases');
-Route::view('/mypage', 'mypage');
+// Route::view('/purchase', 'new_purchases');
+// Route::view('/mypage', 'mypage');
 // Route::view('/item', 'show');
 
 
@@ -65,25 +70,31 @@ Route::middleware('auth')->group(function () {
 
     // --- (認証済の場合にアクセス可能) ---
 
-    // 商品一覧画面の表示
-    // Route::get('/', [ItemController::class, 'index'])
-    //     ->name('items.index');
-
     // --- マイページ・管理系ルート (Route::view を移動・整理) ---
 
     // マイページトップ
-    Route::view('/mypage', 'mypage')->name('mypage.index');
+    Route::get('/mypage', [MypageController::class, 'index'])->name('mypage.index');
 
     // プロフィール編集画面
-    Route::view('/mypage/profile', 'profile_edit')->name('mypage.profile.edit');
+    Route::get('/mypage/profile', [ProfileController::class, 'edit'])
+        ->name('mypage.profile.edit');
 
-    // 配送先住所編集画面
-    Route::view('/address', 'shipping-address_edit')->name('address.edit');
+    // プロフィール更新処理
+    Route::patch('/mypage/profile', [ProfileController::class, 'update'])
+        ->name('mypage.profile.update');
 
     // 商品出品画面
     Route::view('/sell', 'new_items')->name('items.sell');
 
     // 購入履歴画面
-    Route::view('/purchase', 'new_purchases')->name('purchases.index');
+    Route::get('/purchase/{item_id}', [PurchaseController::class, 'create'])->name('purchases.create');
+
+    // ==========================================================
+    // ★★★ 配送先住所関連のルート (ShippingAddressControllerを使用) ★★★
+    // ==========================================================
+
+    Route::get('/address', [ShippingAddressController::class, 'edit'])->name('address.edit');
+
+    Route::patch('/address', [ShippingAddressController::class, 'update'])->name('address.update');
 
     });

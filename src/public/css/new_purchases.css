@@ -186,7 +186,7 @@ body {
     height: auto;
 
     /* フォームを上下の余白で配置する */
-    margin-top: 100px;
+    margin-top: 50px;
     margin-bottom: 50px;
 
     /* 子要素（ロゴからリンクまで）を縦に並べるためのflex設定 */
@@ -232,6 +232,29 @@ body {
     color: #5F5F5F;
     font-size: 18px;
     font-weight: 400;
+    overflow: hidden;
+}
+
+.item-image-area img {
+    width: 100%;
+    /* 親要素の幅を超えないようにする */
+    height: 100%;
+    /* 親要素の高さに合わせる */
+    object-fit: cover;
+    /* ★重要★ 画像を親要素のサイズに合わせてトリミング */
+    display: block;
+    /* 画像の下に余計なスペースができないように */
+}
+
+/* placeholder-image の調整 (画像がない場合の表示) */
+.item-image-area .placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #E0E0E0;
+    color: #5F5F5F;
 }
 
 .item-text {
@@ -274,8 +297,6 @@ body {
 }
 
 .section-title-small {
-    width: 326px;
-    height: 85px;
     font-size: 20px;
     font-weight: 700;
     color: #000000;
@@ -286,10 +307,9 @@ body {
 .custom-payment-select {
     width: 269px;
     height: 31px;
-    padding: 0 10px;
-    margin-top: 0;
+    margin-top: -20px;
     margin-left: 176px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     color: #5F5F5F;
     border: 1px solid #5F5F5F;
     border-radius: 4px;
@@ -357,8 +377,8 @@ body {
 
     /* ❗ 修正点: top プロパティを追加または修正 ❗ */
     /* リストを上にずらして、白いフォームエリアの開始位置に合わせます。 */
-    /* 白いフォームエリアの高さが 57.09px なので、その分上に移動します。 */
-    top: 50%;
+    /* 白いフォームエリアの高さ、その分上に移動します。 */
+    top: 40%;
     /* フォームの枠線が重ならないように -1px に調整（または 0） */
     z-index: 100;
     /* 他の要素の上に表示 */

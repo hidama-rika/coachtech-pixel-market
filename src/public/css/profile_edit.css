@@ -249,7 +249,9 @@ body {
 .profile-image {
     width: 100%;
     height: 100%;
+
     object-fit: cover;
+    object-position: center;
     /* 画像をエリア全体にフィットさせる */
     justify-content: center;
 
@@ -259,7 +261,7 @@ body {
     line-height: 1.2;
     /* 行間を調整して中央に近づける */
 
-    transform: translateY(65px);
+    /* transform: translateY(65px); */
     /* 10px下に移動 */
 }
 

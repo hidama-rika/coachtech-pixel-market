@@ -134,7 +134,7 @@ html {
 
 .nav-text {
     color: #FFFFFF;
-    font-size: 1rem;
+    font-size: 1.25rem;
     display: block;
     margin: auto 0;
     white-space: nowrap;
@@ -142,7 +142,7 @@ html {
 
 .sell-text {
     color: #333333;
-    font-size: 1rem;
+    font-size: 1.25rem;
     display: block;
     margin-right: 15px;
     white-space: nowrap;

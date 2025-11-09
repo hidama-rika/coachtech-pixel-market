@@ -14,7 +14,9 @@ use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
 use Laravel\Fortify\Contracts\TwoFactorChallengeViewResponse;
 use Laravel\Fortify\Http\Responses\LoginResponse;
 use Laravel\Fortify\Contracts\LogoutResponse;
+use Illuminate\Http\RedirectResponse; // 💡 追加または確認
 use Illuminate\Support\Facades\View; // Viewファサードを使用するためのuse宣言
+use Illuminate\Support\Facades\Auth; //明示的にインポート
 
 class CustomAuthenticatedSessionController extends Controller
 {
@@ -62,12 +64,15 @@ class CustomAuthenticatedSessionController extends Controller
     /**
      * ログアウト処理
      */
-    public function destroy(Request $request): \Illuminate\Http\Response
+    public function destroy(Request $request): RedirectResponse|LogoutResponse // 戻り値の型ヒントを修正
     {
-        $this->guard->logout();
+        Auth::guard('web')->logout();
+
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
 
-        return app(LogoutResponse::class); // Fortifyのログアウトレスポンスを使用
+        // ★★★ ログアウト後にログイン画面へリダイレクト ★★★
+        return redirect('/login');
     }
 }

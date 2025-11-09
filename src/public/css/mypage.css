@@ -206,6 +206,18 @@ body {
     /* グレーの円形 */
     border-radius: 50%;
     flex-shrink: 0;
+    /* 【★修正1】: 画像のはみ出しを隠し、円形を維持 */
+    overflow: hidden;
+}
+
+/* 【★修正1】: .profile-avatar 内の img にサイズとフィットを指定 */
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* 画像がコンテナを覆うように拡大・トリミング */
+    border-radius: 50%;
+    display: block;
 }
 
 /* ユーザー名と編集ボタンのコンテナ */
@@ -353,7 +365,7 @@ body {
 }
 
 .item-image-placeholder {
-    max-width: 240px;
+    max-width: 231px;
     height: 231.27px;
     padding-top: 75%;
     background-color: #D9D9D9;
@@ -364,6 +376,19 @@ body {
     font-size: 2.5rem;
     position: relative;
     padding: 0;
+}
+
+/* item-image-placeholder内のimgタグにサイズ制限を設定 */
+.item-image-placeholder img {
+    /* 親要素の幅を超えないようにする */
+    max-width: 100%;
+    /* 親要素の高さ（231.27px）を超えないようにする */
+    max-height: 100%;
+    /* 画像の縦横比を維持したまま、親要素に収める（余白ができても良い） */
+    object-fit: contain;
+    /* 親要素の高さ max-height: 231.27px; が効くように */
+    height: auto;
+    width: auto;
 }
 
 .item-name {

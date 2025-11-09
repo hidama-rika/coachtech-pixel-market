@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Http\Responses\LogoutResponse; // FortifyのLogoutResponseをインポート
+use Illuminate\Http\RedirectResponse; // リダイレクト処理のためにインポート
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -24,9 +26,7 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // サービスコンテナにバインド（instanceじゃなくてbindを使う）
-        // FortifyLoginRequest が要求されたら CustomLoginRequest を渡すように指定
-        // $this->app->bind(FortifyLoginRequest::class, LoginRequest::class);結局不要
+        //
     }
 
     /**

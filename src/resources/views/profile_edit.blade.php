@@ -13,10 +13,10 @@
     <header class="header-shadow header">
         <div class="header-content">
 
-            <div class="logo">
+            <a class="logo" href="/">
                 <img src="{{ asset('storage/img/Vector (3).png') }}" alt="logoアイコン" class="icon logo-icon-img">
                 <img src="{{ asset('storage/img/Group (2).png') }}" alt="logoテキスト" class="icon logo-text-img">
-            </div>
+            </a>
 
             <div class="search-form-container">
                 <input type="text" class="search-input" placeholder="なにをお探しですか？">
@@ -49,23 +49,47 @@
 
             <div class="form-title">プロフィール設定</div>
 
-            <div class="profile-image-section">
-                <div class="profile-image-area">
-                    <img src="placeholder_path_to_profile_image" alt="プロフィール画像" class="profile-image">
-                </div>
-                <div class="image-upload-button-area">
-                    <button type="button" class="image-select-btn">画像を選択する</button>
-                    <input type="file" id="image-upload" name="profile_image" accept="image/*" style="display: none;">
-                </div>
-            </div>
-
-            <form class="form" action="/mypage/profile" method="post" novalidate>
+            <form class="form" action="{{ route('mypage.profile.update') }}" method="post" enctype="multipart/form-data" novalidate>
                 @csrf
+                @method('patch') <!-- PATCHメソッドを指定 -->
+
+                <!-- JavaScriptで値を設定するため、非表示の input[type="file"] をフォーム内に入れる -->
+                <!-- 既存の input[type="file"] をそのまま使用 -->
+
+                {{-- プロフィール画像 --}}
+                <div class="profile-image-section">
+                    <div class="profile-image-area">
+                        <!-- idを追加してJavaScriptからアクセスできるようにする -->
+                        <img
+                            id="profile-preview"
+                            src="{{ asset('storage/' . $user->profile_image) }}"
+                            alt="プロフィール画像"
+                            class="profile-image"
+                            onerror="this.onerror=null; this.src='https://placehold.co/120x120/D9D9D9/333333?text=Avatar';"
+                        >
+                    </div>
+                    <div class="image-upload-button-area">
+                        <!-- ボタンとファイルインプットの連携 -->
+                        <button type="button" class="image-select-btn" id="image-select-btn">画像を選択する</button>
+                        <!-- name="profile_image" の input: 常に非表示 -->
+                        <input type="file" id="image-upload" name="profile_image" accept="image/*" style="display: none;">
+                    </div>
+                </div>
 
                 {{-- ユーザー名 --}}
                 <div class="form-group">
                     <label for="name">ユーザー名</label>
-                    <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus placeholder="ユーザー名を入力">
+                    <!-- ★修正: value属性に $user->name を反映 -->
+                    <input
+                        id="name"
+                        type="text"
+                        class="form-control"
+                        name="name"
+                        value="{{ old('name', $user->name) }}"
+                        required
+                        autofocus
+                        placeholder="ユーザー名を入力"
+                    >
                     <p class="profile_edit-form__error-message">
                         @error('name')
                         {{ $message }}
@@ -76,9 +100,18 @@
                 {{-- 郵便番号 --}}
                 <div class="form-group">
                     <label for="post_code">郵便番号</label>
-                    <input id="post_code" type="post_code" class="form-control" name="post_code" value="{{ old('post_code') }}" required placeholder="郵便番号を入力">
+                    <!-- ★修正: name="post_code" に合わせ、value属性に $user->post_code を反映 -->
+                    <input
+                        id="post_code"
+                        type="text"
+                        class="form-control"
+                        name="post_code"
+                        value="{{ old('post_code', $user->post_code) }}"
+                        required
+                        placeholder="郵便番号を入力"
+                    >
                     <p class="profile_edit-form__error-message">
-                        @error('email')
+                        @error('post_code')
                         {{ $message }}
                         @enderror
                     </p>
@@ -87,7 +120,16 @@
                 {{-- 住所 --}}
                 <div class="form-group">
                     <label for="address">住所</label>
-                    <input id="address" type="address" class="form-control" name="address" required placeholder="住所を入力">
+                    <!-- ★修正: value属性に $user->address を反映 -->
+                    <input
+                        id="address"
+                        type="text"
+                        class="form-control"
+                        name="address"
+                        value="{{ old('address', $user->address) }}"
+                        required
+                        placeholder="住所を入力"
+                    >
                     <p class="profile_edit-form__error-message">
                         @error('address')
                         {{ $message }}
@@ -98,9 +140,17 @@
                 {{-- 建物名 --}}
                 <div class="form-group">
                     <label for="building-name">建物名</label>
-                    <input id="building-name" type="building-name" class="form-control" name="building-name" required placeholder="建物名を入力">
+                    <!-- ★修正: id/nameを building_name に合わせ、value属性に $user->building_name を反映 -->
+                    <input
+                        id="building_name"
+                        type="text"
+                        class="form-control"
+                        name="building_name"
+                        value="{{ old('building_name', $user->building_name) }}"
+                        placeholder="建物名を入力"
+                    >
                     <p class="profile_edit-form__error-message">
-                        @error('building-name')
+                        @error('building_name')
                         {{ $message }}
                         @enderror
                     </p>
@@ -116,6 +166,38 @@
         </div>
 
     </main>
+
+    <!-- jQueryのCDNを読み込み -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // 1. 「画像を選択する」ボタンがクリックされたら
+            $('#image-select-btn').on('click', function() {
+                // 非表示のファイル選択フィールドをクリックする
+                $('#image-upload').trigger('click');
+            });
+
+            // 2. ファイルが選択されたら
+            $('#image-upload').on('change', function(e) {
+                // 選択されたファイルを取得
+                const file = e.target.files[0];
+
+                if (file) {
+                    // FileReader APIを使ってファイルを読み込む
+                    const reader = new FileReader();
+
+                    reader.onload = function(event) {
+                        // 読み込みが完了したら、プロフィール画像要素の src を更新し、プレビューを表示
+                        $('#profile-preview').attr('src', event.target.result);
+                    }
+
+                    // ファイルをData URLとして読み込む
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>

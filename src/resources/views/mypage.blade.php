@@ -13,10 +13,10 @@
     <header class="header-shadow header">
         <div class="header-content">
 
-            <div class="logo">
+            <a class="logo" href="/">
                 <img src="{{ asset('storage/img/Vector (3).png') }}" alt="logoアイコン" class="icon logo-icon-img">
                 <img src="{{ asset('storage/img/Group (2).png') }}" alt="logoテキスト" class="icon logo-text-img">
-            </div>
+            </a>
 
             <div class="search-form-container">
                 <input type="text" class="search-input" placeholder="なにをお探しですか？">
@@ -49,9 +49,24 @@
 
             {{-- プロフィールセクション --}}
             <div class="profile-section">
-                <div class="profile-avatar"></div>
+                @php
+                    // プロフィール画像のパスが存在するかチェックし、存在しない場合はデフォルトを設定
+                    $profileImagePath = $user->profile_image ?? 'default/no-avatar.png';
+                    $profileImageUrl = asset('storage/' . $profileImagePath);
+                    $userName = $user->name ?? 'ユーザー名なし';
+                @endphp
+                <div class="profile-avatar">
+                    {{-- $user->profile_imageがnullの場合のフォールバックを追加 --}}
+                    <img
+                        src="{{ asset('storage/' . ($user->profile_image ?? 'default/no-avatar.png')) }}"
+                        alt="{{ $user->name ?? 'ユーザー' }}のアバター"
+                    >
+                </div>
                 <div class="profile-info">
-                    <div class="user-name">ユーザー名</div>
+                    {{-- null許容の場合でも安全な記法に修正 --}}
+                    <div class="user-name">
+                        {{ $user->name ?? 'ユーザー名なし' }}
+                    </div>
                     <a href="/mypage/profile" class="edit-button">プロフィールを編集</a>
                 </div>
             </div>
@@ -59,61 +74,99 @@
             <div class="mypage-form-container">
                 {{-- 出品した商品/購入した商品 タブ --}}
                 <div class="tab-menu">
-                    <a href="/sell" class="tab-link @if(Request::is('sell')) active @endif">
+                    {{-- *** 修正箇所１：リンク先を専用のルートに変更し、アクティブ判定を $currentTab に変更 *** --}}
+                    {{-- /mypage?tab=listed ル}ート（MypageController@listedItems）にリンクします --}
+                    {{-- コントローラーから渡された $currentTab 変数を使ってアクティブを判定します --}}
+                    <a
+                        href="/mypage?tab=listed"
+                        class="tab-link @if(isset($currentTab) && $currentTab === 'listed') active @endif"
+                        data-target="listed"
+                    >
                         <span class="tab-text">出品した商品</span>
                     </a>
-                    <a href="/buy" class="tab-link @if(Request::is('buy')) active @endif">
+                    <a
+                        href="/mypage?tab=purchased"
+                        class="tab-link @if(isset($currentTab) && $currentTab === 'purchased') active @endif"
+                        data-target="purchased"
+                    >
                         <span class="tab-text">購入した商品</span>
                     </a>
                 </div>
             </div>
 
-            {{-- 商品一覧グリッド (image_6e1b35.png を参考に作成) --}}
+            {{-- 商品一覧グリッド (出品商品) --}}
             <div class="index-grid-container">
-                <div class="item-grid">
-                    {{-- 商品カードの繰り返しをBladeでシミュレーション --}}
-                    @for ($i = 0; $i < 8; $i++)
-                        <div class="item-card">
-                            <div class="item-image-placeholder">商品画像</div>
-                            <p class="item-name">商品名</p>
-                        </div>
-                    @endfor
+
+                <div id="listed-content" class="item-grid-wrapper @if(isset($currentTab) && $currentTab === 'listed') active-content @else hidden-content @endif">
+                    <div class="item-grid">
+                        {{-- コントローラから渡された $items (商品コレクション) をループ処理します --}}
+                        {{-- *** 修正箇所: $items から $listedItems に変更します *** --}}
+                        @if (isset($listedItems) && $listedItems->isNotEmpty())
+                            @foreach ($listedItems as $item)
+                                @php
+                                    // 画像パスの有無をチェックし、存在しなければプレースホルダーを設定
+                                    $itemImageUrl = $item->image_path
+                                        ? asset('storage/' . $item->image_path)
+                                        : 'https://placehold.co/300x150/ffc107/fff?text=No+Image'; // 出品は黄色
+                                @endphp
+                                <a href="/item/{{ $item->id }}" class="item-card">
+                                    {{-- 【画像表示】: item テーブルの image_path カラムを使用 --}}
+                                    <div class="item-image-placeholder">
+                                        {{-- 画像の読み込みに失敗した場合のフォールバックとしてエラー画像を表示 --}}
+                                        <img
+                                            src="{{ asset('storage/' . $item->image_path) }}"
+                                            alt="{{ $item->name }}"
+                                            onerror="this.onerror=null; this.src='https://placehold.co/300x150/ff3333/fff?text=Load+Error';"
+                                        >
+                                    </div>
+                                    <p class="item-name">{{ $item->name }}</p>
+                                </a>
+                            @endforeach
+                        @else
+                            <div class="w-full text-center p-8">
+                                <p>出品した商品がまだありません。</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
+
+                {{-- 商品一覧グリッド (購入商品) --}}
+                <div id="purchased-content" class="item-grid-wrapper @if(isset($currentTab) && $currentTab === 'purchased') active-content @else hidden-content @endif">
+                    <div class="item-grid">
+                        {{-- *** 修正箇所: $listedItems から $purchasedItems に変更します *** --}}
+                        @if (isset($purchasedItems) && $purchasedItems->isNotEmpty())
+                            @foreach ($purchasedItems as $item)
+                                @php
+                                    // 画像パスの有無をチェックし、存在しなければプレースホルダーを設定
+                                    $itemImageUrl = $item->image_path
+                                        ? asset('storage/' . $item->image_path)
+                                        : 'https://placehold.co/300x150/28a745/fff?text=No+Image'; // 購入は緑色
+                                @endphp
+                                <a href="/item/{{ $item->id }}" class="item-card">
+                                    {{-- 【画像表示】: item テーブルの image_path カラムを使用 --}}
+                                    <div class="item-image-placeholder">
+                                        {{-- 画像の読み込みに失敗した場合のフォールバックとしてエラー画像を表示 --}}
+                                        <img
+                                            src="{{ asset('storage/' . $item->image_path) }}"
+                                            alt="{{ $item->name }}"
+                                            onerror="this.onerror=null; this.src='https://placehold.co/300x150/ff3333/fff?text=Load+Error';"
+                                        >
+                                    </div>
+                                    <p class="item-name">{{ $item->name }}</p>
+                                </a>
+                            @endforeach
+                        @else
+                            <div class="w-full text-center p-8">
+                                <p>購入した商品がまだありません。</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
             </div>
 
         </div>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const tabLinks = document.querySelectorAll('.tab-link');
-            const contents = document.querySelectorAll('.item-grid-wrapper');
-
-            tabLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault(); // ページ遷移を防止
-
-                    // 1. タブの active クラスを付け替える
-                    tabLinks.forEach(l => l.classList.remove('active'));
-                    e.currentTarget.classList.add('active');
-
-                    // 2. コンテンツを切り替える
-                    const targetTab = e.currentTarget.dataset.tab; // data-tab="recommend" または "mylist" を取得
-
-                    contents.forEach(content => {
-                        if (content.id === `${targetTab}-content`) {
-                            // クリックされたタブに対応するコンテンツを表示
-                            content.classList.remove('hidden-content');
-                            content.classList.add('active-content');
-                        } else {
-                            // その他のコンテンツを非表示
-                            content.classList.remove('active-content');
-                            content.classList.add('hidden-content');
-                        }
-                    });
-                });
-            });
-        });
-    </script>
 </body>
 </html>

@@ -13,10 +13,10 @@
     <header class="header-shadow header">
         <div class="header-content">
 
-            <div class="logo">
+            <a class="logo" href="/">
                 <img src="{{ asset('storage/img/Vector (3).png') }}" alt="logoアイコン" class="icon logo-icon-img">
                 <img src="{{ asset('storage/img/Group (2).png') }}" alt="logoテキスト" class="icon logo-text-img">
-            </div>
+            </a>
 
             <div class="search-form-container">
                 <input type="text" class="search-input" placeholder="なにをお探しですか？">
@@ -49,13 +49,15 @@
 
             <div class="form-title">住所の変更</div>
 
-            <form class="form" action="/mypage/profile" method="post" novalidate>
+            <form class="form" action="{{ route('address.update') }}" method="post" novalidate>
                 @csrf
+                {{-- ここでPATCHメソッドを偽装 --}}
+                @method('PATCH')
 
                 {{-- 送付先郵便番号 --}}
                 <div class="form-group">
                     <label for="shipping_post_code">郵便番号</label>
-                    <input id="shipping_post_code" type="shipping_post_code" class="form-control" name="shipping_post_code" value="{{ old('shipping_post_code') }}" required placeholder="郵便番号を入力">
+                    <input id="shipping_post_code" type="text" class="form-control" name="post_code" value="{{ old('post_code', $user['post_code'] ?? '') }}" required placeholder="郵便番号を入力">
                     <p class="shipping-address_edit-form__error-message">
                         @error('post_code')
                         {{ $message }}
@@ -66,7 +68,7 @@
                 {{-- 送付先住所 --}}
                 <div class="form-group">
                     <label for="shipping_address">住所</label>
-                    <input id="shipping_address" type="shipping_address" class="form-control" name="shipping_address" required placeholder="住所を入力">
+                    <input id="shipping_address" type="text" class="form-control" name="address" value="{{ old('address', $user['address'] ?? '') }}" required placeholder="住所を入力">
                     <p class="shipping-address_edit-form__error-message">
                         @error('address')
                         {{ $message }}
@@ -77,9 +79,9 @@
                 {{-- 送付先建物名 --}}
                 <div class="form-group">
                     <label for="shipping_building-name">建物名</label>
-                    <input id="shipping_building-name" type="shipping_building-name" class="form-control" name="shipping_building-name" required placeholder="建物名を入力">
+                    <input id="shipping_building-name" type="text" class="form-control" name="building_name" value="{{ old('building_name', $user['building_name'] ?? '') }}" placeholder="建物名を入力">
                     <p class="shipping-address_edit-form__error-message">
-                        @error('building-name')
+                        @error('building_name')
                         {{ $message }}
                         @enderror
                     </p>
