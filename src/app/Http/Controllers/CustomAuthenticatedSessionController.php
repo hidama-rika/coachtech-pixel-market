@@ -43,18 +43,25 @@ class CustomAuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request) // ここで型エラーを解決しつつFortifyを維持
     {
+        // 🚨 重要: AttemptToAuthenticate::class を削除します 🚨
+        // ここに到達した時点で LoginRequest の withValidator によって認証は成功しています。
+
         return app(Pipeline::class)
             ->send($request)
             ->through(array_filter([
-                // Fortifyの主要アクションをすべて実行 (レートリミット、2FAチェックなど)
+                // 1. ログイン試行回数のレートリミットをチェック
                 EnsureLoginIsNotThrottled::class,
-                AttemptToAuthenticate::class,
-                // TwoFactorのチェックは、Userモデルにメソッドがないためスキップ
-                // RedirectIfTwoFactorAuthenticatable::class,
+
+                // 2. 認証処理はLoginRequestで完了済みのた、AttemptToAuthenticateはスキップ。
+
+                // 3. 認証成功後のセッション準備
                 PrepareAuthenticatedSession::class,
+
+                // 4. (必要であれば) 2FAチェック
+                // RedirectIfTwoFactorAuthenticatable::class,
             ]))
             ->then(function ($request) {
-                // 認証成功後のレスポンス (2FA有効なら2FA画面へ)
+                // 認証成功後のレスポンス
                 return $request->user()->hasTwoFactorEnabled()
                     ? app(TwoFactorChallengeViewResponse::class)
                     : app(LoginResponse::class);

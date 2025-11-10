@@ -13,6 +13,7 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
+        // 初回会員登録後にプロフィール編集画面に遷移するため、住所等はnullableに設定
         Schema::create('users', function (Blueprint $table) {
             // PRIMARY KEY
             $table->id(); // unsigned bigint の主キー（id）を作成
@@ -23,8 +24,8 @@ class CreateUsersTable extends Migration
             $table->string('password', 255)->comment('ハッシュ化されたパスワード');
             $table->string('profile_image', 255)->nullable()->comment('プロフィール画像パス'); // 画像パスは任意とする
             // 住所情報
-            $table->string('post_code', 8)->comment('郵便番号（ハイフン含む8桁）');
-            $table->string('address', 255)->comment('住所');
+            $table->string('post_code', 8)->nullable()->comment('郵便番号（ハイフン含む8桁）');
+            $table->string('address', 255)->nullable()->comment('住所');
             $table->string('building_name', 255)->nullable()->comment('建物名'); // 建物名は任意とする
 
             // 認証・タイムスタンプ

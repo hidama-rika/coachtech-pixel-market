@@ -74,6 +74,11 @@
                         <!-- name="profile_image" の input: 常に非表示 -->
                         <input type="file" id="image-upload" name="profile_image" accept="image/*" style="display: none;">
                     </div>
+                    <p class="profile_edit-form__error-message">
+                        @error('profile_image')
+                        {{ $message }}
+                        @enderror
+                    </p>
                 </div>
 
                 {{-- ユーザー名 --}}

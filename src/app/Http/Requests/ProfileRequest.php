@@ -77,7 +77,7 @@ class ProfileRequest extends FormRequest
             'name.max' => 'ユーザー名は20文字以内で入力してください。',
 
             // プロフィール画像に関するメッセージ
-            'profile_image.image' => 'プロフィール画像はファイル形式でアップロードしてください。',
+            'profile_image.image' => 'プロフィール画像はJPEG、またはPNG形式でアップロードしてください。',
             'profile_image.mimes' => 'プロフィール画像はJPEG、またはPNG形式でアップロードしてください。',
 
             // 郵便番号

@@ -68,33 +68,40 @@ Route::post('/logout', [CustomAuthenticatedSessionController::class, 'destroy'])
 
 Route::middleware('auth')->group(function () {
 
-    // --- (認証済の場合にアクセス可能) ---
-
-    // --- マイページ・管理系ルート (Route::view を移動・整理) ---
-
-    // マイページトップ
-    Route::get('/mypage', [MypageController::class, 'index'])->name('mypage.index');
-
-    // プロフィール編集画面
+    // --------------------------------------------------
+    // A. プロフィール編集・更新ルート（ミドルウェア適用外）
+    // --------------------------------------------------
+    // プロフィールが未設定の場合でもアクセスできなければならないルート
     Route::get('/mypage/profile', [ProfileController::class, 'edit'])
-        ->name('mypage.profile.edit');
+        // ミドルウェアのリダイレクト先として、ルート名を 'profile_edit' に統一
+        ->name('profile_edit');
 
-    // プロフィール更新処理
     Route::patch('/mypage/profile', [ProfileController::class, 'update'])
         ->name('mypage.profile.update');
 
-    // 商品出品画面
-    Route::view('/sell', 'new_items')->name('items.sell');
+    // --------------------------------------------------
+    // B. プロフィール設定強制ミドルウェア適用ルート
+    // --------------------------------------------------
+    // これらのルートはプロフィール設定が完了するまでアクセスが強制的に阻止される
+    Route::middleware(['check.profile.set'])->group(function () {
 
-    // 購入履歴画面
-    Route::get('/purchase/{item_id}', [PurchaseController::class, 'create'])->name('purchases.create');
+        // マイページトップ（最終的な遷移先であり、プロフィール設定後にアクセス可能となる）
+        Route::get('/mypage', [MypageController::class, 'index'])
+            ->name('mypage.index');
 
-    // ==========================================================
-    // ★★★ 配送先住所関連のルート (ShippingAddressControllerを使用) ★★★
-    // ==========================================================
+        // 商品出品画面
+        Route::view('/sell', 'new_items')->name('items.sell');
 
-    Route::get('/address', [ShippingAddressController::class, 'edit'])->name('address.edit');
+        // 購入履歴画面
+        Route::get('/purchase/{item_id}', [PurchaseController::class, 'create'])->name('purchases.create');
 
-    Route::patch('/address', [ShippingAddressController::class, 'update'])->name('address.update');
+        // ==========================================================
+        // ★★★ 配送先住所関連のルート (ShippingAddressControllerを使用) ★★★
+        // ==========================================================
+
+        Route::get('/address', [ShippingAddressController::class, 'edit'])->name('address.edit');
+
+        Route::patch('/address', [ShippingAddressController::class, 'update'])->name('address.update');
 
     });
+});

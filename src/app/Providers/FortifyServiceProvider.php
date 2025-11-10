@@ -18,6 +18,9 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Http\Responses\LogoutResponse; // FortifyのLogoutResponseをインポート
 use Illuminate\Http\RedirectResponse; // リダイレクト処理のためにインポート
+use App\Http\Responses\RegisterResponse;
+// Laravelのコントラクト（規約）はそのままインポート
+use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -26,7 +29,10 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(
+            RegisterResponseContract::class,
+            RegisterResponse::class // 👈 App\Http\Resources\RegisterResponseを参照
+        );
     }
 
     /**
@@ -43,11 +49,6 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::loginView(function () {
             return view('auth.login');
         });
-
-        // 🚨 修正箇所：authenticateUsingをloginControllerに置き換える
-        // Fortify::authenticateUsing(App\Http\Controllers\CustomAuthenticatedSessionController::class); // ❌ 以前のコード
-        // Fortify::LoginController(CustomAuthenticatedSessionController::class); // ✅ 結局削除
-
 
         RateLimiter::for('login', function (Request $request) {
             $email = (string) $request->email;
