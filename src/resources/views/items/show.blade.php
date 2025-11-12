@@ -144,7 +144,7 @@
                                 </div>
                             @empty
                                 {{-- コメントがない場合の表示 --}}
-                                <p class="no-comment-message">まだコメントはありません。</p>
+                                <p class="no-comment-message">コメントなし。</p>
                             @endforelse
                         </div>
                         <h2 class="section-title comment-form-title">商品へのコメント</h2>
