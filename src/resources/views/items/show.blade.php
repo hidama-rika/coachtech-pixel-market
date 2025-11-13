@@ -124,18 +124,23 @@
                         <div class="comment-list">
                             {{-- 💡 $item->comments（コレクション）をループし、個々の $comment を取り出す 💡 --}}
                             @forelse ($item->comments as $comment)
-                                <div class="comment-item">
+                                <div class=comment-item-header>
+                                    <div class="comment-item">
                                     {{-- 修正: $comment からユーザー情報にアクセス --}}
-                                    <div class="profile-avatar">
-                                        {{-- $comment->user は必ず存在し、profile_image には必ずデータがある前提 --}}
-                                        <img
-                                            src="{{ asset('storage/' . $comment->user->profile_image) }}"
-                                            alt="{{ $comment->user->name }}のアバター"
-                                        >
-                                    </div>
+                                        <div class="profile-avatar">
+                                            <div class="avatar-image">
+                                            {{-- $comment->user は必ず存在し、profile_image には必ずデータがある前提 --}}
+                                                <img
+                                                src="{{ asset('storage/' . $comment->user->profile_image) }}"
+                                                alt="{{ $comment->user->name }}のアバター"
+                                                >
+                                            </div>
+                                        </div>
 
-                                    {{-- $comment からユーザー名にアクセス --}}
-                                    <span class="comment-user">{{ $comment->user->name }}</span>
+                                        {{-- $comment からユーザー名にアクセス --}}
+                                        <span class="comment-user">{{ $comment->user->name }}</span>
+
+                                    </div>
 
                                     <div class="comment-display">
                                         {{-- $comment のコメント本文にアクセス --}}
@@ -148,13 +153,16 @@
                             @endforelse
                         </div>
                         <h2 class="section-title comment-form-title">商品へのコメント</h2>
-                        <form method="POST" action="/comment/store/{{ $item->id }}">
+                        <!-- 💡 修正点 1: ここにメッセージ表示用の要素を追加 💡 -->
+                        <p class="show-form__error-message" id="comment-message" style="display: none;"></p>
+                        {{-- 💡 修正: フォームにIDを追加 💡 --}}
+                        <form id="comment-form" method="POST" action="{{ route('comment.store', ['item_id' => $item->id]) }}">
                             @csrf
-                            <textarea name="body" class="comment-input" placeholder="コメントを入力"></textarea>
+                            <textarea name="comment" class="comment-input" placeholder="コメントを入力"></textarea>
 
                             {{-- コメントを送信する ボタン --}}
                             <div class="comment-button">
-                                <button type="submit" class="comment-submit-button">コメントを送信する</button>
+                                <button type="submit" id="comment-submit-button" class="comment-submit-button">コメントを送信する</button>
                             </div>
                         </form>
                     </div>
@@ -165,5 +173,109 @@
             </div> {{-- item-detail-wrapper 終了 --}}
         </div> {{-- show-container 終了 --}}
     </main>
+
+    {{-- ======================================================= --}}
+    {{-- コメント投稿後に自動でリロードするためのJavaScriptを追加 💡 --}}
+    {{-- ======================================================= --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('comment-form');
+            const submitButton = document.getElementById('comment-submit-button');
+            const messageArea = document.getElementById('comment-message');
+            const textarea = form.querySelector('textarea[name="comment"]');
+
+            // メッセージ表示関数
+            function showMessage(message, type = 'success') {
+                messageArea.textContent = message;
+                messageArea.className = `show-form__error-message comment-message ${type}`;
+                messageArea.style.display = 'block';
+            }
+
+            // メッセージ非表示関数
+            function hideMessage() {
+                messageArea.style.display = 'none';
+                messageArea.className = 'show-form__error-message';
+            }
+
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault(); // ページのデフォルトのフォーム送信を停止
+                    hideMessage();
+
+                    const comment = textarea.value.trim();
+                    if (!comment) {
+                        showMessage('コメントを入力してください。', 'error');
+                        return;
+                    }
+
+                    // 複数回送信を防ぐためボタンを無効化
+                    submitButton.disabled = true;
+                    submitButton.textContent = '送信中...';
+
+                    // フォームデータを取得
+                    const formData = new FormData(form);
+                    // FormDataをJSON形式に変換
+                    const payload = {};
+                    formData.forEach((value, key) => {
+                        payload[key] = value;
+                    });
+
+                    // fetchのオプション
+                    const fetchOptions = {
+                        method: 'POST',
+                        // JSONボディを送信するため、ヘッダーとボディを調整
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                            'X-Requested-With': 'XMLHttpRequest' // LaravelでAJAXリクエストを認識させる
+                        },
+                        body: JSON.stringify(payload)
+                    };
+
+                    try {
+                        const response = await fetch(form.action, fetchOptions);
+
+                        if (response.ok) {
+                            // 成功したら、サーバーからのメッセージを取得（オプション）
+                            const data = await response.json();
+
+                            // 成功メッセージを表示し、ページをリロード
+                            showMessage(data.message || 'コメントを投稿しました。ページをリロードしています...', 'success');
+
+                            // ページの再読み込みを実行
+                            // これにより、DBから最新のコメントが新しい順に取得され、一番上に表示される
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 500);
+
+                        } else {
+                            // エラー（バリデーションエラーやその他の問題）
+                            const errorData = await response.json();
+                            let errorMessage = 'コメントの投稿に失敗しました。';
+
+                            // バリデーションエラーがあれば詳細を表示
+                            if (errorData.errors && Object.keys(errorData.errors).length > 0) {
+                                // 最初のバリデーションエラーメッセージを取得して表示
+                                const firstError = Object.values(errorData.errors)[0][0];
+                                errorMessage = firstError;
+                            } else if (errorData.message) {
+                                errorMessage = errorData.message;
+                            }
+
+                            showMessage(errorMessage, 'error');
+                        }
+
+                    } catch (error) {
+                        console.error('通信エラー:', error);
+                        showMessage('通信中に予期せぬエラーが発生しました。', 'error');
+                    } finally {
+                        // 処理が終わったらボタンを元に戻す
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'コメントを送信する';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

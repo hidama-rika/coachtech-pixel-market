@@ -270,9 +270,15 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    cursor: pointer;
+    /* 汎用的な cursor: pointer; を削除し、デフォルトに戻す */
+    cursor: default;
     margin-right: 10px;
     margin-left: 30px;
+}
+
+/* いいねアイコン（最初のアイテム）のみクリック可能に戻す */
+.reaction-buttons .reaction-item:first-child {
+    cursor: pointer;
 }
 
 .reaction-icon {
@@ -421,6 +427,19 @@ body {
     text-align: center;
 }
 
+.comment-item-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.avatar-image {
+    max-width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+}
+
 .profile-avatar {
     width: 70px;
     height: 70px;
@@ -428,9 +447,8 @@ body {
     /* グレーの円形 */
     border-radius: 50%;
     flex-shrink: 0;
-    margin-right: 30px;
     overflow: hidden;
-    /* 画像がはみ出さないように */
+    margin-right: 30px;
 }
 
 /* ❗ 追加: アバター画像自体のスタイル ❗ */
@@ -480,7 +498,12 @@ body {
     border: none;
 }
 
-
+.show-form__error-message {
+    color: #e53935;
+    font-size: 0.875rem;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
 
 /* ---------------------------------------------------------------------- */
 /* 3. レスポンシブ対応のためのメディアクエリ */
