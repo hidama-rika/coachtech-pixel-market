@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\MypageController;
 use App\Http\Controllers\ShippingAddressController;
+use App\Http\Controllers\CommentController;
  // コントローラーをインポート
 
 /*
@@ -94,6 +95,11 @@ Route::middleware('auth')->group(function () {
 
         // 購入履歴画面
         Route::get('/purchase/{item_id}', [PurchaseController::class, 'create'])->name('purchases.create');
+
+        // コメント投稿用のルート (POSTリクエスト)
+        // /{item_id}/comments の形式でアクセスできるように定義します
+        Route::post('/items/{item_id}/comments', [CommentController::class, 'store'])
+            ->name('comment.store');
 
         // ==========================================================
         // ★★★ 配送先住所関連のルート (ShippingAddressControllerを使用) ★★★

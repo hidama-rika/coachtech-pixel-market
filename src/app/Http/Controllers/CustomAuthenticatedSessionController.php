@@ -10,8 +10,8 @@ use Illuminate\Routing\Controller;
 use Laravel\Fortify\Actions\AttemptToAuthenticate;
 use Laravel\Fortify\Actions\EnsureLoginIsNotThrottled;
 use Laravel\Fortify\Actions\PrepareAuthenticatedSession;
-use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
-use Laravel\Fortify\Contracts\TwoFactorChallengeViewResponse;
+// use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
+// use Laravel\Fortify\Contracts\TwoFactorChallengeViewResponse;
 use Laravel\Fortify\Http\Responses\LoginResponse;
 use Laravel\Fortify\Contracts\LogoutResponse;
 use Illuminate\Http\RedirectResponse; // 💡 追加または確認
@@ -62,9 +62,7 @@ class CustomAuthenticatedSessionController extends Controller
             ]))
             ->then(function ($request) {
                 // 認証成功後のレスポンス
-                return $request->user()->hasTwoFactorEnabled()
-                    ? app(TwoFactorChallengeViewResponse::class)
-                    : app(LoginResponse::class);
+                return app(LoginResponse::class);
             });
     }
 
