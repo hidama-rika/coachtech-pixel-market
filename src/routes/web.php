@@ -10,6 +10,7 @@ use App\Http\Controllers\MypageController;
 use App\Http\Controllers\ShippingAddressController;
 use App\Http\Controllers\CommentController;
  // コントローラーをインポート
+use App\Http\Controllers\LikeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,6 +101,10 @@ Route::middleware('auth')->group(function () {
         // /{item_id}/comments の形式でアクセスできるように定義します
         Route::post('/items/{item_id}/comments', [CommentController::class, 'store'])
             ->name('comment.store');
+
+        // いいねのトグル用ルート
+        Route::post('/like/toggle/{item}', [LikeController::class, 'toggleLike'])->name('like.toggle');
+
 
         // ==========================================================
         // ★★★ 配送先住所関連のルート (ShippingAddressControllerを使用) ★★★

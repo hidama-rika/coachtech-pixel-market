@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COACHTECH-商品詳細画面</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/sanitize.css') }}">
     <link rel="stylesheet" href="{{ asset('css/show.css')}}">
 </head>
@@ -67,13 +68,45 @@
 
                     {{-- いいね/コメントアイコン --}}
                     <div class="reaction-buttons">
-                        {{-- いいね (星アイコン) --}}
+                        <!-- いいねボタン -->
+                    {{-- 認証済みユーザーのみいいねボタンを有効化 --}}
+                    @auth
+                        {{-- 💡 ここをフォームで囲むことで、ルーティングのエラーを解消します 💡 --}}
+                        {{-- data-item-id は不要になりますが、JavaScript側で data-like-url を使っているのでそのまま残します --}}
+                        {{-- data-* 属性はJavaScriptのために残します --}}
+                        <form id="like-toggle-form" action="{{ route('like.toggle', $item) }}" method="POST">
+                            @csrf
+                            <button type="button" class="reaction-item like-button"
+                            id="like-toggle-button"
+                            data-item-id="{{ $item->id }}"
+                            data-like-url="{{ route('like.toggle', ['item' => $item->id]) }}"
+                            data-is-liked="@if(Auth::user()->isLiking($item)) true @else false
+                            @endif"
+                            >
+                                <span class="reaction-icon">
+                                    {{-- ユーザーがいいね済みなら 'liked' クラスを付与 --}}
+                                    <img src="{{ asset('storage/img/Vector (4).png') }}" alt="いいねアイコン" class="like-icon-img @if(Auth::user()->isLiking($item)) liked @endif" id="like-icon">
+                                </span>
+                                <span class="reaction-count" id="like-count">
+                                    {{ $item->likedUsers->count() }}
+                                </span>
+                            </button>
+                        </form>
+                    @else
+                        {{-- 未認証ユーザーはボタンとして機能させず、アイコンとカウントのみ表示 --}}
                         <div class="reaction-item">
                             <span class="reaction-icon">
-                                <img src="{{ asset('storage/img/星アイコン8.png') }}" alt="星アイコン" class="icon reaction-icon-img">
+                                <img
+                                src="{{ asset('storage/img/Vector (4).png') }}"
+                                alt="いいねアイコン"
+                                class="icon like-icon-img @if($isLiked ?? false) liked @endif"
+                                id="like-icon"
+                                >
                             </span>
-                            <span class="reaction-count">10</span>
+                            <span class="reaction-count">{{ $item->likers_count ?? 0 }}</span>
                         </div>
+                    @endauth
+
                         {{-- コメント (ふきだしアイコン) --}}
                         <div class="reaction-item">
                             <span class="reaction-icon">
@@ -97,7 +130,7 @@
                     <div class="item-metadata">
                         <div class="metadata-row">
                             <span class="metadata-label">カテゴリー</span>
-                            {{-- ❗ 修正: metadata-valueにタグを並べるためのflex-wrapクラスを追加 ❗ --}}
+                            {{-- ❗ 修正: metadata-valueにタグを並べるためのflex-wrapクラスを追加 ❗--}}
                             <span class="metadata-value category-tags-wrapper">
                                 {{-- 多対多のリレーションなので、categoriesコレクションをループして表示します --}}
                                 @forelse ($item->categories as $category)
@@ -131,7 +164,7 @@
                                             <div class="avatar-image">
                                             {{-- $comment->user は必ず存在し、profile_image には必ずデータがある前提 --}}
                                                 <img
-                                                src="{{ asset('storage/' . $comment->user->profile_image) }}"
+                                                src="{{ asset('storage/'. $comment->user->profile_image) }}"
                                                 alt="{{ $comment->user->name }}のアバター"
                                                 >
                                             </div>
@@ -162,7 +195,8 @@
 
                             {{-- コメントを送信する ボタン --}}
                             <div class="comment-button">
-                                <button type="submit" id="comment-submit-button" class="comment-submit-button">コメントを送信する</button>
+                                <button type="submit" id="comment-submit-button"
+                                class="comment-submit-button">コメントを送信する</button>
                             </div>
                         </form>
                     </div>
@@ -170,14 +204,17 @@
 
                 {{-- ❗ 削除: .purchase-sidebar-area は不要 ❗ --}}
 
-            </div> {{-- item-detail-wrapper 終了 --}}
-        </div> {{-- show-container 終了 --}}
+            </div>
+        </div>
     </main>
 
     {{-- ======================================================= --}}
     {{-- コメント投稿後に自動でリロードするためのJavaScriptを追加 💡 --}}
     {{-- ======================================================= --}}
     <script>
+        // CSRFトークンをmetaタグから取得
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('comment-form');
             const submitButton = document.getElementById('comment-submit-button');
@@ -226,7 +263,8 @@
                         // JSONボディを送信するため、ヘッダーとボディを調整
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                            // グローバル変数 csrfToken を使用してトークンをヘッダーで送信
+                            'X-CSRF-TOKEN': csrfToken,
                             'X-Requested-With': 'XMLHttpRequest' // LaravelでAJAXリクエストを認識させる
                         },
                         body: JSON.stringify(payload)
@@ -262,20 +300,23 @@
                                 errorMessage = errorData.message;
                             }
 
-                            showMessage(errorMessage, 'error');
+                            showMessage(errorMessage, 'error', true);
                         }
 
                     } catch (error) {
                         console.error('通信エラー:', error);
-                        showMessage('通信中に予期せぬエラーが発生しました。', 'error');
+                        showMessage('通信中に予期せぬエラーが発生しました。', 'error', true);
                     } finally {
                         // 処理が終わったらボタンを元に戻す
                         submitButton.disabled = false;
                         submitButton.textContent = 'コメントを送信する';
+                        textarea.value = ''; // コメント欄をクリア
                     }
                 });
             }
         });
     </script>
+    // いいね処理は外部ファイル (show.js) に集約する
+    <script src="{{ asset('js/show.js') }}" defer></script>
 </body>
 </html>
