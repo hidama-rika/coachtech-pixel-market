@@ -91,6 +91,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/mypage', [MypageController::class, 'index'])
             ->name('mypage.index');
 
+        // トップページ（おすすめ一覧）
+        Route::get('/recommend', [ItemController::class, 'index'])->name('item.recommend');
+
+        // マイリスト（いいねした商品一覧）
+        // ★★★ このルートを追加します ★★★
+        Route::get('/mylist', [ItemController::class, 'mylist'])->name('item.mylist');
+
         // 商品出品画面
         Route::view('/sell', 'new_items')->name('items.sell');
 

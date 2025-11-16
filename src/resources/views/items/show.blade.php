@@ -87,25 +87,27 @@
                                     {{-- ユーザーがいいね済みなら 'liked' クラスを付与 --}}
                                     <img src="{{ asset('storage/img/Vector (4).png') }}" alt="いいねアイコン" class="like-icon-img @if(Auth::user()->isLiking($item)) liked @endif" id="like-icon">
                                 </span>
-                                <span class="reaction-count" id="like-count">
-                                    {{ $item->likedUsers->count() }}
-                                </span>
                             </button>
                         </form>
                     @else
                         {{-- 未認証ユーザーはボタンとして機能させず、アイコンとカウントのみ表示 --}}
                         <div class="reaction-item">
-                            <span class="reaction-icon">
-                                <img
-                                src="{{ asset('storage/img/Vector (4).png') }}"
-                                alt="いいねアイコン"
-                                class="icon like-icon-img @if($isLiked ?? false) liked @endif"
-                                id="like-icon"
-                                >
-                            </span>
-                            <span class="reaction-count">{{ $item->likers_count ?? 0 }}</span>
-                        </div>
+                            <div class="reaction-item-liked">
+                                <span class="reaction-icon">
+                                    <img
+                                    src="{{ asset('storage/img/Vector (4).png') }}"
+                                    alt="いいねアイコン"
+                                    class="icon like-icon-img @if($isLiked ?? false) liked @endif"
+                                    id="like-icon"
+                                    >
+                                </span>
+                            </div>
                     @endauth
+                        {{-- いいね数の表示を @auth/@else の外に出して、常に表示されるように変更 --}}
+                            <span class="reaction-count" id="like-count">
+                                {{ $item->likedUsers->count() }}
+                            </span>
+                        </div>
 
                         {{-- コメント (ふきだしアイコン) --}}
                         <div class="reaction-item">

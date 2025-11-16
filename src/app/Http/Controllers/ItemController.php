@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Like;
 
 class ItemController extends Controller
 {
@@ -32,6 +33,29 @@ class ItemController extends Controller
 
         // 'items.index' ビューにデータを渡して表示
         return view('items.index', compact('items'));
+    }
+
+    /**
+     * マイリスト（いいねした商品一覧）を表示する
+     * @return \Illuminate\View\View
+     */
+    public function mylist()
+    {
+        // ログインユーザーが「いいね」したItemを取得
+        // 1. ログインユーザーのIDを取得
+        $userId = Auth::id();
+
+        // 2. ユーザーが「いいね」した商品のIDリストを取得
+        // Like モデルに user_id と item_id があることを想定
+        $likedItemIds = Like::where('user_id', $userId)
+                            ->pluck('item_id');
+
+        // 3. 取得したIDリストに基づいて Item を取得
+        $items = Item::whereIn('id', $likedItemIds)->get();
+
+        // index.blade.php にマイリストの商品データを渡す
+        // indexビュー内で /mylist の場合に 'active' が付くようになっているため、ビューは共通でOK
+        return view('items.index', ['items' => $items]);
     }
 
     /**

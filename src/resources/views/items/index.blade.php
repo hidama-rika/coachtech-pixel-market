@@ -53,9 +53,12 @@
                     <a href="/recommend" class="tab-link @if(Request::is('recommend')) active @endif">
                         <span class="tab-text">おすすめ</span>
                     </a>
-                    <a href="/mylist" class="tab-link @if(Request::is('mylist')) active @endif">
-                        <span class="tab-text">マイリスト</span>
-                    </a>
+                    {{-- 未認証ユーザーはマイリストにアクセスできないため、@auth ディレクティブで囲む --}}
+                    @auth
+                        <a href="/mylist" class="tab-link @if(Request::is('mylist')) active @endif">
+                            <span class="tab-text">マイリスト</span>
+                        </a>
+                    @endauth
                 </div>
             </div>
 
@@ -93,31 +96,11 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // タブの切り替えロジックは、aタグによるページ遷移（/recommend または /mylist）に任せます。
             const tabLinks = document.querySelectorAll('.tab-link');
-            const contents = document.querySelectorAll('.item-grid-wrapper');
-
             tabLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
-                    e.preventDefault(); // ページ遷移を防止
-
-                    // 1. タブの active クラスを付け替える
-                    tabLinks.forEach(l => l.classList.remove('active'));
-                    e.currentTarget.classList.add('active');
-
-                    // 2. コンテンツを切り替える
-                    const targetTab = e.currentTarget.dataset.tab; // data-tab="recommend" または "mylist" を取得
-
-                    contents.forEach(content => {
-                        if (content.id === `${targetTab}-content`) {
-                            // クリックされたタブに対応するコンテンツを表示
-                            content.classList.remove('hidden-content');
-                            content.classList.add('active-content');
-                        } else {
-                            // その他のコンテンツを非表示
-                            content.classList.remove('active-content');
-                            content.classList.add('hidden-content');
-                        }
-                    });
+                    // ここでのクライアント側による active クラスの切り替えは不要です。
                 });
             });
         });
