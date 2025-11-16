@@ -10,6 +10,10 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany; // ← 追加
 // ★★★ ここを「Laravel\Fortify」のパスに修正します ★★★
 use Laravel\Fortify\TwoFactorAuthenticatable; // 💡 これを修正
+// BelongsToManyリレーションを使用するため追加
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+// ★★★ isLikingメソッドの引数タイプヒントとlikesリレーションのためにItemモデルをuseします ★★★
+use App\Models\Item;
 
 class User extends Authenticatable
 {
@@ -71,6 +75,31 @@ class User extends Authenticatable
     // =======================================================
     // リレーションシップ定義
     // =======================================================
+
+    /**
+     * ユーザーが「いいね」した商品一覧 (多 対 多)
+     * likes中間テーブルを使用
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function likes(): BelongsToMany
+    {
+        // 第二引数: 中間テーブル名, 第三引数: 自身の外部キー, 第四引数: 相手の外部キー
+        return $this->belongsToMany(Item::class, 'likes', 'user_id', 'item_id')
+                    ->withTimestamps();
+    }
+
+    /**
+    * 指定された商品(Item)をこのユーザーが「いいね」しているかチェックします。
+    *
+    * @param \App\Models\Item $item
+        * @return bool
+    */
+    public function isLiking(Item $item): bool
+    {
+        // likesリレーションのクエリビルダを使用し、指定された商品IDを持つレコードが存在するか確認
+        return $this->likes()->where('item_id', $item->id)->exists();
+    }
 
     /**
      * ユーザーが出品した商品 (1 対 多)

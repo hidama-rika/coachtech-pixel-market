@@ -28,6 +28,29 @@ class Item extends Model
         'is_sold',
     ];
 
+    /**
+     * このアイテムに対する「いいね」を取得
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function likes()
+    {
+        // Itemは複数のLikeを持つ
+        return $this->hasMany(Like::class);
+    }
+
+    /**
+     * このアイテムを「いいね」しているユーザーを取得
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function likedUsers()
+    {
+        // Itemはlikesテーブルを介して複数のUserに属する（多対多）
+        return $this->belongsToMany(User::class, 'likes', 'item_id', 'user_id')
+                    ->withTimestamps();
+    }
+
     // =======================================================
     // リレーションシップ定義
     // =======================================================
