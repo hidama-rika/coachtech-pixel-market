@@ -13,10 +13,10 @@
     <header class="header-shadow header">
         <div class="header-content">
 
-            <div class="logo">
+            <a class="logo" href="/">
                 <img src="{{ asset('storage/img/Vector (3).png') }}" alt="logoアイコン" class="icon logo-icon-img">
                 <img src="{{ asset('storage/img/Group (2).png') }}" alt="logoテキスト" class="icon logo-text-img">
-            </div>
+            </a>
 
         </div>
     </header>
