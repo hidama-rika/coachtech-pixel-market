@@ -29,7 +29,7 @@ Route::view('/register', 'auth.register');
 // Route::view('/address', 'shipping-address_edit');
 // Route::view('/', 'index');
 // Route::view('/mypage/profile', 'profile_edit');
-Route::view('/sell', 'new_items');
+// Route::view('/sell', 'new_items');
 // Route::view('/purchase', 'new_purchases');
 // Route::view('/mypage', 'mypage');
 // Route::view('/item', 'show');
@@ -98,8 +98,15 @@ Route::middleware('auth')->group(function () {
         // ★★★ このルートを追加します ★★★
         Route::get('/mylist', [ItemController::class, 'mylist'])->name('item.mylist');
 
-        // 商品出品画面
-        Route::view('/sell', 'new_items')->name('items.sell');
+        // ==========================================================
+        // ★★★ 商品出品ルートの修正 ★★★
+        // ==========================================================
+        // 商品出品フォームの表示 (GET)
+        Route::get('/sell', [ItemController::class, 'create'])->name('items.sell');
+
+        // 商品出品データの保存 (POST) - ここで画像を受け取って保存します
+        Route::post('/sell', [ItemController::class, 'store'])->name('items.store');
+        // ==========================================================
 
         // 購入履歴画面
         Route::get('/purchase/{item_id}', [PurchaseController::class, 'create'])->name('purchases.create');

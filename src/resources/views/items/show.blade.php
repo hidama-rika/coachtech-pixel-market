@@ -56,6 +56,12 @@
                     <div class="show-image-container">
                         <div class="item-image-placeholder">
                             <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}">
+                            {{-- 商品が購入済みの場合はSOLD OUTオーバーレイを表示 --}}
+                            @if ($item->is_sold_out())
+                                <div class="sold-out-overlay">
+                                    <span class="sold-out-text">SOLD OUT</span>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

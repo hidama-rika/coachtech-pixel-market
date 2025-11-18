@@ -56,8 +56,20 @@ class PurchaseController extends Controller
     {
         // ここに支払い処理のロジックを実装します
         // 例：バリデーション、Stripeなどの決済API連携、在庫更新など
+        // 1. Purchaseレコードの作成/更新
+        $purchase = Purchase::create([
+            'item_id' => $item->id,
+            'user_id' => auth()->id(),
+            'transaction_status' => 'completed', // 支払い完了ステータス
+        ]);
+
+        // 2. 【★ここが重要★】Itemのis_soldカラムをtrueに更新
+        $item->is_sold = true;
+        $item->save();
 
         // 購入完了後のリダイレクト
         return redirect()->route('mypage.index')->with('success', '商品を購入しました。');
     }
+
+
 }

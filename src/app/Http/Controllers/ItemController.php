@@ -6,6 +6,11 @@ use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Like;
+use App\Http\Requests\ExhibitionRequest;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class ItemController extends Controller
 {
@@ -91,5 +96,88 @@ class ItemController extends Controller
 
         // 商品詳細ビューにデータを渡して表示
         return view('items.show', compact('item', 'isLiked', 'likeCount'));
+    }
+
+    /**
+     * 商品出品フォームを表示します。
+     * BadMethodCallExceptionが発生していたのは、このメソッドがなかったためです。
+     *
+     * @return View
+     */
+    public function create(): View
+    {
+        // ★修正箇所: $item 変数に null を定義してビューに渡すことで、
+        // new_items.blade.php 内で $item のプロパティを参照してもエラーにならないようにする
+        $item = null;
+
+        return view('new_items', compact('item'));
+    }
+
+    /**
+     * 新しい商品情報を受け取り、バリデーションとデータベースへの保存を行います。（POST /sell）
+     * ★brandsの保存とcategoriesの多対多対応を修正しました★
+     *
+     * @param ExhibitionRequest $request フォームリクエスト（バリデーション済みデータを含む）
+     * @return RedirectResponse
+     */
+    public function store(ExhibitionRequest $request): RedirectResponse
+    {
+        // 1. バリデーション済みのデータを取得
+        $validatedData = $request->validated();
+
+        // トランザクション開始：商品データとカテゴリ中間テーブルへの保存をセットで行う
+        DB::beginTransaction();
+
+        try {
+            // 2. 画像ファイルの保存
+            $imagePath = null;
+            if ($request->hasFile('image_path')) {
+                // 'public/items' ディスクにファイルを保存し、パスを返します。
+                $imagePath = $request->file('image_path')->store('items', 'public');
+            }
+
+            // 3. データベースへの保存処理 (Item モデルの利用)
+            // category_idは多対多になったため、itemsテーブル自体には保存しませんが、
+            // requestから値を取得して後で中間テーブルに保存します。
+            $item = Item::create([
+                'user_id' => Auth::id(), // ログインユーザーのID
+                'name' => $validatedData['name'],
+                'description' => $validatedData['description'],
+                'price' => $validatedData['price'],
+                'condition_id' => $validatedData['condition_id'], // condition_idは残る
+                'brands' => $validatedData['brands'] ?? null, // ★修正: brands (テキスト) を保存★
+                'image_path' => $imagePath, // 保存されたファイルパス
+                'is_sold' => false, // 未販売
+            ]);
+
+            // 4. カテゴリ中間テーブルへの登録 (多対多対応)
+            // ExhibitionRequestでcategory_idを受け取っている想定で、attachを使用します。
+            // category_idが単一の値であることを前提としています。
+            if (isset($validatedData['category_id'])) {
+                // attach()で item_category 中間テーブルにレコードを挿入
+                // $validatedData['category_id'] は単一のID、またはIDの配列を想定
+                $item->categories()->attach($validatedData['category_id']);
+            }
+
+            DB::commit(); // トランザクションをコミット
+
+            // 5. 処理成功後、新しく作成された商品詳細ページにリダイレクト
+            return redirect()->route('items.show', $item)
+                ->with('success', '商品が正常に出品されました！');
+
+        } catch (\Exception $e) {
+            DB::rollBack(); // エラーが発生した場合、トランザクションをロールバック
+            // 画像ファイルが保存されていた場合、ロールバック時に削除する
+            if ($imagePath) {
+                Storage::disk('public')->delete($imagePath);
+            }
+
+            // ログに出力し、エラーメッセージと共にリダイレクト
+            \Log::error('商品出品中にエラーが発生しました: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => '商品の出品に失敗しました。時間をおいて再度お試しください。'])
+                ->with('error', '商品の出品に失敗しました。');
+        }
     }
 }

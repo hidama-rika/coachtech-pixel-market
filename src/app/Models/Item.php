@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
 
 class Item extends Model
 {
@@ -22,6 +23,7 @@ class Item extends Model
         'category_id',
         'condition_id',
         'name',
+        'brands',
         'description',
         'price',
         'image_path',
@@ -49,6 +51,18 @@ class Item extends Model
         // Itemはlikesテーブルを介して複数のUserに属する（多対多）
         return $this->belongsToMany(User::class, 'likes', 'item_id', 'user_id')
                     ->withTimestamps();
+    }
+
+    /**
+     * 商品が販売済みかどうかを判定します。
+     * itemsテーブルのis_soldカラム（boolean）を参照します。
+     *
+     * @return bool
+     */
+    public function is_sold()
+    {
+        // データベースのis_soldカラムの値（true/false）をそのまま返します
+        return $this->is_sold;
     }
 
     // =======================================================
