@@ -144,7 +144,6 @@ html {
     color: #333333;
     font-size: 1.25rem;
     display: block;
-    margin-right: 15px;
     white-space: nowrap;
 }
 
@@ -453,10 +452,11 @@ body {
 }
 
 /* ❗ 修正: ドロップダウンリスト全体のスタイル ❗ */
-.custom-select-options {
+#condition-options, /* IDセレクタを追加 */
+.custom-select-options.condition-options-list {
     list-style: none;
     padding: 0;
-    margin-top: 25px;
+    margin-top: -107px;
     position: absolute;
     max-width: 680px;
     width: 100%;
@@ -474,18 +474,24 @@ body {
     /* 影を追加 */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
-    /* フォームコントロールの真下に配置 */
-    top: 163%;
-    /* .custom-select-control の高さに合わせる */
+    /* ★修正: 親要素 (form-group) のすぐ下に配置★ */
+    top: 100%;
+    left: 0;
+    /* 左端を親要素に合わせる */
     z-index: 200;
-    /* 他の要素の上に表示 */
     display: none;
-    /* 初期状態では非表示 */
     box-sizing: border-box;
 }
 
+/* ❗ リストが開いたときにリストを表示するCSS (JavaScriptでこのクラスを #condition-options に付与する前提) ❗ */
+.custom-select-control.active+#condition-options,
+.custom-select-control.active+.custom-select-options.condition-options-list {
+    display: block !important;
+    /* ❗ デバッグのために !important を使用して強制表示 ❗ */
+}
+
 /* ❗ 追加: リスト項目のスタイル ❗ */
-.custom-select-options li {
+.condition-options-list .custom-select-options-text {
     padding: 10px 15px;
     /* チェックマークが表示される時のpadding-left: 45px に合わせて、 */
     /* デフォルトのパディングを大きくして、テキストを右にずらします。 */
@@ -502,13 +508,14 @@ body {
 }
 
 /* ❗ 追加: ホバー時のスタイル (青い背景) ❗ */
-.custom-select-options li:hover,
-.custom-select-options li.highlighted {
+.condition-options-list .custom-select-options-text:hover,
+.condition-options-list .custom-select-options-text.highlighted {
     background-color: #4299E1;
+    color: #FFFFFF;
 }
 
 /* ❗ 追加: 選択されたリスト項目のスタイル (青い背景とチェックマーク) ❗ */
-.custom-select-options li.selected {
+.condition-options-list .custom-select-options-text.selected {
     background-color: #4299E1;
     color: #FFFFFF;
     background-image: url("/storage/img/Vector 1 (Stroke) (1).png");
@@ -524,6 +531,7 @@ body {
     height: auto;
     flex-grow: 1;
     /* 👈 これを追加: 利用可能な幅を最大化 */
+    position: relative;
 }
 
 .form-group label {

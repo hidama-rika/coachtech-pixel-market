@@ -11,6 +11,8 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Models\Condition;
+use Illuminate\Support\Facades\Log; // デバッグ用
 
 class ItemController extends Controller
 {
@@ -106,16 +108,18 @@ class ItemController extends Controller
      */
     public function create(): View
     {
-        // ★修正箇所: $item 変数に null を定義してビューに渡すことで、
-        // new_items.blade.php 内で $item のプロパティを参照してもエラーにならないようにする
+        // Conditionモデルから全ての商品状態リストを取得
+        $conditions = Condition::all();
+
+        // ★修正: $item に加え、conditions もビューに渡します★
         $item = null;
 
-        return view('new_items', compact('item'));
+        return view('new_items', compact('item', 'conditions'));
     }
 
     /**
      * 新しい商品情報を受け取り、バリデーションとデータベースへの保存を行います。（POST /sell）
-     * ★brandsの保存とcategoriesの多対多対応を修正しました★
+     * ★brandの保存とcategoriesの多対多対応を修正しました★
      *
      * @param ExhibitionRequest $request フォームリクエスト（バリデーション済みデータを含む）
      * @return RedirectResponse
@@ -145,24 +149,22 @@ class ItemController extends Controller
                 'description' => $validatedData['description'],
                 'price' => $validatedData['price'],
                 'condition_id' => $validatedData['condition_id'], // condition_idは残る
-                'brands' => $validatedData['brands'] ?? null, // ★修正: brands (テキスト) を保存★
+                'brand' => $validatedData['brand'] ?? null, // ★修正: brand (テキスト) を保存★
                 'image_path' => $imagePath, // 保存されたファイルパス
                 'is_sold' => false, // 未販売
             ]);
 
             // 4. カテゴリ中間テーブルへの登録 (多対多対応)
-            // ExhibitionRequestでcategory_idを受け取っている想定で、attachを使用します。
-            // category_idが単一の値であることを前提としています。
-            if (isset($validatedData['category_id'])) {
-                // attach()で item_category 中間テーブルにレコードを挿入
-                // $validatedData['category_id'] は単一のID、またはIDの配列を想定
-                $item->categories()->attach($validatedData['category_id']);
+            // ★★★ 修正箇所: category_id ではなく categories (IDの配列) を使用 ★★★
+            if (isset($validatedData['categories'])) {
+                // $validatedData['categories'] はIDの配列なので、attach() で一度に中間テーブルに挿入
+                $item->categories()->attach($validatedData['categories']);
             }
 
             DB::commit(); // トランザクションをコミット
 
             // 5. 処理成功後、新しく作成された商品詳細ページにリダイレクト
-            return redirect()->route('items.show', $item)
+            return redirect()->route('mypage.index', ['tab' => 'listed'])
                 ->with('success', '商品が正常に出品されました！');
 
         } catch (\Exception $e) {

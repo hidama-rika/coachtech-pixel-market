@@ -104,10 +104,10 @@
                         @if (isset($listedItems) && $listedItems->isNotEmpty())
                             @foreach ($listedItems as $item)
                                 @php
-                                    // 画像パスの有無をチェックし、存在しなければプレースホルダーを設定
+                                    // 【修正1】画像パスが存在しない場合のフォールバックURLを定義
                                     $itemImageUrl = $item->image_path
-                                        ? asset('storage/' . $item->image_path)
-                                        : 'https://placehold.co/300x150/ffc107/fff?text=No+Image'; // 出品は黄色
+                                    ? asset('storage/' . $item->image_path)
+                                    : 'https://placehold.co/300x150/ffc107/fff?text=No+Image'; // 出品は黄色
                                 @endphp
                                 <a href="/item/{{ $item->id }}" class="item-card">
                                     {{-- 【画像表示】: item テーブルの image_path カラムを使用 --}}

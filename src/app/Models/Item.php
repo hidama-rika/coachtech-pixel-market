@@ -23,7 +23,7 @@ class Item extends Model
         'category_id',
         'condition_id',
         'name',
-        'brands',
+        'brand',
         'description',
         'price',
         'image_path',

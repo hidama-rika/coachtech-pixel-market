@@ -27,6 +27,9 @@ class ExhibitionRequest extends FormRequest
             // 商品名: 入力必須
             'name' => ['required', 'string', 'max:255'],
 
+            // ブランド名 (任意) を追加
+            'brand' => ['nullable', 'string', 'max:255'],
+
             // 商品説明: 入力必須、最大文字数255
             'description' => ['required', 'string', 'max:255'],
 
@@ -35,7 +38,11 @@ class ExhibitionRequest extends FormRequest
             'image_path' => ['required', 'file', 'mimes:jpeg,png', 'max:5120'], // max:5120 (5MB)を実用的なサイズとして追加
 
             // 商品のカテゴリー: 選択必須、categoriesテーブルに存在するIDであること
-            'category_id' => ['required', 'integer', 'exists:categories,id'],
+            // ★★★ 修正箇所: 複数カテゴリー選択（配列）のバリデーション ★★★
+            // categories（配列全体）: 必須で、配列であり、最低1つの要素を持つこと
+            'categories' => ['required', 'array', 'min:1'],
+            // categories.*（配列の各要素）: 整数値であり、categoriesテーブルに存在するIDであること
+            'categories.*' => ['integer', 'exists:categories,id'],
 
             // 商品の状態: 選択必須、conditionsテーブルに存在するIDであること
             'condition_id' => ['required', 'integer', 'exists:conditions,id'],
@@ -56,9 +63,11 @@ class ExhibitionRequest extends FormRequest
     {
         return [
             'name' => '商品名',
+            'brand' => 'ブランド名',
             'description' => '商品説明',
             'image_path' => '商品画像',
-            'category_id' => '商品のカテゴリー',
+            // ★ 修正箇所: category_id から categories に変更 ★
+            'categories' => '商品のカテゴリー',
             'condition_id' => '商品の状態',
             'price' => '商品価格',
         ];
@@ -76,6 +85,8 @@ class ExhibitionRequest extends FormRequest
             'name.string' => '商品名は文字列で入力してください。',
             'name.max' => '商品名は255文字以内で入力してください。',
 
+            'brand.max' => 'ブランド名は255文字以内で入力してください。',
+
             'description.required' => '商品説明は必ず入力してください。',
             'description.string' => '商品説明は文字列で入力してください。',
             'description.max' => '商品説明は255文字以内で入力してください。',
@@ -83,7 +94,10 @@ class ExhibitionRequest extends FormRequest
             'image_path.required' => '商品画像をアップロードしてください。',
             'image_path.mimes' => '商品画像の拡張子はJPEGまたはPNG形式を選択してください。',
 
-            'category_id.required' => '商品のカテゴリーを選択してください。',
+            'categories.required' => '商品のカテゴリーを1つ以上選択してください。',
+            'categories.min' => '商品のカテゴリーを1つ以上選択してください。',
+            'categories.*.integer' => '選択されたカテゴリーIDが不正です。',
+            'categories.*.exists' => '選択されたカテゴリーが存在しません。',
 
             'condition_id.required' => '商品の状態を選択してください。',
 

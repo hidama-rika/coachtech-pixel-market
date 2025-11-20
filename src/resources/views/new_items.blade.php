@@ -93,72 +93,32 @@
                 <div class="category-section">
                     <label class="category-label">カテゴリー</label>
                     <div class="category-tags-container">
-                        {{-- カテゴリータグの例 (実際はDBから取得したデータをループで表示) --}}
+                        {{-- 【重要】本来は $categories のような変数を使ってDBのカテゴリーをループで表示します。 --}}
 
-                        {{-- 1行目 --}}
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="fashion" class="tag-checkbox">
-                            <span class="tag-text selected-tag">ファッション</span>
-                        </label>
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="household" class="tag-checkbox">
-                            <span class="tag-text">家電</span>
-                        </label>
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="interior" class="tag-checkbox" >
-                            <span class="tag-text selected-tag">インテリア</span>
-                        </label>
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="ladies" class="tag-checkbox">
-                            <span class="tag-text">レディース</span>
-                        </label>
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="mens" class="tag-checkbox">
-                            <span class="tag-text">メンズ</span>
-                        </label>
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="cosme" class="tag-checkbox">
-                            <span class="tag-text">コスメ</span>
-                        </label>
+                        @php
+                            // カテゴリーリストの例 (実際はCategoryモデル::all()などで取得してください)
+                            $categoryList = [
+                                1 => 'ファッション', 2 => '家電', 3 => 'インテリア',
+                                4 => 'レディース', 5 => 'メンズ', 6 => 'コスメ',
+                                7 => '本', 8 => 'ゲーム', 9 => 'スポーツ',
+                                10 => 'キッチン', 11 => 'ハンドメイド', 12 => 'アクセサリー',
+                                13 => 'おもちゃ', 14 => 'ベビー・キッズ',
+                            ];
+                        @endphp
 
-                        {{-- 2行目 --}}
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="other" class="tag-checkbox">
-                            <span class="tag-text">本</span>
-                        </label>
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="game" class="tag-checkbox">
-                            <span class="tag-text">ゲーム</span>
-                        </label>
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="sports" class="tag-checkbox">
-                            <span class="tag-text">スポーツ</span>
-                        </label>
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="kitchen" class="tag-checkbox">
-                            <span class="tag-text">キッチン</span>
-                        </label>
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="handmade" class="tag-checkbox">
-                            <span class="tag-text">ハンドメイド</span>
-                        </label>
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="accessory" class="tag-checkbox">
-                            <span class="tag-text">アクセサリー</span>
-                        </label>
-
-                        {{-- 3行目 --}}
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="toy" class="tag-checkbox">
-                            <span class="tag-text">おもちゃ</span>
-                        </label>
-                        <label class="tag-checkbox-label">
-                            <input type="checkbox" name="categories[]" value="baby_kids" class="tag-checkbox">
-                            <span class="tag-text">ベビー・キッズ</span>
-                        </label>
+                        @foreach ($categoryList as $id => $name)
+                            <label class="tag-checkbox-label">
+                                {{-- name="categories[]" と value="{{ $id }}" を使用して複数IDを送信 --}}
+                                {{-- old() 関数で以前選択した値を保持 --}}
+                                <input type="checkbox" name="categories[]" value="{{ $id }}" class="tag-checkbox"
+                                    {{ in_array($id, old('categories', [])) ? 'checked' : '' }}
+                                >
+                                <span class="tag-text">{{ $name }}</span>
+                            </label>
+                        @endforeach
                     </div>
                     <p class="new_items-form__error-message">
-                        @error('category_id')
+                        @error('categories')
                         {{ $message }}
                         @enderror
                     </p>
@@ -169,19 +129,43 @@
                     <label for="condition">商品の状態</label>
 
                     {{-- ❗ フォーム送信用の隠し入力フィールド ❗ --}}
-                    <input type="hidden" id="condition_input" name="condition_id" value="">
+                    {{-- ✅ 修正済み: $selectedConditionId ?? '' で未定義エラーを回避 --}}
+                    <input type="hidden" id="condition_input" name="condition_id" value="{{ old('condition_id', $selectedConditionId ?? '') }}" />
 
                     {{-- ❗ カスタムドロップダウンの表示エリア ❗ --}}
                     <div id="custom-condition-select" class="form-control custom-select-control">
-                        <span>選択してください</span>
+                        <span id="selected-condition-name">
+                            {{-- 初期表示テキスト: IDがあればその名前、なければ「選択してください」を表示 --}}
+                            @php
+                                // $selectedConditionIdが未定義でもエラーにならないように ?? null を使用して安全化
+                                $currentConditionId = $selectedConditionId ?? null;
+                                $selectedCondition = null;
+
+                                // $conditionsの存在とIDの存在の両方をチェックして検索
+                                if (isset($conditions) && $currentConditionId !== null) {
+                                    $selectedCondition = $conditions->firstWhere('id', $currentConditionId);
+                                }
+                            @endphp
+                            {{-- ✅ 修正済み: 事前に定義した $selectedCondition 変数を使用することで、未定義エラーを回避 --}}
+                            @if($selectedCondition)
+                                {{ $selectedCondition->name }}
+                            @else
+                                選択してください
+                            @endif
+                        </span>
                     </div>
 
                     {{-- ❗ ドロップダウンのリスト ❗ --}}
                     <ul id="condition-options" class="custom-select-options condition-options-list">
-                        <li data-value="good_condition" class="custom-select-options-text">良好</li>
-                        <li data-value="no_damage" class="custom-select-options-text">目立った傷や汚れなし</li>
-                        <li data-value="minor_damage" class="custom-select-options-text">やや傷や汚れあり</li>
-                        <li data-value="poor_condition" class="custom-select-options-text">状態が悪い</li>
+                        {{-- $conditionsが存在する場合のみループを実行することで安全化 --}}
+                        @if(isset($conditions))
+                            @foreach ($conditions as $condition)
+                                {{-- 選択肢のliタグのdata-value属性に、DBのIDを設定する --}}
+                                <li data-value="{{ $condition->id }}" class="custom-select-options-text">
+                                    {{ $condition->name }}
+                                </li>
+                            @endforeach
+                        @endif
                     </ul>
 
                     <p class="new_items-form__error-message">
@@ -197,7 +181,7 @@
                 {{-- 商品名 --}}
                 <div class="form-group">
                     <label for="items">商品名</label>
-                    <input id="items" type="items" class="form-control" name="name" required placeholder="商品名を入力">
+                    <input id="items" type="text" class="form-control" name="name" required placeholder="商品名を入力" value="{{ old('name') }}">
                     <p class="new_items-form__error-message">
                         @error('name')
                         {{ $message }}
@@ -208,7 +192,7 @@
                 {{-- ブランド名 --}}
                 <div class="form-group">
                     <label for="brands">ブランド名</label>
-                    <input id="brands" type="text" class="form-control" name="brands" required placeholder="ブランド名を入力">
+                    <input id="brands" type="text" class="form-control" name="brands" required placeholder="ブランド名を入力" value="{{ old('brands') }}">
                     <p class="new_items-form__error-message">
                         @error('brands')
                         {{ $message }}
@@ -219,7 +203,7 @@
                 {{-- 商品の説明 --}}
                 <div class="form-group">
                     <label for="description">商品の説明</label>
-                    <textarea id="description" class="form-control" name="description" required placeholder="商品の説明を入力"></textarea>
+                    <textarea id="description" class="form-control" name="description" required placeholder="商品の説明を入力" value="{{ old('description') }}"></textarea>
                     <p class="new_items-form__error-message">
                         @error('description')
                         {{ $message }}
@@ -230,7 +214,7 @@
                 {{-- 販売価格 --}}
                 <div class="form-group">
                     <label for="price">販売価格</label>
-                    <input id="price" type="text" class="form-control" name="price" required placeholder="￥">
+                    <input id="price" type="text" class="form-control" name="price" required placeholder="￥" value="{{ old('price') }}">
                     <p class="new_items-form__error-message">
                         @error('price')
                         {{ $message }}
@@ -300,7 +284,10 @@
             const hiddenInput = document.getElementById('condition_input');
 
             // 1. ドロップダウンの表示/非表示を切り替える
-            selectElement.addEventListener('click', function() {
+            selectElement.addEventListener('click', function(e) { // ★修正: e を引数として受け取る★
+                // 外側クリックで閉じないよう、このクリックイベントの伝播を停止
+                e.stopPropagation(); // ★修正: 正しい e.stopPropagation() の構文を使用★
+
                 // 現在の表示状態をチェック
                 const isHidden = optionsList.style.display === 'none' || optionsList.style.display === '';
 
@@ -313,7 +300,7 @@
             optionsList.querySelectorAll('li').forEach(item => {
                 item.addEventListener('click', function() {
                     const value = this.getAttribute('data-value');
-                    const text = this.textContent;
+                    const text = this.textContent.trim(); // 空白をトリム
 
                     // フォーム送信用の値と表示テキストを更新
                     hiddenInput.value = value;
@@ -329,6 +316,15 @@
                     optionsList.style.display = 'none';
                     selectElement.classList.remove('active');
                 });
+            });
+
+            // 3. ドロップダウンの外側をクリックしたときに閉じる
+            document.addEventListener('click', function(e) {
+                // クリックされた要素がカスタムセレクトのコントロールでもオプションリストでもない場合
+                if (!selectElement.contains(e.target) && !optionsList.contains(e.target)) {
+                    optionsList.style.display = 'none';
+                    selectElement.classList.remove('active');
+                }
             });
 
             // 3. ドロップダウンの外側をクリックしたときに閉じる
