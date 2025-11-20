@@ -32,11 +32,20 @@ class ItemController extends Controller
      */
     public function index()
     {
-        // 販売ステータスが未販売（is_sold = 0/false）の商品のみを取得
-        // 最新の商品が上に来るように降順で取得
-        $items = Item::where('is_sold', false)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+        // 基本クエリ: 販売ステータスが未販売（is_sold = false）の商品
+        $query = Item::where('is_sold', false);
+
+        // 認証済みユーザーの場合、自身が出品した商品を除外する条件を追加
+        if (Auth::check()) {
+            // ログインユーザーのIDを取得し、そのユーザーが出品した商品（user_idが一致するもの）を除外
+            $query->where('user_id', '!=', Auth::id()); // ← この行を追加
+        }
+
+        // ★★★ 修正箇所: ここでクエリを実行し、結果を $items に代入します ★★★
+        // 最新の商品が上に来るように降順で取得し、クエリを実行
+        $items = $query->orderBy('created_at', 'desc')
+                        ->get();
+        // 以前の重複するクエリブロック（Item::where('is_sold', false)->orderBy('created_at', 'desc')->get();）を削除しました。
 
         // 'items.index' ビューにデータを渡して表示
         return view('items.index', compact('items'));
