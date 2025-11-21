@@ -94,14 +94,11 @@ Route::middleware('auth')->group(function () {
 
         // マイページトップ（最終的な遷移先であり、プロフィール設定後にアクセス可能となる）
         Route::get('/mypage', [MypageController::class, 'index'])
-            ->name('mypage.index');
-
-        // トップページ（おすすめ一覧）
-        // Route::get('/recommend', [ItemController::class, 'index'])->name('item.recommend');
+            ->name('itms.index');
 
         // マイリスト（いいねした商品一覧）
         // ★★★ このルートを追加します ★★★
-        Route::get('/mylist', [ItemController::class, 'mylist'])->name('item.mylist');
+        Route::get('/mylist', [ItemController::class, 'mylist'])->name('items.mylist');
 
         // ==========================================================
         // ★★★ 商品出品ルートの修正 ★★★

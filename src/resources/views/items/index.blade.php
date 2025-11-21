@@ -29,7 +29,7 @@
                         name="keyword"
                         class="search-input"
                         placeholder="なにをお探しですか？"
-                        value="{{ request('keyword') }}"
+                        value="{{ $lastKeyword }}"
                     >
             </div>
 
@@ -61,7 +61,14 @@
             <div class="index-form-container">
                 {{-- おすすめ/マイリスト タブ --}}
                 <div class="tab-menu">
-                    <a href="/recommend" class="tab-link @if(Request::is('recommend')) active @endif">
+                    @php
+                        // $lastKeywordが空でなければ、リンクにキーワードを含める
+                        $routeParams = !empty($lastKeyword) ? ['keyword' => $lastKeyword] : [];
+                    @endphp
+                    <a
+                        href="{{ route('items.index', $routeParams) }}"
+                        class="tab-link @if(!Request::is('mylist')) active @endif"
+                    >
                         <span class="tab-text">おすすめ</span>
                     </a>
                     {{-- 未認証ユーザーはマイリストにアクセスできないため、@auth ディレクティブで囲む --}}

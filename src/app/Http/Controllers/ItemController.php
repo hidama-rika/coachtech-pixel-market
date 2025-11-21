@@ -32,39 +32,53 @@ class ItemController extends Controller
      */
     public function index(Request $request) // Requestを受け取る
     {
-        // 検索キーワードを取得
-        $keyword = $request->input('keyword');
+        // 1. URLのキーワードを取得 (コンテンツのフィルタリングに使用)
+        $keywordForFiltering = $request->input('keyword');
 
-        // 基本クエリ: 販売ステータスが未販売（is_sold = false）の商品
+        // 2. 検索状態の保持（Persistence Management）
+        //    URLに 'keyword' パラメータがある場合（検索実行またはタブによる復元・クリア）はセッションを更新
+        if ($request->has('keyword')) {
+            // キーワードが空（""）の場合もセッションを空で上書きし、検索状態をクリアする
+            session(['last_search_keyword' => $keywordForFiltering ?? '']);
+        }
+        // URLにキーワードがない場合、セッションは更新しない
+        // （他のタブから戻る時の復元用として、前回の検索キーワードを保持し続けます）
+
+        // 3. 基本クエリの組み立て: 販売ステータスが未販売（is_sold = false）の商品
         $query = Item::where('is_sold', false);
 
-        // 検索機能の追加 (一般条件として、認証チェックの前に配置)
-        if ($keyword) {
-            // キーワードが入力されている場合、認証状態に関わらず、商品名で部分一致検索を行う
-            $query->where('name', 'LIKE', '%' . $keyword . '%');
+        // 4. 検索機能の追加 (コンテンツのフィルタリング)
+        //    URLにキーワードがある場合のみ、クエリに検索条件を追加
+        if (!empty($keywordForFiltering)) {
+            $query->where('name', 'LIKE', '%' . $keywordForFiltering . '%');
         }
 
-        // 認証済みユーザーの場合、自身が出品した商品を除外する条件を追加
+        // 5. 認証済みユーザーの場合、自身が出品した商品を除外する条件を追加
         if (Auth::check()) {
             // ログインユーザーのIDを取得し、そのユーザーが出品した商品（user_idが一致するもの）を除外
-            $query->where('user_id', '!=', Auth::id()); // ← この行を追加
+            $query->where('user_id', '!=', Auth::id());
         }
 
-        // ★★★ 修正箇所: ここでクエリを実行し、結果を $items に代入します ★★★
-        // 最新の商品が上に来るように降順で取得し、クエリを実行
-        $items = $query->orderBy('created_at', 'desc')
-                        ->get();
-        // 以前の重複するクエリブロック（Item::where('is_sold', false)->orderBy('created_at', 'desc')->get();）を削除しました。
+        // 6. クエリの実行
+        $items = $query->orderBy('created_at', 'desc')->get();
 
-        // 'items.index' ビューにデータを渡して表示
-        return view('items.index', compact('items'));
+        // 7. Viewへ渡す
+        //    フォームのvalueやタブリンクのパラメータとして、セッションに保持された最新のキーワードを渡す。
+        $lastKeywordForView = session('last_search_keyword') ?? '';
+
+        // 'index' ビューにデータを渡して表示
+        return view('items.index', [
+            'items' => $items,
+            // フォームとタブリンクの復元に使用
+            'lastKeyword' => $lastKeywordForView
+        ]);
     }
 
     /**
      * マイリスト（いいねした商品一覧）を表示する
      * @return \Illuminate\View\View
      */
-    public function mylist()
+    public function mylist(Request $request)
     {
         // ログインユーザーが「いいね」したItemを取得
         // 1. ログインユーザーのIDを取得
@@ -78,9 +92,14 @@ class ItemController extends Controller
         // 3. 取得したIDリストに基づいて Item を取得
         $items = Item::whereIn('id', $likedItemIds)->get();
 
-        // index.blade.php にマイリストの商品データを渡す
-        // indexビュー内で /mylist の場合に 'active' が付くようになっているため、ビューは共通でOK
-        return view('items.index', ['items' => $items]);
+        // セッションに保存された前回の検索キーワードを取得
+        $lastKeyword = $request->session()->get('last_search_keyword', '');
+
+        // index.blade.php にマイリストの商品データとキーワードデータを渡す
+        return view('items.index', [
+            'items' => $items,
+            'lastKeyword' => $lastKeyword // キーワードを渡す
+        ]);
     }
 
     /**
