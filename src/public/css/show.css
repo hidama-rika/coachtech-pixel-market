@@ -168,12 +168,11 @@ body {
     max-width: 1515px;
     width: 100%;
     min-height: 100vh;
-    padding-top: 82px;
-    /* ヘッダーの高さ分、コンテンツを下にずらす */
-
+    padding-top: 100px;
     margin: 0 auto;
-    /* ❗ 修正: 左右の余白をデザインに合わせて調整 ❗ */
-    padding: 100px 100px 50px 100px;
+    padding-bottom: 50px;
+    padding-left: 100px;
+    padding-right: 100px;
 }
 
 
@@ -181,8 +180,7 @@ body {
 .item-detail-wrapper {
     display: flex;
     justify-content: center;
-    /* コンテンツ全体を中央に寄せる */
-    gap: 150px;
+    gap: 100px;
     /* 画像エリアと情報エリアの間隔 */
 }
 
@@ -213,6 +211,7 @@ body {
     /* オーバーレイを配置するための基準 */
     overflow: hidden;
     /* 子要素のオーバーフローを防ぐ */
+    background-color: #D9D9D9;
 }
 
 /* オーバーレイ自体（黒の透過背景） */
@@ -269,6 +268,8 @@ body {
 
 /* 2. 右側: 商品情報エリア */
 .item-info-area {
+    display: flex;
+    flex-direction: column;
     max-width: 570px;
     width: 100%;
     /* 画像より広めの幅を確保 */
@@ -464,21 +465,16 @@ body {
 
 /* ❗ 追加: 個別のカテゴリタグのスタイル ❗ */
 .category-tag {
-    /* 画像に見られるタグのスタイルを設定 */
     background-color: #D9D9D9;
-    /* 薄いグレーの背景色 */
     color: #000000;
     font-size: 1.25rem;
     font-weight: 400;
     border-radius: 15px;
-    /* 角丸 */
 
     /* テキストの幅に合わせてタグのサイズを可変にする */
     display: flex;
     align-items: center;
-    /* 垂直方向中央寄せ */
     justify-content: center;
-    /* 水平方向中央寄せ */
 
     /* 適切なパディングを設定（高さ30pxになるように調整） */
     padding: 5px 15px;
@@ -501,6 +497,13 @@ body {
     /* ラベルと同じか少し大きめのサイズに調整 */
 }
 
+.comment-section {
+    display: flex;
+    flex-direction: column;
+    max-width: 570px;
+    width: 100%;
+}
+
 .comment-section-title {
     font-size: 2.25rem;
     font-weight: bold;
@@ -509,14 +512,28 @@ body {
     color: #5F5F5F;
 }
 
-.comment-item {
+.comment-list {
     display: flex;
-    text-align: center;
+    flex-direction: column;
 }
 
+.comment-item {
+    display: flex;
+    margin-bottom: 20px;
+    gap: 30px;
+    /* アバターとコメントの間の隙間 */
+}
+
+/* .comment-item-header はアバターとユーザー名を縦に並べる */
 .comment-item-header {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    /* ユーザー名を中央揃えに */
+    flex-shrink: 0;
+    /* 縮小させない */
+    max-width: 570px;
+    width: 100%;
 }
 
 .avatar-image {
@@ -551,6 +568,7 @@ body {
     font-size: 1.875rem;
     font-weight: bold;
     padding: 10px;
+    display: flex;
 }
 
 .comment-text {
@@ -560,7 +578,16 @@ body {
     border-radius: 5px;
     font-size: 1rem;
     line-height: 1.5;
+    max-width: 570px;
     width: 100%;
+    align-items: stretch;
+}
+
+.comment-display {
+    max-width: 570px;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
 }
 
 .comment-input {

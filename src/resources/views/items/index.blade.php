@@ -18,8 +18,19 @@
                 <img src="{{ asset('storage/img/Group (2).png') }}" alt="logoテキスト" class="icon logo-text-img">
             </a>
 
+            <!-- 検索フォームの組み込みと修正 -->
             <div class="search-form-container">
-                <input type="text" class="search-input" placeholder="なにをお探しですか？">
+                <!-- GETメソッドで / (または {{ route('items.index') }}) に検索クエリを送信 -->
+                <!-- <input type="text">が<form>タグ内にあるため、Enterキーで自動的に送信されます。-->
+                {{-- 検索アイコンを表示するため、inputとボタンを一つのコンテナでラップする場合はCSSの調整が必要です --}}
+                <form action="/" method="GET" class="search-form">
+                    <input
+                        type="search"
+                        name="keyword"
+                        class="search-input"
+                        placeholder="なにをお探しですか？"
+                        value="{{ request('keyword') }}"
+                    >
             </div>
 
             <nav class="nav-menu">

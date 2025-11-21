@@ -30,10 +30,19 @@ class ItemController extends Controller
      * ホーム画面 (商品一覧) を表示する
      * 未認証ユーザーもアクセス可能
      */
-    public function index()
+    public function index(Request $request) // Requestを受け取る
     {
+        // 検索キーワードを取得
+        $keyword = $request->input('keyword');
+
         // 基本クエリ: 販売ステータスが未販売（is_sold = false）の商品
         $query = Item::where('is_sold', false);
+
+        // 検索機能の追加 (一般条件として、認証チェックの前に配置)
+        if ($keyword) {
+            // キーワードが入力されている場合、認証状態に関わらず、商品名で部分一致検索を行う
+            $query->where('name', 'LIKE', '%' . $keyword . '%');
+        }
 
         // 認証済みユーザーの場合、自身が出品した商品を除外する条件を追加
         if (Auth::check()) {

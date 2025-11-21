@@ -57,7 +57,7 @@
                         <div class="item-image-placeholder">
                             <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}">
                             {{-- 商品が購入済みの場合はSOLD OUTオーバーレイを表示 --}}
-                            @if ($item->is_sold_out())
+                            @if ($item->is_sold())
                                 <div class="sold-out-overlay">
                                     <span class="sold-out-text">SOLD OUT</span>
                                 </div>
@@ -68,9 +68,11 @@
 
                 {{-- 2. 右側: 商品情報、商品説明、コメント --}}
                 <div class="item-info-area">
-                    <h1 class="item-name">{{ $item->name }}</h1>
-                    <p class="item-brand">{{ empty($item->brand) ? '' : $item->brand }}</p>
-                    <p class="item-price">¥{{ number_format($item->price) }}<span class="tax-info">(税込)</span></p>
+                    <div class="item-info">
+                        <h1 class="item-name">{{ $item->name }}</h1>
+                        <p class="item-brand">{{ empty($item->brand) ? '' : $item->brand }}</p>
+                        <p class="item-price">¥{{ number_format($item->price) }}<span class="tax-info">(税込)</span></p>
+                    </div>
 
                     {{-- いいね/コメントアイコン --}}
                     <div class="reaction-buttons">
@@ -193,6 +195,7 @@
                                 <p class="no-comment-message">コメントなし。</p>
                             @endforelse
                         </div>
+
                         <h2 class="section-title comment-form-title">商品へのコメント</h2>
                         <!-- 💡 修正点 1: ここにメッセージ表示用の要素を追加 💡 -->
                         <p class="show-form__error-message" id="comment-message" style="display: none;"></p>
@@ -324,7 +327,6 @@
             }
         });
     </script>
-    // いいね処理は外部ファイル (show.js) に集約する
     <script src="{{ asset('js/show.js') }}" defer></script>
 </body>
 </html>

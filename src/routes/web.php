@@ -37,11 +37,16 @@ Route::view('/register', 'auth.register');
 
 
 
-// ホーム画面 (未認証ルート)
-Route::get('/', [HomeController::class, 'index'])->name('items.index');
+// ==========================================================
+// ★★★ 商品一覧・検索機能の修正（ItemControllerを使用） ★★★
+// ==========================================================
 
-// 商品詳細画面 (未認証ルート)
-Route::get('/item/{item}', [HomeController::class, 'show'])->name('items.show');
+// ホーム画面 (商品一覧/検索結果) - 未認証/認証ユーザー両方アクセス可能
+// ItemController の index メソッドを使用し、クエリパラメータ (keyword) を受け付ける
+Route::get('/', [ItemController::class, 'index'])->name('items.index');
+
+// 商品詳細画面 (未認証ルート) - ItemControllerに変更
+Route::get('/item/{item}', [ItemController::class, 'show'])->name('items.show');
 
 // Fortifyが提供する認証ルートをここで定義することもできますが、
 // 通常はFortifyのインストールと設定により自動的に有効化されます。
@@ -92,7 +97,7 @@ Route::middleware('auth')->group(function () {
             ->name('mypage.index');
 
         // トップページ（おすすめ一覧）
-        Route::get('/recommend', [ItemController::class, 'index'])->name('item.recommend');
+        // Route::get('/recommend', [ItemController::class, 'index'])->name('item.recommend');
 
         // マイリスト（いいねした商品一覧）
         // ★★★ このルートを追加します ★★★
