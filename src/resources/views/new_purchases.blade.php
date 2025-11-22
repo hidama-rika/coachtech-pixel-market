@@ -49,7 +49,7 @@
 
             <div class="new_purchases-form-container">
 
-                <form action="/purchase/execute" method="POST" class="new_purchases-form-container">
+                <form action="{{ route('purchase.store', ['item_id' => $item->id ?? 0]) }}" method="POST" class="new_purchases-form-container">
                     @csrf
                     <input type="hidden" name="item_id" value="{{ $item->id ?? '' }}">
 
@@ -86,10 +86,10 @@
                         <div class="payment-method-section section-divider">
                             <p class="section-title-small">支払い方法</p>
 
-                            {{-- ❗ 修正: フォーム送信用の隠し入力フィールド ❗ --}}
+                            {{--修正: フォーム送信用の隠し入力フィールド--}}
                             <input type="hidden" id="payment_method_input" name="payment_method" value="">
 
-                            {{-- ❗ 修正: カスタムドロップダウンの表示エリア ❗ --}}
+                            {{--修正: カスタムドロップダウンの表示エリア--}}
                             <div id="custom-payment-select" class="form-control custom-select-control payment-select-display">
                                 <span class="payment-select-text">選択してください</span>
                             </div>
@@ -114,14 +114,17 @@
                             <p class="section-title-small">配送先</p>
                             <a href="{{ route('address.edit') }}" class="change-link">変更する</a>
 
-                            {{-- ユーザーの住所情報が存在するかチェック --}}
                             @isset($user)
-                                {{-- 住所情報が存在する場合、それを表示 --}}
-                                <p class="address-post-code">〒 {{ $user->post_code }}</p>
-                                {{-- 住所と建物名を結合して表示 (ここでは address と building_name を想定) --}}
-                                <p class="address-detail">{{ $user->address . ' ' . $user->building_name }}</p>
+                            <!-- 配送情報を隠しフィールドとして送信 (Controllerに合わせて) -->
+                                <input type="hidden" name="shipping_post_code" value="{{ $user->post_code ?? '' }}">
+                                <input type="hidden" name="shipping_address" value="{{ $user->address ?? '' }}">
+                                <input type="hidden" name="shipping_building" value="{{ $user->building_name ?? '' }}">
+
+                                <!-- 住所情報が存在する場合、それを表示 -->
+                                <p class="address-post-code">〒 {{ $user->post_code ?? '---' }}</p>
+                                <p class="address-detail">{{ ($user->address ?? '配送先住所を登録・変更してください。') . ' ' . ($user->building_name ?? '') }}</p>
                             @else
-                                {{-- 住所情報が存在しない場合、代替表示 --}}
+                                <!-- 住所情報が存在しない場合、代替表示 -->
                                 <p class="address-post-code">〒 住所未登録</p>
                                 <p class="address-detail">配送先住所を登録・変更してください。</p>
                             @endisset

@@ -110,8 +110,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/sell', [ItemController::class, 'store'])->name('items.store');
         // ==========================================================
 
-        // 購入履歴画面
+        // 購入手続き画面の表示
         Route::get('/purchase/{item_id}', [PurchaseController::class, 'create'])->name('purchases.create');
+
+        // 購入確定処理 (POST)
+        Route::post('/purchase/{item_id}', [PurchaseController::class, 'store'])->name('purchases.store');
 
         // コメント投稿用のルート (POSTリクエスト)
         // /{item_id}/comments の形式でアクセスできるように定義します
