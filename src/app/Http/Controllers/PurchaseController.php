@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Purchase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session; // ★追加：セッションを使うために必要★
 // use Stripe\Stripe;
 // use Stripe\Checkout\Session;
 
@@ -37,11 +38,34 @@ class PurchaseController extends Controller
             return redirect()->route('items.show', $item->id)->with('error', 'この商品は既に販売済みです。');
         }
 
-        // 3. ビューに商品情報とユーザー情報を渡す
-        // 以前のロジック（$id_to_find）が重複していたため削除しました
+        // 配送先住所の初期値設定ロジック
+        $shipping = Session::get('purchase_shipping');
+
+        if (!$shipping) {
+            // セッションに情報がない場合、ユーザーの基本住所を初期データとして設定
+            $initialShipping = [
+                // DBのカラム名（post_codeなど）からビュー/セッションが期待するキー名（shipping_...）に変換
+                'shipping_post_code' => $user->post_code ?? '',
+                'shipping_address' => $user->address ?? '',
+                'shipping_building' => $user->building_name ?? '',
+            ];
+            // この初期データをセッションに保存
+            Session::put('purchase_shipping', $initialShipping);
+            $shipping = $initialShipping;
+        }
+
+        // 配送先住所をセッションから取得 (ビューに渡すためにオブジェクト化)
+        $shipping = (object)Session::get('purchase_shipping');
+
+        // これで、ShippingAddressController::edit で item_id を取得できるようになる
+        // ★★★ 修正点2: 購入中のitem_idをセッションに保存 ★★★
+        Session::put('purchasing_item_id', $item_id);
+
+        // 3. ビューに商品情報、ユーザー情報、配送先情報を渡す
         return view('new_purchases', [
             'item' => $item,
-            'user' => $user, // ユーザー情報（住所など）をビューに渡す
+            'user' => $user,
+            'shipping' => $shipping, // ★配送先情報をビューに渡す★
         ]);
     }
 
@@ -68,13 +92,26 @@ class PurchaseController extends Controller
             return redirect()->route('items.show', $item->id)->with('error', 'この商品は既に販売済みか、ご自身の出品商品です。');
         }
 
-        //  トランザクション処理を開始 (原子性の確保)
+        // 🚨 修正点1: Session Fallback のキーを 'shipping_' に合わせる 🚨
+        // セッションにない場合、フォームデータ（$validated）をフォールバックとして使用する。
+        $shipping = Session::get('purchase_shipping', [
+            'shipping_post_code' => $validated['shipping_post_code'],
+            'shipping_address' => $validated['shipping_address'],
+            'shipping_building' => $validated['shipping_building'] ?? null,
+        ]);
+
+        // データを取得した後、セッションをクリアする（一度きりの注文のため）
+        Session::forget('purchase_shipping');
+        Session::forget('purchasing_item_id'); // 購入完了に伴い、item_idもクリア
+
+        // 🚨 修正点2: トランザクションの use 変数に $validated と $shipping を追加 🚨
+        // トランザクション処理を開始 (原子性の確保)
         try {
-            DB::transaction(function () use ($item, $user_id, $request) {
+            DB::transaction(function () use ($item, $user_id, $validated, $shipping) {
 
                 // 【要件 1】 itemsテーブルのis_soldをtrueに更新
-                $item->is_sold = true;
-                $item->save();
+                // ★修正箇所: $fillableに依存しない、より確実な更新方法を使用する
+                Item::where('id', $item->id)->update(['is_sold' => true]);
 
                 // 【要件 2】 Purchasesテーブルに購入履歴を作成
                 Purchase::create([
@@ -82,18 +119,19 @@ class PurchaseController extends Controller
                     'user_id' => $user_id,
                     'payment_method_id' => $validated['payment_method_id'],
 
-                    // フォームリクエストのフィールド名（shipping_...）から
-                    // Purchasesテーブルのカラム名（post_code, address, building_name）へマッピング
-                    'post_code' => $validated['shipping_post_code'],
-                    'address' => $validated['shipping_address'],
-                    'building_name' => $validated['shipping_building'],
+                    // 🚨 修正点3: Purchasesテーブルのカラム名（shipping_...）に合わせる 🚨
+                    // セッションキーとDBカラム名が一致していることを確認（マイグレーションファイルに基づく）
+                    'shipping_post_code' => $shipping['shipping_post_code'],
+                    'shipping_address' => $shipping['shipping_address'],
+                    'shipping_building' => $shipping['shipping_building'] ?? null,
 
                     'transaction_status' => true, // 取引完了ステータス
                 ]);
             });
 
-            // 4. 成功したら商品一覧画面へリダイレクト
-            return redirect()->route('items.index')->with('success', '商品の購入が完了しました。');
+            // 4. 成功したら商品詳細画面へリダイレクト
+            // ★★★ 修正点: $item->id を引数として渡す必要があります ★★★
+            return redirect()->route('items.show', $item->id)->with('success', '商品の購入が完了しました。');
 
         } catch (\Exception $e) {
             // エラーログを記録

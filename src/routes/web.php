@@ -130,12 +130,18 @@ Route::middleware('auth')->group(function () {
 
 
         // ==========================================================
-        // ★★★ 配送先住所関連のルート (ShippingAddressControllerを使用) ★★★
+        // ★★★ 配送先住所関連のルート (セッション一時保存用) ★★★
         // ==========================================================
 
-        Route::get('/address', [ShippingAddressController::class, 'edit'])->name('address.edit');
+        // 送付先変更フォームの表示 (editメソッドが担当)
+        Route::get('/address/edit', [ShippingAddressController::class, 'edit'])->name('shipping_session.edit');
 
-        Route::patch('/address', [ShippingAddressController::class, 'update'])->name('address.update');
+        // 送付先一時保存処理 (storeメソッドが担当)
+        // POSTに変更するのが理想ですが、元のPATCHを踏襲しつつ、storeを呼び出す形に修正
+        // ただし、/addressというURIはeditと重複しているため、URIも変更します。
+        Route::patch('/address/store', [ShippingAddressController::class, 'store'])->name('shipping_session.store');
 
+        // 既存の '/address' ルートは混乱を招くため削除または修正が必要です。
+        // Route::get('/address', [ShippingAddressController::class, 'edit'])->name('address.edit'); // ❌ 削除または上記に統合
     });
 });

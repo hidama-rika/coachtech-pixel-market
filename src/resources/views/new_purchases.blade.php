@@ -99,8 +99,9 @@
 
                             {{-- ❗ 修正: ドロップダウンのリスト ❗ --}}
                             <ul id="payment-options" class="custom-select-options payment-options-list">
-                                <li data-value="convenience" class="custom-select-options-text">コンビニ払い</li>
-                                <li data-value="card" class="custom-select-options-text">カード支払い</li>
+                                {{-- IDをPaymentMethodSeederの内容と合わせる --}}
+                                <li data-value="1" class="custom-select-options-text">コンビニ払い</li>
+                                <li data-value="2" class="custom-select-options-text">カード支払い</li>
                             </ul>
 
                             {{-- エラーメッセージのエリア（Laravelの@errorディレクティブを仮定） --}}
@@ -115,22 +116,16 @@
                         {{-- 配送先 --}}
                         <div class="shipping-address-section section-divider">
                             <p class="section-title-small">配送先</p>
-                            <a href="{{ route('address.edit') }}" class="change-link">変更する</a>
+                            {{-- 🚨 ルート名を修正し、セッション保存用の編集画面へ遷移 🚨 --}}
+                            <a href="{{ route('shipping_session.edit') }}" class="change-link">変更する</a>
 
-                            @isset($user)
-                            <!-- 配送情報を隠しフィールドとして送信 (Controllerに合わせて) -->
-                                <input type="hidden" name="shipping_post_code" value="{{ $user->post_code ?? '' }}">
-                                <input type="hidden" name="shipping_address" value="{{ $user->address ?? '' }}">
-                                <input type="hidden" name="shipping_building" value="{{ $user->building_name ?? '' }}">
+                            <input type="hidden" name="shipping_post_code" value="{{ $shipping->shipping_post_code ?? '' }}">
+                            <input type="hidden" name="shipping_address" value="{{ $shipping->shipping_address ?? '' }}">
+                            <input type="hidden" name="shipping_building" value="{{ $shipping->shipping_building ?? '' }}">
 
-                                <!-- 住所情報が存在する場合、それを表示 -->
-                                <p class="address-post-code">〒 {{ $user->post_code ?? '---' }}</p>
-                                <p class="address-detail">{{ ($user->address ?? '配送先住所を登録・変更してください。') . ' ' . ($user->building_name ?? '') }}</p>
-                            @else
-                                <!-- 住所情報が存在しない場合、代替表示 -->
-                                <p class="address-post-code">〒 住所未登録</p>
-                                <p class="address-detail">配送先住所を登録・変更してください。</p>
-                            @endisset
+                            <p class="address-post-code">〒 {{ $shipping->shipping_post_code ?? '---' }}</p>
+                            <p class="address-detail">{{ ($shipping->shipping_address ?? '配送先住所を登録・変更してください。') . ' ' . ($shipping->shipping_building ?? '') }}</p>
+
                         </div>
                     </div>
 
