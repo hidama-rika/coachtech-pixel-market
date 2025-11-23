@@ -196,6 +196,16 @@ body {
     gap: 60px;
 }
 
+.new_purchases-second-container form {
+    display: flex;
+    gap: 40px;
+    /* 要素間のスペース */
+    margin-top: 40px;
+    /* Flexアイテムが縮まないように設定を強化 */
+    align-items: flex-start;
+    /* 上端を揃える */
+}
+
 /* ❗ 左側: 商品詳細と配送情報 ❗ */
 .purchase-details-container {
     width: 100%;
@@ -292,7 +302,6 @@ body {
 .section-divider {
     padding: 30px 0;
     border-bottom: 1px solid #000000;
-    /* セクション間の下線 */
     text-align: left;
 }
 
@@ -347,7 +356,6 @@ body {
 /* 選択済みの値のスタイル */
 .custom-select-control.selected {
     color: #333333;
-    /* 選択後は濃い色に */
 }
 
 /* リストが開いているときのスタイル */
@@ -372,7 +380,6 @@ body {
     border-top: none;
     border-radius: 0 0 4px 4px;
     background-color: #5F5F5F;
-    /* 画像のような濃いグレーの背景 */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
     /* ❗ 修正点: top プロパティを追加または修正 ❗ */

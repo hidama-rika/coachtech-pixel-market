@@ -76,42 +76,38 @@
 
                     {{-- いいね/コメントアイコン --}}
                     <div class="reaction-buttons">
-                        <!-- いいねボタン -->
-                    {{-- 認証済みユーザーのみいいねボタンを有効化 --}}
-                    @auth
-                        {{-- 💡 ここをフォームで囲むことで、ルーティングのエラーを解消します 💡 --}}
-                        {{-- data-item-id は不要になりますが、JavaScript側で data-like-url を使っているのでそのまま残します --}}
-                        {{-- data-* 属性はJavaScriptのために残します --}}
-                        <form id="like-toggle-form" action="{{ route('like.toggle', $item) }}" method="POST">
-                            @csrf
-                            <button type="button" class="reaction-item like-button"
-                            id="like-toggle-button"
-                            data-item-id="{{ $item->id }}"
-                            data-like-url="{{ route('like.toggle', ['item' => $item->id]) }}"
-                            data-is-liked="@if(Auth::user()->isLiking($item)) true @else false
-                            @endif"
-                            >
-                                <span class="reaction-icon">
-                                    {{-- ユーザーがいいね済みなら 'liked' クラスを付与 --}}
-                                    <img src="{{ asset('storage/img/Vector (4).png') }}" alt="いいねアイコン" class="like-icon-img @if(Auth::user()->isLiking($item)) liked @endif" id="like-icon">
-                                </span>
-                            </button>
-                        </form>
-                    @else
-                        {{-- 未認証ユーザーはボタンとして機能させず、アイコンとカウントのみ表示 --}}
+
+                        {{-- いいね要素全体を、常に一つの親要素で囲む（この要素はFlexアイテムとして動作） --}}
                         <div class="reaction-item">
-                            <div class="reaction-item-liked">
-                                <span class="reaction-icon">
-                                    <img
-                                    src="{{ asset('storage/img/Vector (4).png') }}"
-                                    alt="いいねアイコン"
-                                    class="icon like-icon-img @if($isLiked ?? false) liked @endif"
-                                    id="like-icon"
+
+                            @auth
+                                <form id="like-toggle-form" action="{{ route('like.toggle', $item) }}" method="POST">
+                                    @csrf
+                                    <button type="button" class="like-button"
+                                    id="like-toggle-button"
+                                    data-item-id="{{ $item->id }}"
+                                    data-like-url="{{ route('like.toggle', ['item' => $item->id]) }}"
+                                    data-is-liked="@if(Auth::user()->isLiking($item)) true @else false @endif"
                                     >
-                                </span>
-                            </div>
-                    @endauth
-                        {{-- いいね数の表示を @auth/@else の外に出して、常に表示されるように変更 --}}
+                                        <span class="reaction-icon">
+                                            <img src="{{ asset('storage/img/Vector (4).png') }}" alt="いいねアイコン" class="like-icon-img @if(Auth::user()->isLiking($item)) liked @endif" id="like-icon">
+                                        </span>
+                                    </button>
+                                </form>
+                            @else
+                                <div class="reaction-item-liked">
+                                    <span class="reaction-icon">
+                                        <img
+                                        src="{{ asset('storage/img/Vector (4).png') }}"
+                                        alt="いいねアイコン"
+                                        class="icon like-icon-img @if($isLiked ?? false) liked @endif"
+                                        id="like-icon"
+                                        >
+                                    </span>
+                                </div>
+                            @endauth
+
+                            {{-- いいね数の表示を .reaction-item の直下（@auth/@else の外）に移動 --}}
                             <span class="reaction-count" id="like-count">
                                 {{ $item->likedUsers->count() }}
                             </span>
@@ -126,8 +122,8 @@
                         </div>
                     </div>
 
-                    {{-- 購入手続きへ ボタン (画像中央の右側エリアにあるため移動) --}}
-                    <a href="{{ route('purchases.create', ['item_id' => $item->id]) }}" class="purchase-link">購入手続きへ</a>
+                    {{-- 購入手続きへ ボタン --}}
+                    <a href="{{ route('new_purchases', ['item_id' => $item->id]) }}" class="purchase-link">購入手続きへ</a>
 
                     {{-- 商品説明 --}}
                     <h2 class="section-title">商品説明</h2>
@@ -192,7 +188,7 @@
                                 </div>
                             @empty
                                 {{-- コメントがない場合の表示 --}}
-                                <p class="no-comment-message">コメントなし。</p>
+                                <p class="no-comment-message">まだコメントはありません。</p>
                             @endforelse
                         </div>
 

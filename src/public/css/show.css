@@ -67,10 +67,12 @@ html {
 .search-form-container {
     flex-grow: 1;
     /* 成長させて中央の空きスペースを埋める */
-    max-width: 600px;
+    /* max-width: 600px; */
     /* 検索フォームの最大幅を設定（デザインに合わせて調整） */
-    margin: 0 50px;
+    margin: 0 40px;
     /* 左右に適切な余白を設定（デザインに合わせて調整） */
+    /* ❗ 修正: 検索フォームが潰れないための最小幅 ❗ */
+    min-width: 300px;
 }
 
 /* 検索入力欄 */
@@ -89,6 +91,7 @@ html {
     display: flex;
     height: 44px;
     flex-shrink: 0;
+    gap: 10px;
 }
 
 /* ログアウトとマイページのスタイルを統合し、リンクのような見た目にする */
@@ -110,6 +113,19 @@ html {
     text-decoration: none;
 }
 
+/* ❗ 追加: ログアウトフォームの右側にマージンを追加 ❗ */
+.nav-menu>form {
+    display: inline-flex;
+    margin: 0 0 0 0;
+    /* 元々のマージンをリセット */
+    padding: 0;
+    border: none;
+
+    /* ログアウトボタンとマイページボタンの間にマージンを追加 */
+    margin: 0;
+    /* マイページと出品ボタンの間にはマージンがないため、調整が必要です */
+}
+
 /* ❗ 修正: 出品ボタンのスタイルを画像に合わせる */
 .sell-button {
     width: 100px;
@@ -118,7 +134,7 @@ html {
     background-color: #FFFFFF;
     border: 1px solid #333333;
     border-radius: 5px;
-    margin-left: 20px;
+    margin: 0;
     padding: 0;
     line-height: 1;
     /* ❗ 追加: flexコンテナとして文字を中央に配置する */
@@ -334,21 +350,22 @@ body {
     cursor: default;
     margin-right: 10px;
     margin-left: 30px;
+    justify-content: space-between;
 }
 
 /* ---------------------------------- */
 /* ❗ 追加: いいねボタンの不要なボックス装飾をリセット ❗ */
 /* ---------------------------------- */
-.reaction-item.like-button {
+.like-button {
     /* 背景色を透明にする */
     background-color: transparent;
     /* 境界線（枠）を消す */
     border: none;
     /* 内側の余白をリセット */
     padding: 0;
+    outline: none;
     /* 外側の余白を調整（必要であれば） */
     margin: 0;
-    margin-left: 30px;
     cursor: pointer;
 }
 
@@ -381,6 +398,7 @@ body {
     font-size: 1rem;
     color: #333333;
     line-height: 1;
+    margin: 0;
 }
 
 /* ---------------------------------- */
@@ -402,9 +420,6 @@ body {
     /* 完全なカラー表示 */
 }
 
-
-
-
 /* 購入手続きへ ボタン (情報エリア内) */
 .purchase-link {
     display: block;
@@ -418,6 +433,9 @@ body {
     font-size: 1.25rem;
     font-weight: bold;
     margin-bottom: 50px;
+    /* ❗ 最重要修正: 異常な配置をリセットし、レイヤーの重なりを修正 ❗ */
+    position: relative;
+    z-index: 1;
 }
 
 .section-title {
@@ -430,14 +448,12 @@ body {
 /* 商品の情報 (カテゴリ/状態) のコンテナ */
 .item-metadata {
     margin-top: 15px;
-    /* 商品説明との間隔 */
 }
 
 .metadata-row {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
-    /* 各行の間隔 */
 }
 
 /* ラベル (カテゴリー、商品の状態) */
@@ -456,7 +472,6 @@ body {
     padding: 5px 15px;
     /* ボックスのパディング */
     margin-right: 20px;
-    /* 値同士の間隔 */
     border-radius: 5px;
     white-space: nowrap;
     line-height: 1.5;
@@ -464,16 +479,13 @@ body {
 }
 
 /* ❗ 修正: カテゴリーの値にのみボックススタイルを適用 ❗ */
-/* 画像（image_9617c2.png）より、カテゴリーの値（洋服, メンズ）にのみグレーのボックスが付いています。*/
 .metadata-row:nth-child(1) .metadata-value {
     /* 修正: 親の .metadata-value はFlexboxのコンテナとして機能させる */
     display: flex;
     flex-wrap: wrap;
     /* タグが複数行になった場合に折り返す */
     gap: 10px;
-    /* タグ間の間隔 (画像に合わせて10px程度に調整) */
     background-color: transparent;
-    /* 親要素の背景は透明にする */
     padding: 0;
     /* 親要素のパディングもリセット */
     margin: 0;
@@ -497,7 +509,6 @@ body {
     height: 30px;
     /* 高さを指定して統一感を出す */
 
-    /* テキストが折り返さないように */
     white-space: nowrap;
 }
 
@@ -510,7 +521,6 @@ body {
     /* パディングをリセット */
     font-weight: normal;
     font-size: 1.25rem;
-    /* ラベルと同じか少し大きめのサイズに調整 */
 }
 
 .comment-section {
@@ -635,21 +645,6 @@ body {
     margin-bottom: 5px;
 }
 
-/* ---------------------------------- */
-/* ❗ 追加: ログイン時のみ出現するFORMのレイアウトを修正 ❗ */
-/* ---------------------------------- */
-#like-toggle-form {
-    /* フォーム要素をインライン要素として扱い、周囲のFlexboxの流れに乗せる */
-    /* これにより、フォームが独立したブロック要素として振る舞い、レイアウトを破壊するのを防ぎます */
-    display: inline-flex;
-    /* または display: contents; も有効な場合がありますが、inline-flexが確実です */
-
-    /* フォーム自体の余白や境界線をリセット（もしデフォルトで設定されていた場合） */
-    margin: 0;
-    padding: 0;
-    border: none;
-}
-
 /* ---------------------------------------------------------------------- */
 /* 3. レスポンシブ対応のためのメディアクエリ */
 /* ---------------------------------------------------------------------- */
@@ -680,12 +675,4 @@ body {
     }
 
     /* その他、この画面幅でのデザイン調整があれば追記 */
-}
-
-/* ---------------------------------- */
-/* ❗ 追加: コメントボタンのカーソルを明示的に解除 ❗ */
-/* ---------------------------------- */
-.reaction-item.comment-button {
-    /* カーソルをデフォルト（矢印）に戻す */
-    cursor: default;
 }

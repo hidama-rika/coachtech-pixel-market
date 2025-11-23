@@ -94,7 +94,7 @@ Route::middleware('auth')->group(function () {
 
         // マイページトップ（最終的な遷移先であり、プロフィール設定後にアクセス可能となる）
         Route::get('/mypage', [MypageController::class, 'index'])
-            ->name('itms.index');
+            ->name('mypage');
 
         // マイリスト（いいねした商品一覧）
         // ★★★ このルートを追加します ★★★
@@ -111,10 +111,14 @@ Route::middleware('auth')->group(function () {
         // ==========================================================
 
         // 購入手続き画面の表示
-        Route::get('/purchase/{item_id}', [PurchaseController::class, 'create'])->name('purchases.create');
+        Route::get('/purchase/{item_id}', [PurchaseController::class, 'create'])->name('new_purchases');
 
         // 購入確定処理 (POST)
-        Route::post('/purchase/{item_id}', [PurchaseController::class, 'store'])->name('purchases.store');
+        Route::post('/purchase', [PurchaseController::class, 'store'])->name('purchase.store');
+
+        Route::get('/purchase', function () {
+            return redirect()->route('items.index'); // このルートが存在しない場合、エラーの参照元になる
+        });
 
         // コメント投稿用のルート (POSTリクエスト)
         // /{item_id}/comments の形式でアクセスできるように定義します

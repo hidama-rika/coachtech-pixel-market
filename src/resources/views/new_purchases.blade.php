@@ -47,12 +47,15 @@
     <main>
         <div class="new_purchases-container">
 
-            <div class="new_purchases-form-container">
+            <div class="new_purchases-second-container">
 
-                <form action="{{ route('purchase.store', ['item_id' => $item->id ?? 0]) }}" method="POST" class="new_purchases-form-container">
+                {{-- 🔥 修正: $item が存在する場合のみフォームを表示し、アクションはシンプルな route('purchase.store') にする 🔥 --}}
+                @isset($item)
+                <form action="{{ route('purchase.store') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="item_id" value="{{ $item->id ?? '' }}">
+                    <input type="hidden" name="item_id" value="{{ $item->id }}">
 
+                    {{-- 購入サマリーエリア（左側） --}}
                     <div class="purchase-details-container">
 
                         <div class="item-info">
@@ -87,7 +90,7 @@
                             <p class="section-title-small">支払い方法</p>
 
                             {{--修正: フォーム送信用の隠し入力フィールド--}}
-                            <input type="hidden" id="payment_method_input" name="payment_method" value="">
+                            <input type="hidden" id="payment_method_input" name="payment_method_id" value="">
 
                             {{--修正: カスタムドロップダウンの表示エリア--}}
                             <div id="custom-payment-select" class="form-control custom-select-control payment-select-display">
@@ -102,7 +105,7 @@
 
                             {{-- エラーメッセージのエリア（Laravelの@errorディレクティブを仮定） --}}
                             <p class="new_purchases-form__error-message">
-                                @error('payment_method')
+                                @error('payment_method_id')
                                 {{ $message }}
                                 @enderror
                             </p>
@@ -148,6 +151,13 @@
                         </div>
                     </div>
                 </form>
+                @else
+                    {{-- $item が存在しない場合（PurchaseController@createでエラー処理された後など）--}}
+                    <div class="error-message-box">
+                        <p>商品情報が見つからないため、購入手続きに進めません。</p>
+                        <a href="{{ route('items.index') }}">商品一覧へ戻る</a>
+                    </div>
+                @endisset
             </div>
         </div>
     </main>
