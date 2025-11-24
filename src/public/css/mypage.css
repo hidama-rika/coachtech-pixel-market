@@ -220,6 +220,17 @@ body {
     display: block;
 }
 
+/* ★追加: 画像がない/ロードエラー時のプレースホルダーテキストのスタイル */
+.avatar-placeholder-text {
+    color: #555555;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    /* 画像がないときに中央に表示されるように */
+    line-height: 1.2;
+}
+
 /* ユーザー名と編集ボタンのコンテナ */
 .profile-info {
     display: flex;

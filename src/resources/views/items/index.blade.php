@@ -64,16 +64,26 @@
                     @php
                         // $lastKeywordが空でなければ、リンクにキーワードを含める
                         $routeParams = !empty($lastKeyword) ? ['keyword' => $lastKeyword] : [];
+
+                        // ★★★ 修正: おすすめタブがアクティブになる条件を定義 ★★★
+                        // 以下のいずれかの条件を満たすとき、'active' クラスを付与する:
+                        // 1. マイリスト画面ではない (おすすめ画面にいる)
+                        // 2. かつ、URLに 'keyword' パラメータが含まれている (検索結果を表示している)
+                        $isRecommendActive = !Request::is('mylist') && Request::has('keyword');
                     @endphp
                     <a
                         href="{{ route('items.index', $routeParams) }}"
-                        class="tab-link @if(!Request::is('mylist')) active @endif"
+                        class="tab-link @if($isRecommendActive) active @endif"
                     >
                         <span class="tab-text">おすすめ</span>
                     </a>
                     {{-- 未認証ユーザーはマイリストにアクセスできないため、@auth ディレクティブで囲む --}}
                     @auth
-                        <a href="/mylist" class="tab-link @if(Request::is('mylist')) active @endif">
+                        @php
+                            // ★★★ マイリストのリンクに、$lastKeyword を付与する ★★★
+                            $mylistParams = !empty($lastKeyword) ? ['keyword' => $lastKeyword] : [];
+                        @endphp
+                        <a href="{{ route('items.mylist', $mylistParams) }}" class="tab-link @if(Request::is('mylist')) active @endif">
                             <span class="tab-text">マイリスト</span>
                         </a>
                     @endauth

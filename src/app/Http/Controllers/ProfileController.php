@@ -49,16 +49,31 @@ class ProfileController extends Controller
             // 1. 画像ファイルの処理
             // ------------------------------------
             if ($request->hasFile('profile_image')) {
+                // ★ケース1: 新しい画像が送信された場合
+
                 // 古い画像ファイルがあれば削除
-                if ($user->profile_image) {
-                    Storage::delete('public/' . $user->profile_image);
+                if ($user->profile_image && Storage::disk('public')->exists($user->profile_image)) {
+                    Storage::disk('public')->delete($user->profile_image);
                 }
 
                 // 新しい画像を保存し、保存先パスを取得
-                // ファイル名はハッシュ化され、'public/profile_images' ディレクトリに保存
                 $path = $request->file('profile_image')->store('profile_images', 'public');
                 $user->profile_image = $path; // storage/app/publicからの相対パスを保存
+
+            // } elseif ($request->filled('remove_image')) {
+                // ★ケース2: 画像削除フラグが送られてきた場合（今後フロントエンドに削除ボタンやチェックボックスが必要になる場合）
+
+                // 古い画像ファイルがあれば削除
+                if ($user->profile_image && Storage::disk('public')->exists($user->profile_image)) {
+                    Storage::disk('public')->delete($user->profile_image);
+                }
+
+                // DBのプロフィール画像パスをnullに設定
+                $user->profile_image = null;
+
             }
+            // ★ケース3: 画像ファイルも削除フラグも送信されなかった場合
+            // 既存の $user->profile_image はそのまま維持されます。
 
             // ------------------------------------
             // 2. ユーザーデータの更新
@@ -84,12 +99,12 @@ class ProfileController extends Controller
                 // 新規登録フローからの完了時 (profile_edit完了)
                 $message = 'プロフィール登録が完了しました！サービスを始めましょう！';
                 // 通常はmypageのメイン画面へリダイレクト
-                return redirect()->route('mypage.index')->with('success', $message);
+                return redirect()->route('mypage')->with('success', $message);
             } else {
                 // 通常のプロフィール更新時
                 $message = 'プロフィールが正常に更新されました。';
                 // マイページ（ルート名 'mypage.index' を想定）へリダイレクト
-                return redirect()->route('mypage.index')->with('success', $message);
+                return redirect()->route('mypage')->with('success', $message);
             }
 
         } catch (\Exception $exception) {

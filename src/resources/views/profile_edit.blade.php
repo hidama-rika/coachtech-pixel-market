@@ -49,7 +49,8 @@
 
             <div class="form-title">プロフィール設定</div>
 
-            <form class="form" action="{{ route('mypage.profile.update') }}" method="post" enctype="multipart/form-data" novalidate>
+            <!-- 302が出たため、 onsubmit属性を追加して、確実に通常の送信を許可する -->
+            <form method="POST" action="{{ route('mypage.profile.update') }}" enctype="multipart/form-data" class="js-normal-form" onsubmit="return true;" novalidate>
                 @csrf
                 @method('patch') <!-- PATCHメソッドを指定 -->
 
@@ -59,6 +60,13 @@
                 {{-- プロフィール画像 --}}
                 <div class="profile-image-section">
                     <div class="profile-image-area">
+                        @php
+                            // 既存の画像パスをチェックし、存在しない場合はデフォルトのプレースホルダーを使用
+                            // $user->profile_image が null または空の場合に備える
+                            $profileImagePath = empty($user->profile_image) ?
+                                'https://placehold.co/120x120/D9D9D9/333333?text=Avatar' :
+                                asset('storage/' . $user->profile_image);
+                        @endphp
                         <!-- idを追加してJavaScriptからアクセスできるようにする -->
                         <img
                             id="profile-preview"

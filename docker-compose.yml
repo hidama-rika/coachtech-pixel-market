@@ -40,3 +40,16 @@ services:
       - mysql
     ports:
       - 8080:80
+
+  # --- ここから MailHog サービスを追加 ---
+  mailhog:
+    image: mailhog/mailhog
+    # mailhogサービス名は 'mailhog' となり、LaravelのMAIL_HOSTとして使用します。
+    ports:
+      # SMTP ポート: Laravel がメールを送信する先 (ホスト:1025 -> コンテナ:1025)
+      - "1025:1025"
+      # Web UI ポート: ブラウザで受信箱を確認する (ホスト:8025 -> コンテナ:8025)
+      - "8025:8025"
+    networks:
+      # 既存のサービスと同じネットワークに所属させることで、ホスト名 'mailhog' で接続できます。
+      - default

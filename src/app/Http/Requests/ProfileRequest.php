@@ -14,7 +14,9 @@ class ProfileRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        // 認証済みユーザーであればアクセスを許可
+        // ★修正点1: true ではなく Auth::check() を使用して認証を確認
+        return Auth::check();
     }
 
     /**
@@ -29,7 +31,7 @@ class ProfileRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
-                'max:20',
+                'max:255',
             ],
 
             // プロフィール画像 (Profile Image) のバリデーション
@@ -37,7 +39,7 @@ class ProfileRequest extends FormRequest
                 'nullable',
                 'image',
                 'mimes:jpeg,png',
-                'max:2048', // 2MBの上限を追加しておくと安全です
+                // 'max:2048', // 2MBの上限を追加しておくと安全です
             ],
 
             // プロフィール住所用
@@ -74,7 +76,7 @@ class ProfileRequest extends FormRequest
             // ユーザー名に関するメッセージ
             'name.required' => 'ユーザー名を入力してください。',
             'name.string' => 'ユーザー名は文字列で入力してください。',
-            'name.max' => 'ユーザー名は20文字以内で入力してください。',
+            'name.max' => 'ユーザー名は255文字以内で入力してください。',
 
             // プロフィール画像に関するメッセージ
             'profile_image.image' => 'プロフィール画像はJPEG、またはPNG形式でアップロードしてください。',

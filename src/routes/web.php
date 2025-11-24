@@ -11,6 +11,7 @@ use App\Http\Controllers\ShippingAddressController;
 use App\Http\Controllers\CommentController;
  // コントローラーをインポート
 use App\Http\Controllers\LikeController;
+use Laravel\Fortify\Fortify; // Fortifyのuseステートメント
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,7 @@ use App\Http\Controllers\LikeController;
 // 開発用表示ルート Route::view('URI', 'ビュー名');
 Route::view('/login', 'auth.login');
 Route::view('/register', 'auth.register');
+// Route::view('/verify-email', 'auth.verify-email');
 // Route::view('/address', 'shipping-address_edit');
 // Route::view('/', 'index');
 // Route::view('/mypage/profile', 'profile_edit');
@@ -68,6 +70,8 @@ Route::post('/logout', [CustomAuthenticatedSessionController::class, 'destroy'])
     ->middleware(['web'])
     ->name('logout');
 
+// resources/views/auth/verify-email.blade.php を表示する、Fortify::verifyEmailView の設定ブロックは削除し、AppServiceProviderに移動
+
 
 
 
@@ -90,7 +94,7 @@ Route::middleware('auth')->group(function () {
     // B. プロフィール設定強制ミドルウェア適用ルート
     // --------------------------------------------------
     // これらのルートはプロフィール設定が完了するまでアクセスが強制的に阻止される
-    Route::middleware(['check.profile.set'])->group(function () {
+    Route::middleware(['verified', 'check.profile.set'])->group(function () {
 
         // マイページトップ（最終的な遷移先であり、プロフィール設定後にアクセス可能となる）
         Route::get('/mypage', [MypageController::class, 'index'])

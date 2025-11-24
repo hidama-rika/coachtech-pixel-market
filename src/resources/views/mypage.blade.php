@@ -59,7 +59,7 @@
                     {{-- $user->profile_imageがnullの場合のフォールバックを追加 --}}
                     <img
                         src="{{ asset('storage/' . ($user->profile_image ?? 'default/no-avatar.png')) }}"
-                        alt="{{ $user->name ?? 'ユーザー' }}のアバター"
+                        alt=""
                     >
                 </div>
                 <div class="profile-info">

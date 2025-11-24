@@ -84,21 +84,44 @@ class ItemController extends Controller
         // 1. ログインユーザーのIDを取得
         $userId = Auth::id();
 
-        // 2. ユーザーが「いいね」した商品のIDリストを取得
+        // ★★★ 検索状態の保持ロジックを追加 ★★★
+        // 2. indexと同じく、URLのキーワードを取得
+        $keywordForFiltering = $request->input('keyword');
+
+        // 3. indexと同じく、URLに 'keyword' があればセッションを更新
+        if ($request->has('keyword')) {
+            session(['last_search_keyword' => $keywordForFiltering ?? '']);
+        }
+        // ★★★ 検索状態の保持ロジックはここまで ★★★
+
+        // 4. 基本クエリ: ログインユーザーがいいねした Item の ID リストを取得
         // Like モデルに user_id と item_id があることを想定
         $likedItemIds = Like::where('user_id', $userId)
                             ->pluck('item_id');
 
-        // 3. 取得したIDリストに基づいて Item を取得
-        $items = Item::whereIn('id', $likedItemIds)->get();
+        // ★★★ 修正ポイント: クエリビルダを $query に代入し、販売済みを除外 ★★★
+        $query = Item::whereIn('id', $likedItemIds)
+                    ->where('is_sold', false);
 
-        // セッションに保存された前回の検索キーワードを取得
-        $lastKeyword = $request->session()->get('last_search_keyword', '');
+        // 5. 検索機能の追加 (コンテンツのフィルタリング)
+        //    URLにキーワードがある場合のみ、クエリに検索条件を追加
+        if (!empty($keywordForFiltering)) {
+            // ★ $query に対して where 条件を追加 ★
+            $query->where('name', 'LIKE', '%' . $keywordForFiltering . '%');
+        }
+
+        // 6. クエリの実行
+        // ★ 最後に $query に対して orderBy と get() を適用して結果を取得 ★
+        $items = $query->orderBy('created_at', 'desc')->get();
+
+        // 7. Viewへ渡す
+        $lastKeywordForView = session('last_search_keyword') ?? '';
 
         // index.blade.php にマイリストの商品データとキーワードデータを渡す
         return view('items.index', [
             'items' => $items,
-            'lastKeyword' => $lastKeyword // キーワードを渡す
+            // ★ 変数名を $lastKeywordForView に統一（$lastKeyword のままでも動作するが、可読性のため） ★
+            'lastKeyword' => $lastKeywordForView
         ]);
     }
 

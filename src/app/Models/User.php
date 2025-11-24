@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail; // ★ メール認証のため
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -15,7 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 // ★★★ isLikingメソッドの引数タイプヒントとlikesリレーションのためにItemモデルをuseします ★★★
 use App\Models\Item;
 
-class User extends Authenticatable
+// ★ MustVerifyEmail インターフェースを実装。implements MustVerifyEmail記述追加
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
     // ★★★ これで正しくFortifyのトレイトが読み込まれます ★★★

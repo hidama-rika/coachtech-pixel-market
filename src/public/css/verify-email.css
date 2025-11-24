@@ -1,0 +1,240 @@
+* {
+    box-sizing: border-box;
+}
+
+/* 横スクロールを強制的に有効にする */
+html {
+    overflow-x: hidden;
+}
+
+/*  ヘッダー共通スタイル */
+
+.header-shadow {
+    display: flex;
+    background-color: #000000;
+    width: 100%;
+    height: 82px;
+    top: 0;
+    left: 0;
+    padding: 10px 20px;
+    border-bottom-width: 1px;
+    position: fixed;
+    z-index: 100;
+}
+
+.header-content {
+    width: 100%;
+    max-width: 1515px;
+    margin: 0 auto;
+    /* コンテンツをヘッダーの幅の中央に配置 */
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    width: auto;
+    height: 36px;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+/* ロゴアイコンのコンテナ */
+.logo-icon {
+    width: auto;
+    height: auto;
+}
+
+/* 修正：ロゴテキストのコンテナ */
+.logo-text {
+    width: auto;
+    height: auto;
+}
+
+/* ロゴ画像自体に高さを設定してサイズを制御 */
+.logo img.icon {
+    /* 親要素の高さに合わせるか、固定値を設定 */
+    height: 36px;
+    /* 親要素の高さ 36px に合わせる */
+    width: auto;
+    display: block;
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+/* ---------------------------------------------------------------------- */
+/* 2. メール認証誘導画面（verify-email）のスタイル */
+/* ---------------------------------------------------------------------- */
+
+.verify-email-container {
+    background-color: #FFFFFF;
+    text-align: center;
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 82px;
+    margin: 0 auto;
+
+    /* フォームを垂直・水平方向に中央配置するためにFlexboxを適用 */
+    display: flex;
+    justify-content: center;
+    /* 水平中央 */
+    align-items: flex-start;
+    /* 垂直方向は上部から開始（ヘッダー分パディングがあるため） */
+}
+
+.verify-email-form-container {
+    background-color: #FFFFFF;
+    text-align: center;
+    width: 100%;
+    max-width: 720px;
+    height: auto;
+    /* フォームの背景色と角丸はデザイン画像にはないので一旦削除 */
+    /* border-radius: 24px; */
+    /* padding: 40px; */
+
+    /* コンテンツ全体の縦方向の中央寄せをシミュレート */
+    margin-top: 150px;
+    margin-bottom: 50px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+    /* flex-startにしてmarginで位置調整 */
+}
+
+/* メッセージエリアのスタイル */
+.message-area {
+    /* メッセージ間の調整用 */
+    margin-bottom: 50px;
+}
+
+.verify-message-sent,
+.verify-instruction {
+    /* メッセージの共通スタイル (画像からの推測) */
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 1.2rem;
+    /* サイズ調整 */
+    line-height: 150%;
+    color: #000000;
+    margin: 0;
+    /* デフォルトマージンをリセット */
+    padding: 0;
+}
+
+.verify-instruction {
+    /* 2行目のメッセージに少し上部マージンを設定 */
+    margin-top: 10px;
+}
+
+/* ボタンとリンクの領域 */
+.action-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 300px;
+    /* ボタン/リンクの最大幅を制限 */
+}
+
+.verify-email-btn {
+    /* 認証はこちらからボタンのスタイル（画像のデザインに合わせる） */
+    width: 100%;
+    max-width: 257px;
+    height: 48px;
+    /* デザイン画像に合わせて高さを調整 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    /* aタグの装飾を解除 */
+
+    border: 1px solid #000000;
+    /* 細い境界線を追加（画像からの推測） */
+    border-radius: 5px;
+    /* 角丸を適用 */
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #000000;
+    cursor: pointer;
+    background-color: #D9D9D9;
+    /* グレーの背景色 */
+    transition: background-color 0.3s;
+}
+
+.verify-email-btn:hover {
+    background-color: #cccccc;
+}
+
+/* 認証メールを再送するリンクのスタイル */
+.resend-form {
+    margin-top: 30px;
+    /* ボタンとリンクの間隔 */
+    width: 100%;
+}
+
+.verify-email-link {
+    /* 認証メールを再送するボタン/リンクのスタイル */
+    background: none;
+    border: none;
+    padding: 0;
+    font-weight: 400;
+    font-size: 1rem;
+    color: #0073CC;
+    /* 青色リンク */
+    text-decoration: none;
+    /* デフォルトのアンダーラインを削除 */
+    cursor: pointer;
+    display: inline-block;
+    /* text-align: center;を有効にするため */
+}
+
+.verify-email-link:hover {
+    text-decoration: underline;
+}
+
+/* ---------------------------------------------------------------------- */
+/* 3. レスポンシブ対応のためのメディアクエリ */
+/* ---------------------------------------------------------------------- */
+
+/* 1. 超広幅PCモニター対応 (1541px以上) */
+/* 非常に広い画面幅でコンテンツを広げる、または特定の要素のサイズを拡大する場合に利用 */
+@media screen and (min-width: 1541px) {
+
+    /* 1515pxのコンテンツ幅を、例えば1800pxに広げる場合 */
+    .header-content {
+        max-width: 1800px;
+        /* 必要に応じてコンテンツの最大幅を広げる */
+    }
+
+    /* その他、超広幅画面でのデザイン調整があれば追記 */
+}
+
+
+/* 2. 狭いPC画面対応 (1399px以下) */
+@media screen and (max-width: 1399px) {
+
+    /* ❗ フォームの幅を柔軟な設定で上書きする */
+    .login-form-container {
+        width: 90%;
+        /* 1399px以下で90%幅に */
+        max-width: 680px;
+        /* 念のため最大幅は680pxに制限 */
+        padding: 30px;
+        /* パディングを詰める（任意） */
+        margin-top: 20px;
+        /* 上部のマージンを詰める（任意） */
+    }
+
+    /* その他、この画面幅でのデザイン調整があれば追記 */
+    .header-content {
+        padding: 12px 10px;
+    }
+}
