@@ -98,13 +98,13 @@ class ProfileController extends Controller
             if ($wasUnregistered) {
                 // 新規登録フローからの完了時 (profile_edit完了)
                 $message = 'プロフィール登録が完了しました！サービスを始めましょう！';
-                // 通常はmypageのメイン画面へリダイレクト
-                return redirect()->route('mypage')->with('success', $message);
+                // 通常は商品一覧のトップ画面へリダイレクト
+                return redirect()->route('items.index')->with('success', $message);
             } else {
                 // 通常のプロフィール更新時
                 $message = 'プロフィールが正常に更新されました。';
-                // マイページ（ルート名 'mypage.index' を想定）へリダイレクト
-                return redirect()->route('mypage')->with('success', $message);
+                // 商品一覧画面（ルート名 'items.index' を想定）へリダイレクト
+                return redirect()->route('items.index')->with('success', $message);
             }
 
         } catch (\Exception $exception) {

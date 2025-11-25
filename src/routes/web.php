@@ -96,13 +96,14 @@ Route::middleware('auth')->group(function () {
     // これらのルートはプロフィール設定が完了するまでアクセスが強制的に阻止される
     Route::middleware(['verified', 'check.profile.set'])->group(function () {
 
+        // マイリスト（いいねした商品一覧）
+        // ★★★ このルートを追加します ★★★
+        Route::get('/mylist', [ItemController::class, 'mylist'])->name('items.mylist');
+
         // マイページトップ（最終的な遷移先であり、プロフィール設定後にアクセス可能となる）
         Route::get('/mypage', [MypageController::class, 'index'])
             ->name('mypage');
 
-        // マイリスト（いいねした商品一覧）
-        // ★★★ このルートを追加します ★★★
-        Route::get('/mylist', [ItemController::class, 'mylist'])->name('items.mylist');
 
         // ==========================================================
         // ★★★ 商品出品ルートの修正 ★★★

@@ -17,8 +17,8 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    // 💡 認証後のデフォルトリダイレクト先をマイページに変更
-    public const HOME = '/mypage';
+    // 💡 認証後のデフォルトリダイレクト先を商品一覧に変更
+    public const HOME = '/';
 
     /**
      * The controller namespace for the application.

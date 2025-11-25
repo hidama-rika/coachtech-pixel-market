@@ -19,31 +19,26 @@ class CheckProfileSet
      */
     public function handle(Request $request, Closure $next)
     {
-        // ユーザーが認証されていない場合は、次の処理に進む
-        if (!Auth::check()) {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        // ユーザーが認証されていない場合は、次の処理に進む（'auth'ミドルウェアが先に処理するため通常は発生しないが保険として）
+        if (!$user) {
             return $next($request);
         }
 
-        // 現在認証されているユーザーを取得
-        // Userモデルはファイル冒頭で use App\Models\User; されているので直接使えます
-        $user = Auth::user();
-
-        // 💡 修正: usersテーブルのpost_codeまたはaddressが空かどうかでプロフィール設定をチェック
-        // ※ 実際にどのフィールドを必須としているかに合わせて条件を変更してください
-        $profileNotSet = empty($user->post_code) || empty($user->address);
-
-        // プロフィール情報が設定されていない場合
-        if ($profileNotSet) {
+        // Userモデルに定義されたメソッドでプロフィール未登録をチェック
+        if ($user->isProfileUnregistered()) {
 
             $currentRouteName = $request->route()->getName();
 
-            // 現在アクセス中のルートがプロフィール設定画面（profile_edit）または
-            // プロフィール保存処理（register.target.save）ではない場合にリダイレクトする
-            // ※ ルート名はアプリケーションの設定に合わせて確認・修正してください
-            if (!in_array($currentRouteName, ['profile_edit', 'register.target.save'])) {
+            // 現在アクセス中のルートがプロフィール設定画面（profile_edit）ではない、
+            // かつ、プロフィール更新処理（mypage.profile.update）でもない場合にリダイレクト
+            // これらのルートは未設定でもアクセス可能にする必要がある
+            if (!in_array($currentRouteName, ['profile_edit', 'mypage.profile.update'])) {
 
                 // profile_edit登録フォームへ強制リダイレクト
-                return redirect()->route('profile_edit')->with('status', 'プロフィールを先に設定してください。');
+                return redirect()->route('profile_edit')->with('status', 'プロフィール情報の必須項目を設定してください。');
             }
         }
 

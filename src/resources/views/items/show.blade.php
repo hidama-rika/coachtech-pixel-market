@@ -171,7 +171,7 @@
                                             {{-- $comment->user は必ず存在し、profile_image には必ずデータがある前提 --}}
                                                 <img
                                                 src="{{ asset('storage/'. $comment->user->profile_image) }}"
-                                                alt="{{ $comment->user->name }}のアバター"
+                                                alt=""
                                                 >
                                             </div>
                                         </div>

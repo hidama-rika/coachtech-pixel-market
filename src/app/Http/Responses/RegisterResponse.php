@@ -4,7 +4,7 @@ namespace App\Http\Responses; // 名前空間を Responses に変更
 
 use Illuminate\Http\Resources\Json\JsonResponses;
 use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
-
+use Illuminate\Support\Facades\Redirect; // Redirect ファサードを追加
 
 /**
  * Fortifyによる新規登録が成功した後の応答を定義します。
