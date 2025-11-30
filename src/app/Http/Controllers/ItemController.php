@@ -44,8 +44,9 @@ class ItemController extends Controller
         // URLにキーワードがない場合、セッションは更新しない
         // （他のタブから戻る時の復元用として、前回の検索キーワードを保持し続けます）
 
-        // 3. 基本クエリの組み立て: 販売ステータスが未販売（is_sold = false）の商品
-        $query = Item::where('is_sold', false);
+        // 3. 基本クエリの組み立て: 「非表示にする」という要件をなくし、「すべての商品を表示する（ただし、自分の出品した商品は除外）」というロジックに変更
+        // 【修正後】 is_sold の条件を削除し、すべてのアイテムを対象とする
+        $query = Item::query(); // Itemモデルのクエリビルダを開始
 
         // 4. 検索機能の追加 (コンテンツのフィルタリング)
         //    URLにキーワードがある場合のみ、クエリに検索条件を追加
@@ -58,6 +59,12 @@ class ItemController extends Controller
             // ログインユーザーのIDを取得し、そのユーザーが出品した商品（user_idが一致するもの）を除外
             $query->where('user_id', '!=', Auth::id());
         }
+        // ----------------------------------------------------------------------------------
+        // ⚠️ 注意: 未認証ユーザーは is_sold=true/false にかかわらずすべての商品が見えるようになります。
+        //   もし未認証ユーザーには is_sold=true の商品も見せたくない場合は、
+        //   is_sold = false の条件をここに含める必要があります。
+        //   今回は SOLDOUT 表示が目的なので、このまま進めます。
+        // ----------------------------------------------------------------------------------
 
         // 6. クエリの実行
         $items = $query->orderBy('created_at', 'desc')->get();
@@ -224,7 +231,7 @@ class ItemController extends Controller
             DB::commit(); // トランザクションをコミット
 
             // 5. 処理成功後、新しく作成された商品詳細ページにリダイレクト
-            return redirect()->route('mypage.index', ['tab' => 'listed'])
+            return redirect()->route('mypage', ['tab' => 'listed'])
                 ->with('success', '商品が正常に出品されました！');
 
         } catch (\Exception $e) {

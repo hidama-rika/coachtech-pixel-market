@@ -35,6 +35,11 @@ class CreateNewUser implements CreatesNewUsers
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
+
+            // ★★★ 必須カラムに初期値を設定 ★★★
+            'post_code' => '',
+            'address' => '',
+            // usersテーブルの NOT NULL 制約を持つ全てのカラムに初期値を設定
         ]);
     }
 }

@@ -51,7 +51,7 @@
 
                 {{-- 🔥 修正: $item が存在する場合のみフォームを表示し、アクションはシンプルな route('purchase.store') にする 🔥 --}}
                 @isset($item)
-                <form action="{{ route('purchase.store') }}" method="POST">
+                <form action="{{ route('checkout.start', ['item_id' => $item->id]) }}" method="POST">
                     @csrf
                     <input type="hidden" name="item_id" value="{{ $item->id }}">
 

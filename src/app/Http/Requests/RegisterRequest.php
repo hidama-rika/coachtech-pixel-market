@@ -25,7 +25,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             // ユーザー名
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:20'],
 
             // メールアドレス: 必須、メール形式、usersテーブル内でユニークであること
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -62,6 +62,8 @@ class RegisterRequest extends FormRequest
         return [
             // name
             'name.required' => 'ユーザー名を入力してください',
+            'name.string' => 'ユーザー名は文字列で入力してください。',
+            'name.max' => 'ユーザー名は20文字以下で入力してください',
 
             // email
             'email.required' => 'メールアドレスを入力してください',

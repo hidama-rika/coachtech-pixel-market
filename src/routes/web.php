@@ -80,15 +80,17 @@ Route::post('/logout', [CustomAuthenticatedSessionController::class, 'destroy'])
 Route::middleware('auth')->group(function () {
 
     // --------------------------------------------------
-    // A. プロフィール編集・更新ルート（ミドルウェア適用外）
+    // A. プロフィール編集・更新ルート（verifiedミドルウェアを追加）
     // --------------------------------------------------
-    // プロフィールが未設定の場合でもアクセスできなければならないルート
-    Route::get('/mypage/profile', [ProfileController::class, 'edit'])
-        // ミドルウェアのリダイレクト先として、ルート名を 'profile_edit' に統一
-        ->name('profile_edit');
+    // プロフィール設定自体も、メール認証が完了するまでアクセスできないようにする
+    Route::middleware('verified')->group(function () { // ★★★ verifiedミドルウェアを追加 ★★★
 
-    Route::patch('/mypage/profile', [ProfileController::class, 'update'])
-        ->name('mypage.profile.update');
+        Route::get('/mypage/profile', [ProfileController::class, 'edit'])
+            ->name('profile_edit');
+
+        Route::patch('/mypage/profile', [ProfileController::class, 'update'])
+            ->name('mypage.profile.update');
+    });
 
     // --------------------------------------------------
     // B. プロフィール設定強制ミドルウェア適用ルート
@@ -118,8 +120,9 @@ Route::middleware('auth')->group(function () {
         // 購入手続き画面の表示
         Route::get('/purchase/{item_id}', [PurchaseController::class, 'create'])->name('new_purchases');
 
-        // 購入確定処理 (POST)
-        Route::post('/purchase', [PurchaseController::class, 'store'])->name('purchase.store');
+        // 購入確定処理 (POST) /purchase は削除し、Stripe Checkout開始に置き換え
+        // ✅ Stripe Checkoutセッション開始ルート (POSTリクエストでStripeへ遷移)
+        Route::post('/checkout/{item_id}', [PurchaseController::class, 'checkout'])->name('checkout.start');
 
         Route::get('/purchase', function () {
             return redirect()->route('items.index'); // このルートが存在しない場合、エラーの参照元になる
@@ -150,3 +153,11 @@ Route::middleware('auth')->group(function () {
         // Route::get('/address', [ShippingAddressController::class, 'edit'])->name('address.edit'); // ❌ 削除または上記に統合
     });
 });
+
+// --- 認証ミドルウェアの外側 ---
+
+// ✅ Stripe決済成功後のリダイレクト先（stripeサーバーからという外部からのリクエストとなるため、認証なしでアクセス可能にする）
+Route::get('/success', [PurchaseController::class, 'success'])->name('purchase_success');
+
+// ✅ Stripe決済キャンセル後のリダイレクト先（stripeサーバーからという外部からのリクエストとなるため、認証なしでアクセス可能にする）
+Route::get('/cancel', [PurchaseController::class, 'cancel'])->name('purchase.cancel');

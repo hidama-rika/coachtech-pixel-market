@@ -31,7 +31,7 @@ class ProfileRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
-                'max:255',
+                'max:20',
             ],
 
             // プロフィール画像 (Profile Image) のバリデーション
@@ -76,7 +76,7 @@ class ProfileRequest extends FormRequest
             // ユーザー名に関するメッセージ
             'name.required' => 'ユーザー名を入力してください。',
             'name.string' => 'ユーザー名は文字列で入力してください。',
-            'name.max' => 'ユーザー名は255文字以内で入力してください。',
+            'name.max' => 'ユーザー名は20文字以内で入力してください。',
 
             // プロフィール画像に関するメッセージ
             'profile_image.image' => 'プロフィール画像はJPEG、またはPNG形式でアップロードしてください。',

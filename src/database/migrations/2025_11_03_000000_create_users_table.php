@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->id(); // unsigned bigint の主キー（id）を作成
 
             // 基本情報
-            $table->string('name', 255)->comment('ユーザー名');
+            $table->string('name', 20)->comment('ユーザー名');
             $table->string('email', 255)->unique()->comment('メールアドレス');
             $table->string('password', 255)->comment('ハッシュ化されたパスワード');
             $table->string('profile_image', 255)->nullable()->comment('プロフィール画像パス'); // 画像パスは任意とする
