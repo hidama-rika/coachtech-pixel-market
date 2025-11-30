@@ -389,6 +389,45 @@ body {
     padding: 0;
 }
 
+/* オーバーレイ自体（黒の透過背景） */
+.sold-out-overlay {
+    /* 絶対配置で親要素全体を覆う */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    /* 黒の透過（r:0, g:0, b:0, alpha: 0.6）*/
+    background-color: rgba(0, 0, 0, 0.6);
+
+    /* テキスト（SOLD OUT）を中央に配置 */
+    display: flex;
+    justify-content: center;
+    /* 水平方向の中央揃え */
+    align-items: center;
+    /* 垂直方向の中央揃え */
+
+    /* 最前面に表示 */
+    z-index: 10;
+}
+
+/* SOLD OUT テキスト */
+.sold-out-text {
+    /* 白文字 */
+    color: #FFFFFF;
+
+    /* フォントサイズを大きく、太字に設定（調整してください） */
+    font-size: 3rem;
+    font-weight: bold;
+
+    /* 影を付けて、背景の画像と文字が馴染まないように視認性を高める */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+
+    /* 読みやすくするために、文字を大文字にする */
+    text-transform: uppercase;
+}
+
 /* item-image-placeholder内のimgタグにサイズ制限を設定 */
 .item-image-placeholder img {
     /* 親要素の幅を超えないようにする */

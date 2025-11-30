@@ -118,6 +118,12 @@
                                             alt="{{ $item->name }}"
                                             onerror="this.onerror=null; this.src='https://placehold.co/300x150/ff3333/fff?text=Load+Error';"
                                         >
+                                        {{-- 商品が購入済みの場合はSOLD OUTオーバーレイを表示 --}}
+                                        @if ($item->is_sold)
+                                            <div class="sold-out-overlay">
+                                                <span class="sold-out-text">SOLD OUT</span>
+                                            </div>
+                                        @endif
                                     </div>
                                     <p class="item-name">{{ $item->name }}</p>
                                 </a>
@@ -151,6 +157,12 @@
                                             alt="{{ $item->name }}"
                                             onerror="this.onerror=null; this.src='https://placehold.co/300x150/ff3333/fff?text=Load+Error';"
                                         >
+                                        {{-- 商品が購入済みの場合はSOLD OUTオーバーレイを表示 --}}
+                                        @if ($item->is_sold)
+                                            <div class="sold-out-overlay">
+                                                <span class="sold-out-text">SOLD OUT</span>
+                                            </div>
+                                        @endif
                                     </div>
                                     <p class="item-name">{{ $item->name }}</p>
                                 </a>
