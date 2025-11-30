@@ -35,7 +35,7 @@
 
             <nav class="nav-menu">
 
-                <form method="POST" action="/logout">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="nav-button logout-button">
                         <span class="nav-text">ログアウト</span>
@@ -103,6 +103,12 @@
                                 {{-- 【画像表示】: item テーブルの image_path カラムを使用 --}}
                                 <div class="item-image-placeholder">
                                     <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}">
+                                    {{-- 商品が購入済みの場合はSOLD OUTオーバーレイを表示 --}}
+                                    @if ($item->is_sold)
+                                        <div class="sold-out-overlay">
+                                            <span class="sold-out-text">SOLD OUT</span>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 {{-- 【商品名表示】: item テーブルの name カラムを使用 --}}

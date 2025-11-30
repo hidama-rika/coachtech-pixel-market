@@ -29,7 +29,9 @@ class CreatePurchasesTable extends Migration
             $table->string('shipping_building', 255)->nullable()->comment('配送先建物名');
 
             // 取引ステータス
-            $table->boolean('transaction_status')->comment('取引完了ステータス (1:完了, 0:未完了)');
+            // ★★★ 修正箇所：default(false) または default(0) を追加 ★★★
+            // boolean型はデフォルトでNOT NULLになるため、デフォルト値を設定
+            $table->boolean('transaction_status')->default(false)->comment('取引完了ステータス (1:完了, 0:未完了)');
 
             // タイムスタンプ
             $table->timestamps(); // created_at と updated_at

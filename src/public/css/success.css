@@ -69,10 +69,10 @@ body {
 }
 
 /* ---------------------------------------------------------------------- */
-/* 2. メール認証誘導画面（verify-email）のスタイル */
+/* 2. 購入手続き完了画面（success）のスタイル */
 /* ---------------------------------------------------------------------- */
 
-.verify-email-container {
+.success-container {
     background-color: #FFFFFF;
     text-align: center;
     width: 100%;
@@ -88,7 +88,7 @@ body {
     /* 垂直方向は上部から開始（ヘッダー分パディングがあるため） */
 }
 
-.verify-email-form-container {
+.success-form-container {
     background-color: #FFFFFF;
     text-align: center;
     width: 100%;
@@ -115,8 +115,8 @@ body {
     margin-bottom: 50px;
 }
 
-.verify-message-sent,
-.verify-instruction {
+.success-message-purchase,
+.message-shipping {
     /* メッセージの共通スタイル (画像からの推測) */
     font-family: sans-serif;
     font-weight: bold;
@@ -144,34 +144,6 @@ body {
     /* ボタン/リンクの最大幅を制限 */
 }
 
-.verify-email-btn {
-    /* 認証はこちらからボタンのスタイル（画像のデザインに合わせる） */
-    width: 100%;
-    max-width: 257px;
-    height: 48px;
-    /* デザイン画像に合わせて高さを調整 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-    /* aタグの装飾を解除 */
-
-    border: 1px solid #000000;
-    /* 細い境界線を追加（画像からの推測） */
-    border-radius: 5px;
-    /* 角丸を適用 */
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: #000000;
-    cursor: pointer;
-    background-color: #D9D9D9;
-    /* グレーの背景色 */
-    transition: background-color 0.3s;
-}
-
-.verify-email-btn:hover {
-    background-color: #cccccc;
-}
 
 /* 認証メールを再送するリンクのスタイル */
 .resend-form {
@@ -180,7 +152,7 @@ body {
     width: 100%;
 }
 
-.verify-email-link {
+.mypage-link {
     /* 認証メールを再送するボタン/リンクのスタイル */
     background: none;
     border: none;
@@ -196,7 +168,7 @@ body {
     /* text-align: center;を有効にするため */
 }
 
-.verify-email-link:hover {
+.mypage-link:hover {
     text-decoration: underline;
 }
 
