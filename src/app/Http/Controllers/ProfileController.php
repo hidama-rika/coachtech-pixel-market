@@ -20,9 +20,12 @@ class ProfileController extends Controller
         // 認証済みユーザー情報を取得
         $user = Auth::user();
 
+        $lastKeywordForView = session('last_search_keyword') ?? '';
+
         // ビューに渡す
         return view('profile_edit', [
             'user' => $user,
+            'lastKeyword' => $lastKeywordForView
         ]);
     }
 

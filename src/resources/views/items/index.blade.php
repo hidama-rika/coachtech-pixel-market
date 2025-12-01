@@ -31,6 +31,7 @@
                         placeholder="なにをお探しですか？"
                         value="{{ $lastKeyword }}"
                     >
+                </form>
             </div>
 
             <nav class="nav-menu">
@@ -43,12 +44,12 @@
                 </form>
 
                 <a href="/mypage" class="nav-button mypage-button">
-                    <span class="nav-text">マイページ</span>
-                </a>
+                    <span class="nav-text">マイページ</span>
+                </a>
 
                 <a href="/sell" class="nav-button sell-button">
-                    <span class="sell-text">出品</span>
-                </a>
+                    <span class="sell-text">出品</span>
+                </a>
 
             </nav>
 

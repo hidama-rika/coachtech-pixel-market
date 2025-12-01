@@ -163,8 +163,15 @@ class ItemController extends Controller
         // いいね合計数の取得 (リレーションの count() メソッドはロードされているコレクションに対して実行されます)
         $likeCount = $item->likedUsers->count();
 
+        $lastKeywordForView = session('last_search_keyword') ?? '';
+
         // 商品詳細ビューにデータを渡して表示
-        return view('items.show', compact('item', 'isLiked', 'likeCount'));
+        return view('items.show', [
+            'item' => $item,
+            'isLiked' => $isLiked,
+            'likeCount' => $likeCount,
+            'lastKeyword' => $lastKeywordForView
+]);
     }
 
     /**
@@ -181,7 +188,13 @@ class ItemController extends Controller
         // ★修正: $item に加え、conditions もビューに渡します★
         $item = null;
 
-        return view('new_items', compact('item', 'conditions'));
+        $lastKeywordForView = session('last_search_keyword') ?? '';
+
+        return view('new_items', [
+            'item' => $item,
+            'conditions' => $conditions,
+            'lastKeyword' => $lastKeywordForView
+        ]);
     }
 
     /**

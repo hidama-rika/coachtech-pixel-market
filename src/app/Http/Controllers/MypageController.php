@@ -44,12 +44,15 @@ class MypageController extends Controller
         ->orderBy('created_at', 'desc')
         ->get();
 
+        $lastKeywordForView = session('last_search_keyword') ?? '';
+
         // 3. ユーザー情報と商品リストをビューに渡して表示
         return view('mypage', [
             'user' => $user,
             'listedItems' => $listedItems,     // 出品した商品リスト
             'purchasedItems' => $purchasedItems, // 購入した商品リスト
             'currentTab' => $currentTab,        // URLから取得した $currentTab を渡す
+            'lastKeyword' => $lastKeywordForView
         ]);
     }
 }

@@ -19,12 +19,23 @@
             </a>
 
             <div class="search-form-container">
-                <input type="text" class="search-input" placeholder="なにをお探しですか？">
+                <!-- GETメソッドで / (または {{ route('items.index') }}) に検索クエリを送信 -->
+                <!-- <input type="text">が<form>タグ内にあるため、Enterキーで自動的に送信されます。-->
+                {{-- 検索アイコンを表示するため、inputとボタンを一つのコンテナでラップする場合はCSSの調整が必要です --}}
+                <form action="/" method="GET" class="search-form">
+                    <input
+                        type="search"
+                        name="keyword"
+                        class="search-input"
+                        placeholder="なにをお探しですか？"
+                        value="{{ $lastKeyword }}"
+                    >
+                </form>
             </div>
 
             <nav class="nav-menu">
 
-                <form method="POST" action="/logout">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="nav-button logout-button">
                         <span class="nav-text">ログアウト</span>
@@ -32,12 +43,12 @@
                 </form>
 
                 <a href="/mypage" class="nav-button mypage-button">
-                    <span class="nav-text">マイページ</span>
-                </a>
+                    <span class="nav-text">マイページ</span>
+                </a>
 
                 <a href="/sell" class="nav-button sell-button">
-                    <span class="sell-text">出品</span>
-                </a>
+                    <span class="sell-text">出品</span>
+                </a>
 
             </nav>
 

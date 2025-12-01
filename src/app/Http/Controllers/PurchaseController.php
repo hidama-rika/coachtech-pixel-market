@@ -64,11 +64,14 @@ class PurchaseController extends Controller
         // ★★★ 修正点2: 購入中のitem_idをセッションに保存 ★★★
         Session::put('purchasing_item_id', $item_id);
 
+        $lastKeywordForView = session('last_search_keyword') ?? '';
+
         // 3. ビューに商品情報、ユーザー情報、配送先情報を渡す
         return view('new_purchases', [
             'item' => $item,
             'user' => $user,
             'shipping' => $shipping, // ★配送先情報をビューに渡す★
+            'lastKeyword' => $lastKeywordForView
         ]);
     }
 
@@ -271,11 +274,15 @@ class PurchaseController extends Controller
             // (F) セッションに保存していた一時データをクリア
             Session::forget(['purchase_shipping', 'purchasing_item_id', 'selected_payment_type']);
 
+            $lastKeywordForView = session('last_search_keyword') ?? '';
+
             // ----------------------------------------------------
             // 5. 成功ビューの表示
             // ----------------------------------------------------
             // ビューファイル名が purchase_success に変更されている前提
-            return view('purchase_success')->with('success', '決済手続きが完了しました。');
+            return view('purchase_success')
+                ->with('success', '決済手続きが完了しました。') // 成功メッセージを渡す
+                ->with('lastKeyword', $lastKeywordForView);    // ← これをチェーンで追加
 
         } catch (\Exception $e) {
             if (DB::transactionLevel() > 0) {

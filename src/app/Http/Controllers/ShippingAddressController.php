@@ -29,11 +29,14 @@ class ShippingAddressController extends Controller
         // セッションから item_id を取得
         $item_id = Session::get('purchasing_item_id', null);
 
+        $lastKeywordForView = session('last_search_keyword') ?? '';
+
         // ★修正点3: item_idをビューに渡す
-    return view('shipping-address_edit', [
-        'shipping' => (object)$shipping,
-        'item_id' => $item_id
-    ]);
+        return view('shipping-address_edit', [
+            'shipping' => (object)$shipping,
+            'item_id' => $item_id,
+            'lastKeyword' => $lastKeywordForView
+        ]);
     }
 
     /**
