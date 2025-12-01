@@ -22,9 +22,10 @@ class PaymentMethodsTableSeeder extends Seeder
         DB::table('payment_methods')->truncate();
 
         DB::table('payment_methods')->insert([
+            // ここでは、Stripeが定義する支払い情報に合わせたnameにする
             // ID指定を外します。これが ID: 1 として投入されます
             [
-                'name' => 'コンビニ払い',
+                'name' => 'konbini',
                 'payment_status' => 1,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -32,7 +33,7 @@ class PaymentMethodsTableSeeder extends Seeder
 
             // ID指定を外します。これが ID: 2 として投入されます
             [
-                'name' => 'カード支払い',
+                'name' => 'card',
                 'payment_status' => 1,
                 'created_at' => now(),
                 'updated_at' => now()
