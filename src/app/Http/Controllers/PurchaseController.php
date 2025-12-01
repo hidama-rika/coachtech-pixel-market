@@ -183,22 +183,6 @@ class PurchaseController extends Controller
             $stripe = new StripeClient($secretKey);
             $session = $stripe->checkout->sessions->retrieve($sessionId);
 
-            // 支払意図ID（Payment Intent ID）を取得
-            $intentId = $session->payment_intent;
-
-            // ----------------------------------------------------
-            // 3. 二重購入防止チェック
-            // ----------------------------------------------------
-            $purchase = Purchase::where('stripe_payment_intent_id', $intentId)->first();
-
-            // 既に購入記録がある場合は、重複処理を避けて成功画面へリダイレクト
-            if ($purchase) {
-                // セッションに保存していた一時データをクリア
-                Session::forget(['purchase_shipping', 'purchasing_item_id', 'selected_payment_type']);
-                // ビューファイル名が purchase_success に変更されている前提
-                return view('purchase_success')->with('success', '決済手続きは既に完了しています。');
-            }
-
             // ----------------------------------------------------
             // 4. DBトランザクション処理
             // ----------------------------------------------------
@@ -230,14 +214,14 @@ class PurchaseController extends Controller
             // DBの payment_methods テーブルからIDを取得
             // stripePaymentTypeが 'card' または 'konbini' であることを前提とする
             if ($stripePaymentType === 'konbini') {
-                $dbPaymentName = 'コンビニ支払い';
+                $dbPaymentName = 'konbini';
             } elseif ($stripePaymentType === 'card') {
-                $dbPaymentName = 'カード支払い'; // DBに合わせて 'カード支払い'
+                $dbPaymentName = 'card'; // DBに合わせて 'card'
             } else {
                 // 予期せぬ支払いタイプの場合のフォールバック処理 (エラーログを出すなど)
                 Log::error("予期せぬStripe支払いタイプを受信しました: " . $stripePaymentType);
                 // とりあえず 'カード支払い' に設定するか、エラーを投げる
-                $dbPaymentName = 'カード支払い';
+                $dbPaymentName = 'card';
             }
             $paymentMethod = PaymentMethod::where('name', $dbPaymentName)->first();
 
@@ -254,15 +238,10 @@ class PurchaseController extends Controller
                 'shipping_address' => $shippingData['shipping_address'] ?? null,
                 'shipping_building_name' => $shippingData['shipping_building'] ?? null, // purchasesテーブルのカラム名に合わせる
                 'payment_method_id' => $paymentMethod->id,
-                'stripe_payment_intent_id' => $intentId, // 支払意図ID
                 'price' => $session->amount_total / 100, // 合計金額をセントから円に戻す
 
                 // ★★★ 修正箇所: transaction_status を 1 (完了) で新規作成 ★★★
                 'transaction_status' => 1,
-
-                // ★★★ 修正箇所3: セッションから取得した値を payment_method_type に設定 ★★★
-                // $selectedPaymentType を使用して DB に書き込む
-                'payment_method_type' => $stripePaymentType,
             ]);
 
             // (D) Itemモデルの更新
