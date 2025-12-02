@@ -99,7 +99,7 @@ view ファイルの作成
 ![table5](conditions.png)
 ![table6](comments.png)
 ![table7](purchases.png)
-![table8](peyment_methods.png)
+![table8](payment_methods.png)
 ![table9](likes.png)
 
 ## ER 図
