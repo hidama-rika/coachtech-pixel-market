@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session; // ★追加：セッションを使うために必要★
 use Illuminate\Support\Facades\Log; // ★追加：エラーログ用★
 use Stripe\StripeClient;
-// use Stripe\Stripe;
-// use Stripe\Checkout\Session;
 
 class PurchaseController extends Controller
 {

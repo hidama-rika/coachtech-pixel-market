@@ -35,7 +35,7 @@ class ExhibitionRequest extends FormRequest
 
             // 商品画像: アップロード必須、拡張子がjpegもしくはpng (image/mimesルールはfileを含意)
             // mimesルールは小文字で指定することが推奨されます。
-            'image_path' => ['required', 'file', 'mimes:jpeg,png', 'max:5120'], // max:5120 (5MB)を実用的なサイズとして追加
+            'image_path' => ['required', 'file', 'mimes:jpeg,png'], // 今後max:5120 (5MB)を実用的なサイズとして追加予定
 
             // 商品のカテゴリー: 選択必須、categoriesテーブルに存在するIDであること
             // ★★★ 修正箇所: 複数カテゴリー選択（配列）のバリデーション ★★★

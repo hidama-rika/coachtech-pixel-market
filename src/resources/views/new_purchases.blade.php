@@ -128,7 +128,7 @@
                         <div class="shipping-address-section section-divider">
                             <p class="section-title-small">配送先</p>
                             {{-- 🚨 ルート名を修正し、セッション保存用の編集画面へ遷移 🚨 --}}
-                            <a href="{{ route('shipping_session.edit') }}" class="change-link">変更する</a>
+                            <a href="{{ route('shipping_session.edit', ['item_id' => $item->id]) }}" class="change-link">変更する</a>
 
                             <input type="hidden" name="shipping_post_code" value="{{ $shipping->shipping_post_code ?? '' }}">
                             <input type="hidden" name="shipping_address" value="{{ $shipping->shipping_address ?? '' }}">

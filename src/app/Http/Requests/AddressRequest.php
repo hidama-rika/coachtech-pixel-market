@@ -23,26 +23,29 @@ class AddressRequest extends FormRequest
      */
     public function rules()
     {
-        // プロフィール住所用
-        // post_code: 必須、郵便番号形式（ハイフンあり8文字）
-        'post_code' => [
-            'required',
-            'regex:/^\d{3}-\d{4}$/', // XXX-YYYY 形式
-        ],
+        return [
 
-        // address: 必須、文字列、最大255文字（purchasesテーブル定義より）
-        'address' => [
-            'required',
-            'string',
-            'max:255',
-        ],
+            // post_code: 必須、郵便番号形式（ハイフンあり8文字）
+            'post_code' => [
+                'required',
+                'regex:/^\d{3}-\d{4}$/', // XXX-YYYY 形式
+            ],
 
-        // building_name: 任意、文字列、最大255文字
-        'building_name' => [
-            'nullable', // 建物名は任意
-            'string',
-            'max:255',
-        ],
+            // address: 必須、文字列、最大255文字
+            'address' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            // building_name: 任意、文字列、最大255文字
+            'building_name' => [
+                'nullable', // 建物名は任意
+                'string',
+                'max:255',
+            ],
+
+        ];
     }
 
     /**

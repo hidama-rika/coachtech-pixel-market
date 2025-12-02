@@ -18,12 +18,12 @@ class MypageController extends Controller
         $user = Auth::user();
 
         // アクティブタブの決定
-        // ★ 修正2: URLクエリパラメータから 'tab' を取得。なければ 'listed' をデフォルトとする。
-        $currentTab = $request->query('tab', 'listed');
+        // ★ 修正2: URLクエリパラメータから 'page' を取得。なければ 'sell' をデフォルトとする。
+        $currentPage = $request->query('page', 'sell');
 
         // 'listed' か 'purchased' 以外の値が来た場合は 'listed' に矯正 (安全のため)
-        if (!in_array($currentTab, ['listed', 'purchased'])) {
-            $currentTab = 'listed';
+        if (!in_array($currentPage, ['sell', 'buy'])) {
+            $currentPage = 'sell';
         }
 
         // 1. ログインユーザーが出品した商品を取得
@@ -51,7 +51,7 @@ class MypageController extends Controller
             'user' => $user,
             'listedItems' => $listedItems,     // 出品した商品リスト
             'purchasedItems' => $purchasedItems, // 購入した商品リスト
-            'currentTab' => $currentTab,        // URLから取得した $currentTab を渡す
+            'currentPage' => $currentPage,        // URLから取得した $currentPage を渡す
             'lastKeyword' => $lastKeywordForView
         ]);
     }

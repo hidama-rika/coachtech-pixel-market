@@ -75,7 +75,7 @@ class ProfileRequest extends FormRequest
         return [
             // ユーザー名に関するメッセージ
             'name.required' => 'ユーザー名を入力してください。',
-            'name.string' => 'ユーザー名は文字列で入力してください。',
+            'name.string' => 'ユーザー名は文字列で入力してください。',// 👈 テーブルのデータ型に合わせて追加
             'name.max' => 'ユーザー名は20文字以内で入力してください。',
 
             // プロフィール画像に関するメッセージ
@@ -88,6 +88,7 @@ class ProfileRequest extends FormRequest
 
             // 住所
             'address.required' => '住所を入力してください',
+            'address.string' => '住所は文字列で入力してください', // 👈 テーブルのデータ型に合わせて追加
             'address.max' => '住所は255文字以内で入力してください',
 
             // building_nameに関するメッセージ

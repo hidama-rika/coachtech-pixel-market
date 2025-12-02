@@ -85,19 +85,18 @@
             <div class="mypage-form-container">
                 {{-- 出品した商品/購入した商品 タブ --}}
                 <div class="tab-menu">
-                    {{-- *** 修正箇所１：リンク先を専用のルートに変更し、アクティブ判定を $currentTab に変更 *** --}}
-                    {{-- /mypage?tab=listed ル}ート（MypageController@listedItems）にリンクします --}
-                    {{-- コントローラーから渡された $currentTab 変数を使ってアクティブを判定します --}}
+                    {{-- *** 修正箇所１：リンク先を仕様書通りの /mypage?page=sell に変更し、アクティブ判定を $currentPage に変更（$currentTabを$currentPageに置き換える前提） *** --}}
+                    {{-- data-targetはDOM操作用なのでそのままで問題なし --}}
                     <a
-                        href="/mypage?tab=listed"
-                        class="tab-link @if(isset($currentTab) && $currentTab === 'listed') active @endif"
+                        href="/mypage?page=sell"
+                        class="tab-link @if(isset($currentPage) && $currentPage === 'sell') active @endif"
                         data-target="listed"
                     >
                         <span class="tab-text">出品した商品</span>
                     </a>
                     <a
-                        href="/mypage?tab=purchased"
-                        class="tab-link @if(isset($currentTab) && $currentTab === 'purchased') active @endif"
+                        href="/mypage?page=buy"
+                        class="tab-link @if(isset($currentPage) && $currentPage === 'buy') active @endif"
                         data-target="purchased"
                     >
                         <span class="tab-text">購入した商品</span>

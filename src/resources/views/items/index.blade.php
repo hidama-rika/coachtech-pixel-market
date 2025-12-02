@@ -23,7 +23,7 @@
                 <!-- GETメソッドで / (または {{ route('items.index') }}) に検索クエリを送信 -->
                 <!-- <input type="text">が<form>タグ内にあるため、Enterキーで自動的に送信されます。-->
                 {{-- 検索アイコンを表示するため、inputとボタンを一つのコンテナでラップする場合はCSSの調整が必要です --}}
-                <form action="/" method="GET" class="search-form">
+                <form action="{{ route('items.index') }}" method="GET" class="search-form">
                     <input
                         type="search"
                         name="keyword"
@@ -31,6 +31,10 @@
                         placeholder="なにをお探しですか？"
                         value="{{ $lastKeyword }}"
                     >
+                    {{-- ★修正点: 現在のタブ状態を検索時に引き継ぐための隠しフィールドを追加 ★ --}}
+                    @if (isset($currentTab) && $currentTab === 'mylist')
+                        <input type="hidden" name="tab" value="mylist">
+                    @endif
                 </form>
             </div>
 
@@ -62,29 +66,32 @@
             <div class="index-form-container">
                 {{-- おすすめ/マイリスト タブ --}}
                 <div class="tab-menu">
+                    {{-- 検索キーワードをリンクに引き継ぐための準備 --}}
                     @php
-                        // $lastKeywordが空でなければ、リンクにキーワードを含める
-                        $routeParams = !empty($lastKeyword) ? ['keyword' => $lastKeyword] : [];
-
-                        // ★★★ 修正: おすすめタブがアクティブになる条件を定義 ★★★
-                        // 以下のいずれかの条件を満たすとき、'active' クラスを付与する:
-                        // 1. マイリスト画面ではない (おすすめ画面にいる)
-                        // 2. かつ、URLに 'keyword' パラメータが含まれている (検索結果を表示している)
-                        $isRecommendActive = !Request::is('mylist') && Request::has('keyword');
+                        $keywordParam = !empty($lastKeyword) ? ['keyword' => $lastKeyword] : [];
                     @endphp
+
+                    {{-- おすすめタブ (全商品 + 自分の出品商品を除外) --}}
+                    {{-- ★修正箇所1: $currentTab を使用してアクティブ状態を判定 ★ --}}
                     <a
-                        href="{{ route('items.index', $routeParams) }}"
-                        class="tab-link @if($isRecommendActive) active @endif"
+                        href="{{ route('items.index', $keywordParam) }}"
+                        class="tab-link @if(isset($currentTab) && $currentTab === 'all') active @endif"
                     >
                         <span class="tab-text">おすすめ</span>
                     </a>
+
                     {{-- 未認証ユーザーはマイリストにアクセスできないため、@auth ディレクティブで囲む --}}
                     @auth
+                        {{-- マイリストタブ (いいねした商品一覧) --}}
+                        {{-- ★修正箇所2: /?tab=mylist の形式でリンクを生成し、アクティブ状態を判定 ★ --}}
                         @php
-                            // ★★★ マイリストのリンクに、$lastKeyword を付与する ★★★
-                            $mylistParams = !empty($lastKeyword) ? ['keyword' => $lastKeyword] : [];
+                            // マイリストリンクには keyword と tab=mylist の両方を含める
+                            $mylistParams = array_merge($keywordParam, ['tab' => 'mylist']);
                         @endphp
-                        <a href="{{ route('items.mylist', $mylistParams) }}" class="tab-link @if(Request::is('mylist')) active @endif">
+                        <a
+                            href="{{ route('items.index', $mylistParams) }}"
+                            class="tab-link @if(isset($currentTab) && $currentTab === 'mylist') active @endif"
+                        >
                             <span class="tab-text">マイリスト</span>
                         </a>
                     @endauth

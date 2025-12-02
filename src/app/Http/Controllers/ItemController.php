@@ -27,110 +27,75 @@ class ItemController extends Controller
     }
 
     /**
-     * ホーム画面 (商品一覧) を表示する
-     * 未認証ユーザーもアクセス可能
+     * ホーム画面 (商品一覧) を表示する。
+     * URLのクエリパラメータ (tab=mylist) に応じて、マイリスト機能も統合して処理する。
      */
     public function index(Request $request) // Requestを受け取る
     {
-        // 1. URLのキーワードを取得 (コンテンツのフィルタリングに使用)
+        // 1. URLのキーワードとタブ情報を取得
         $keywordForFiltering = $request->input('keyword');
+        $tab = $request->get('tab');
+        $currentTab = 'all'; // デフォルトは「おすすめ」タブ
 
         // 2. 検索状態の保持（Persistence Management）
-        //    URLに 'keyword' パラメータがある場合（検索実行またはタブによる復元・クリア）はセッションを更新
+        // URLに 'keyword' パラメータがある場合（検索実行またはタブによる復元・クリア）はセッションを更新
         if ($request->has('keyword')) {
             // キーワードが空（""）の場合もセッションを空で上書きし、検索状態をクリアする
             session(['last_search_keyword' => $keywordForFiltering ?? '']);
         }
-        // URLにキーワードがない場合、セッションは更新しない
-        // （他のタブから戻る時の復元用として、前回の検索キーワードを保持し続けます）
 
-        // 3. 基本クエリの組み立て: 「非表示にする」という要件をなくし、「すべての商品を表示する（ただし、自分の出品した商品は除外）」というロジックに変更
-        // 【修正後】 is_sold の条件を削除し、すべてのアイテムを対象とする
+        // 3. 基本クエリの組み立て
         $query = Item::query(); // Itemモデルのクエリビルダを開始
 
+        // ==========================================================
+        // ★★★ 修正箇所1: マイリスト表示ロジックの統合 ★★★
+        // ==========================================================
+        if ($tab === 'mylist' && Auth::check()) {
+            $currentTab = 'mylist'; // タブをマイリストに設定
+
+            // ログインユーザーがいいねした Item の ID リストを取得
+            $userId = Auth::id();
+            // ログインユーザーが「いいね」した商品のIDを取得
+            $likedItemIds = Like::where('user_id', $userId)->pluck('item_id');
+
+            // 基本クエリ: いいねした商品のみに絞り込む (販売済みは除く)
+            $query->whereIn('id', $likedItemIds)
+                ->where('is_sold', false);
+        } else {
+            // デフォルトの「おすすめ」タブの場合 (tab=mylist ではない場合)
+
+            // 認証済みユーザーの場合、自身が出品した商品を除外する条件を追加
+            if (Auth::check()) {
+                // ログインユーザーのIDを取得し、そのユーザーが出品した商品（user_idが一致するもの）を除外
+                $query->where('user_id', '!=', Auth::id());
+            }
+
+            // is_sold の条件は追加しない (SOLDOUT表示のため)
+        }
+
         // 4. 検索機能の追加 (コンテンツのフィルタリング)
-        //    URLにキーワードがある場合のみ、クエリに検索条件を追加
+        //    URLにキーワードがある場合のみ、クエリに検索条件を追加
         if (!empty($keywordForFiltering)) {
             $query->where('name', 'LIKE', '%' . $keywordForFiltering . '%');
         }
 
-        // 5. 認証済みユーザーの場合、自身が出品した商品を除外する条件を追加
-        if (Auth::check()) {
-            // ログインユーザーのIDを取得し、そのユーザーが出品した商品（user_idが一致するもの）を除外
-            $query->where('user_id', '!=', Auth::id());
-        }
-        // ----------------------------------------------------------------------------------
-        // ⚠️ 注意: 未認証ユーザーは is_sold=true/false にかかわらずすべての商品が見えるようになります。
-        //   もし未認証ユーザーには is_sold=true の商品も見せたくない場合は、
-        //   is_sold = false の条件をここに含める必要があります。
-        //   今回は SOLDOUT 表示が目的なので、このまま進めます。
-        // ----------------------------------------------------------------------------------
-
-        // 6. クエリの実行
+        // 5. クエリの実行
         $items = $query->orderBy('created_at', 'desc')->get();
 
-        // 7. Viewへ渡す
-        //    フォームのvalueやタブリンクのパラメータとして、セッションに保持された最新のキーワードを渡す。
+        // 6. Viewへ渡す
         $lastKeywordForView = session('last_search_keyword') ?? '';
 
         // 'index' ビューにデータを渡して表示
         return view('items.index', [
             'items' => $items,
             // フォームとタブリンクの復元に使用
-            'lastKeyword' => $lastKeywordForView
+            'lastKeyword' => $lastKeywordForView,
+            // ★修正箇所2: 現在のタブ情報をビューに渡す ★
+            'currentTab' => $currentTab,
         ]);
     }
 
-    /**
-     * マイリスト（いいねした商品一覧）を表示する
-     * @return \Illuminate\View\View
-     */
-    public function mylist(Request $request)
-    {
-        // ログインユーザーが「いいね」したItemを取得
-        // 1. ログインユーザーのIDを取得
-        $userId = Auth::id();
-
-        // ★★★ 検索状態の保持ロジックを追加 ★★★
-        // 2. indexと同じく、URLのキーワードを取得
-        $keywordForFiltering = $request->input('keyword');
-
-        // 3. indexと同じく、URLに 'keyword' があればセッションを更新
-        if ($request->has('keyword')) {
-            session(['last_search_keyword' => $keywordForFiltering ?? '']);
-        }
-        // ★★★ 検索状態の保持ロジックはここまで ★★★
-
-        // 4. 基本クエリ: ログインユーザーがいいねした Item の ID リストを取得
-        // Like モデルに user_id と item_id があることを想定
-        $likedItemIds = Like::where('user_id', $userId)
-                            ->pluck('item_id');
-
-        // ★★★ 修正ポイント: クエリビルダを $query に代入し、販売済みを除外 ★★★
-        $query = Item::whereIn('id', $likedItemIds)
-                    ->where('is_sold', false);
-
-        // 5. 検索機能の追加 (コンテンツのフィルタリング)
-        //    URLにキーワードがある場合のみ、クエリに検索条件を追加
-        if (!empty($keywordForFiltering)) {
-            // ★ $query に対して where 条件を追加 ★
-            $query->where('name', 'LIKE', '%' . $keywordForFiltering . '%');
-        }
-
-        // 6. クエリの実行
-        // ★ 最後に $query に対して orderBy と get() を適用して結果を取得 ★
-        $items = $query->orderBy('created_at', 'desc')->get();
-
-        // 7. Viewへ渡す
-        $lastKeywordForView = session('last_search_keyword') ?? '';
-
-        // index.blade.php にマイリストの商品データとキーワードデータを渡す
-        return view('items.index', [
-            'items' => $items,
-            // ★ 変数名を $lastKeywordForView に統一（$lastKeyword のままでも動作するが、可読性のため） ★
-            'lastKeyword' => $lastKeywordForView
-        ]);
-    }
+    
 
     /**
      * 商品詳細画面を表示する (重複定義を修正し、いいね情報を追加)

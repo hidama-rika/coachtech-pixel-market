@@ -29,8 +29,8 @@ class LoginRequest extends FormRequest
             // メールアドレス: 必須、メール形式、usersテーブル内でユニークであること
             'email' => ['required', 'string', 'email', 'max:255'],
 
-            // パスワード: 必須、8文字以上、確認用パスワードと一致すること
-            'password' => ['required', 'string', 'min:8'],
+            // パスワード: 必須、8文字以上。要件定義書に合わせて 'min:8' を削除
+            'password' => ['required', 'string'],
         ];
     }
 
@@ -87,11 +87,10 @@ class LoginRequest extends FormRequest
         return [
             // email
             'email.required' => 'メールアドレスを入力してください',
-            'email.email' => 'メールアドレスは「ユーザー名@ドメイン」形式で入力してください',
+            'email.email' => 'メールアドレスはメール形式で入力してください',
 
             // password
             'password.required' => 'パスワードを入力してください',
-            'password.min' => 'パスワードは8文字以上で入力してください',
 
             // withValidatorで追加するエラーメッセージは、ここでは定義しない。
             // （withValidator内で直接メッセージを指定）
