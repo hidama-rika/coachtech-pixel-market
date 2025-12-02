@@ -90,6 +90,18 @@ view ファイルの作成
 
     ・　JavaScript
 
+## テーブル仕様書
+
+![table1](users.png)
+![table2](items.png)
+![table3](item_category.png)
+![table4](categories.png)
+![table5](conditions.png)
+![table6](comments.png)
+![table7](purchases.png)
+![table8](peyment_methods.png)
+![table9](likes.png)
+
 ## ER 図
 
 ![ER図](er-diagram.png)
