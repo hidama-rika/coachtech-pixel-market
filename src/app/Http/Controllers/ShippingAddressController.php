@@ -51,9 +51,6 @@ class ShippingAddressController extends Controller
             'post_code' => 'required|string|regex:/^\d{3}-?\d{4}$/',
             'address' => 'required|string|max:255',
             'building_name' => 'nullable|string|max:255',
-            // 受取人名もセッションに含める場合は、ここでバリデーションに追加
-            // 'receiver_name' => 'required|string|max:255',
-            // item_idをバリデーションに追加
             'item_id' => 'required|integer|exists:items,id',
         ]);
 

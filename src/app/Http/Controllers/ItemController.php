@@ -7,12 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Like;
 use App\Http\Requests\ExhibitionRequest;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Models\Condition;
-use Illuminate\Support\Facades\Log; // デバッグ用
 
 class ItemController extends Controller
 {
@@ -95,7 +93,7 @@ class ItemController extends Controller
         ]);
     }
 
-    
+
 
     /**
      * 商品詳細画面を表示する (重複定義を修正し、いいね情報を追加)
@@ -136,7 +134,7 @@ class ItemController extends Controller
             'isLiked' => $isLiked,
             'likeCount' => $likeCount,
             'lastKeyword' => $lastKeywordForView
-]);
+        ]);
     }
 
     /**
