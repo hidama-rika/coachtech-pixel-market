@@ -2,14 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CustomAuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\MypageController;
 use App\Http\Controllers\ShippingAddressController;
 use App\Http\Controllers\CommentController;
- // コントローラーをインポート
 use App\Http\Controllers\LikeController;
 use Laravel\Fortify\Fortify; // Fortifyのuseステートメント
 
