@@ -48,6 +48,19 @@ Route::get('/', [ItemController::class, 'index'])->name('items.index');
 // 商品詳細画面 (未認証ルート) - ItemControllerに変更
 Route::get('/item/{item}', [ItemController::class, 'show'])->name('items.show');
 
+// ==========================================================
+// ★★★ Stripeリダイレクトルート (認証不要) - ここに移動します ★★★
+// ==========================================================
+
+// ✅ Stripe決済成功後のリダイレクト先（外部リクエストのため認証不要）
+Route::get('/purchase/success', [App\Http\Controllers\PurchaseController::class, 'success'])->name('purchase_success');
+
+// ✅ Stripe決済キャンセル後のリダイレクト先 (キャンセル時はGETリクエストで戻る)
+Route::get('/purchase/cancel', [PurchaseController::class, 'cancel'])->name('purchase_cancel');
+// 💡 注意: ルート名を 'purchase.cancel' から 'purchase_cancel' に変更し、統一します。
+
+// ==========================================================
+
 // Fortifyが提供する認証ルートをここで定義することもできますが、
 // 通常はFortifyのインストールと設定により自動的に有効化されます。
 
@@ -117,10 +130,6 @@ Route::middleware('auth')->group(function () {
         // 購入手続き画面の表示
         Route::get('/purchase/{item_id}', [PurchaseController::class, 'create'])->name('new_purchases');
 
-        // 購入確定処理 (POST) /purchase は削除し、Stripe Checkout開始に置き換え
-        // ✅ Stripe Checkoutセッション開始ルート (POSTリクエストでStripeへ遷移)
-        Route::post('/purchase/checkout/{item_id}', [PurchaseController::class, 'checkout'])->name('checkout.start');
-
         // コメント投稿用のルート (POSTリクエスト)
         // /{item_id}/comments の形式でアクセスできるように定義します
         Route::post('/items/{item_id}/comments', [CommentController::class, 'store'])
@@ -137,14 +146,14 @@ Route::middleware('auth')->group(function () {
         // 送付先変更フォームの表示 (editメソッドが担当)
         Route::get('/purchase/address/{item_id}', [ShippingAddressController::class, 'edit'])->name('shipping_session.edit');
 
+        // ★★★ 修正後の挿入場所: authミドルウェアの内側、かつ check.profile.setグループの外側 ★★★
+        // 購入確定処理 (POST) /purchase は削除し、Stripe Checkout開始に置き換え
+        // ✅ Stripe Checkoutセッション開始ルート (POSTリクエストでStripeへ遷移)
+        Route::post('/purchase/checkout/{item_id}', [PurchaseController::class, 'checkout'])->name('checkout.start');
+
         // 送付先一時保存処理 (storeメソッドが担当)
         // POSTに変更するのが理想ですが、元のPATCHを踏襲しつつ、storeを呼び出す形に修正
         // ただし、/addressというURIはeditと重複しているため、URIも変更します。
         Route::patch('/purchase/address/store', [ShippingAddressController::class, 'store'])->name('shipping_session.store');
     });
 });
-
-// --- 認証ミドルウェアの外側 ---
-
-// ✅ Stripe決済成功後のリダイレクト先（stripeサーバーからという外部からのリクエストとなるため、認証なしでアクセス可能にする）
-Route::get('/purchase/success', [PurchaseController::class, 'success'])->name('purchase_success');

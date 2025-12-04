@@ -15,6 +15,11 @@ services:
     build: ./docker/php
     volumes:
       - ./src:/var/www/
+    # --- ここから追加 ---
+    depends_on:
+      - mysql
+    restart: always
+    # --- ここまで追加 ---
 
   mysql:
     image: mysql:8.0.26
@@ -28,6 +33,9 @@ services:
     volumes:
       - ./docker/mysql/data:/var/lib/mysql
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    # --- ここから追加 ---
+    restart: always
+    # --- ここまで追加 ---
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

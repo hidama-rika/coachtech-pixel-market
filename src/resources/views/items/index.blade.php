@@ -73,7 +73,7 @@
                     @endphp
 
                     {{-- おすすめタブ (全商品 + 自分の出品商品を除外) --}}
-                    {{-- ★修正箇所1: $currentTab を使用してアクティブ状態を判定 ★ --}}
+                    {{-- ★ $currentTab を使用してアクティブ状態を判定 ★ --}}
                     <a
                         href="{{ route('items.index', $keywordParam) }}"
                         class="tab-link @if(isset($currentTab) && $currentTab === 'all') active @endif"
@@ -84,7 +84,7 @@
                     {{-- 未認証ユーザーはマイリストにアクセスできないため、@auth ディレクティブで囲む --}}
                     @auth
                         {{-- マイリストタブ (いいねした商品一覧) --}}
-                        {{-- ★修正箇所2: /?tab=mylist の形式でリンクを生成し、アクティブ状態を判定 ★ --}}
+                        {{-- ★ /?tab=mylist の形式でリンクを生成し、アクティブ状態を判定 ★ --}}
                         @php
                             // マイリストリンクには keyword と tab=mylist の両方を含める
                             $mylistParams = array_merge($keywordParam, ['tab' => 'mylist']);

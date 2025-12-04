@@ -91,14 +91,14 @@
                     <a
                         href="/mypage?page=sell"
                         class="tab-link @if(isset($currentPage) && $currentPage === 'sell') active @endif"
-                        data-target="listed"
+                        data-target="sell"
                     >
                         <span class="tab-text">出品した商品</span>
                     </a>
                     <a
                         href="/mypage?page=buy"
                         class="tab-link @if(isset($currentPage) && $currentPage === 'buy') active @endif"
-                        data-target="purchased"
+                        data-target="buy"
                     >
                         <span class="tab-text">購入した商品</span>
                     </a>
@@ -108,7 +108,7 @@
             {{-- 商品一覧グリッド (出品商品) --}}
             <div class="index-grid-container">
 
-                <div id="listed-content" class="item-grid-wrapper @if(isset($currentTab) && $currentTab === 'listed') active-content @else hidden-content @endif">
+                <div id="listed-content" class="item-grid-wrapper @if(isset($currentPage) && $currentPage === 'sell') active-content @else hidden-content @endif">
                     <div class="item-grid">
                         {{-- コントローラから渡された $items (商品コレクション) をループ処理します --}}
                         {{-- *** 修正箇所: $items から $listedItems に変更します *** --}}
@@ -148,7 +148,7 @@
                 </div>
 
                 {{-- 商品一覧グリッド (購入商品) --}}
-                <div id="purchased-content" class="item-grid-wrapper @if(isset($currentTab) && $currentTab === 'purchased') active-content @else hidden-content @endif">
+                <div id="purchased-content" class="item-grid-wrapper @if(isset($currentPage) && $currentPage === 'buy') active-content @else hidden-content @endif">
                     <div class="item-grid">
                         {{-- *** 修正箇所: $listedItems から $purchasedItems に変更します *** --}}
                         @if (isset($purchasedItems) && $purchasedItems->isNotEmpty())

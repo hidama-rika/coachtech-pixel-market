@@ -10,18 +10,15 @@ use App\Models\Purchase;
 use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session; // ★追加：セッションを使うために必要★
-use Illuminate\Support\Facades\Log; // ★追加：エラーログ用★
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 use Stripe\StripeClient;
+use Illuminate\View\View;
 
 class PurchaseController extends Controller
 {
     /**
      * 商品購入画面を表示する。
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int|null $item_id ルートパラメータ（例: /purchase/10）
-     * @return \Illuminate\Contracts\View\View
      */
     public function create(Request $request, $item_id)
     {
@@ -58,7 +55,6 @@ class PurchaseController extends Controller
         // 配送先住所をセッションから取得 (ビューに渡すためにオブジェクト化)
         $shipping = (object)Session::get('purchase_shipping');
 
-        // これで、ShippingAddressController::edit で item_id を取得できるようになる
         // ★★★ 修正点2: 購入中のitem_idをセッションに保存 ★★★
         Session::put('purchasing_item_id', $item_id);
 
@@ -69,48 +65,56 @@ class PurchaseController extends Controller
             'item' => $item,
             'user' => $user,
             'shipping' => $shipping, // ★配送先情報をビューに渡す★
-            'lastKeyword' => $lastKeywordForView
+            'lastKeyword' => $lastKeywordForView,
         ]);
     }
 
     // -------------------------------------------------------------
-    // ★★★ 元の store メソッドを置き換え：Stripe Checkoutセッションを開始 ★★★
+    // ★★★ Stripe Checkoutセッションを開始 ★★★
     // -------------------------------------------------------------
 
     /**
      * Stripe Checkoutセッションを作成し、Stripeにリダイレクトする。
-     *
-     * @param  \App\Http\Requests\PurchaseRequest  $request <- ★ PurchaseRequest を使用 ★
-     * @param  int $itemId
-     * @return \Illuminate\Http\Response
      */
-    public function checkout(PurchaseRequest $request, $itemId) // <- ★ ここも修正 ★
+    public function checkout($item_id, PurchaseRequest $request)
     {
-        // 1. バリデーション済みの支払い方法をセッションに保存 ★★★ 修正箇所1: $request->input の取得位置を修正 ★★★
-        // バリデーションされたデータはここでアクセス可能
-        $selectedPaymentType = $request->input('payment_method'); // payment_method は 'card' または 'konbini'
-        Session::put('selected_payment_type', $selectedPaymentType); // セッションに保存
+        // 1. バリデーション済みの支払い方法IDを取得し、セッションに保存
+        $paymentMethodId = $request->input('payment_method_id');
+        Session::put('selected_payment_type', $paymentMethodId);
 
-        $item = Item::findOrFail($itemId);
+        $item = Item::findOrFail($item_id);
 
         // 最終購入条件のチェック
         if (Auth::id() === $item->user_id || $item->is_sold) {
             return redirect()->route('items.show', $item->id)->with('error', 'この商品は既に販売済みか、ご自身の出品商品です。');
         }
 
-        // $secretKey = env('STRIPE_SECRET_KEY'); // 以前の記述
-        $secretKey = config('services.stripe.secret'); // ← このように修正
+        $secretKey = config('services.stripe.secret');
 
         $stripe = new StripeClient($secretKey);
 
+        // 2. IDからStripeの payment_method_types に必要な値に変換
+        $stripePaymentType = '';
+        if ($paymentMethodId == 1) {
+            $stripePaymentType = 'konbini'; // ID 1 = コンビニ払い
+        } elseif ($paymentMethodId == 2) {
+            $stripePaymentType = 'card'; // ID 2 = カード支払い
+        } else {
+            // IDが見つからない場合のエラー処理
+            Log::error('無効な支払い方法IDを受信: ' . $paymentMethodId);
+            return back()->with('error', '無効な支払い方法が選択されました。');
+        }
+
         try {
             $session = $stripe->checkout->sessions->create([
-                // カードとコンビニ決済に対応
-                'payment_method_types' => ['card', 'konbini'],
+
+                // 修正: ユーザーが選択した支払い方法のみを許可するように動的に設定
+                'payment_method_types' => [$stripePaymentType],
+
                 'line_items' => [[
                     'price_data' => [
                         'currency' => 'jpy',
-                        'unit_amount' => $item->price, // 商品の価格を使用
+                        'unit_amount' => $item->price,
                         'product_data' => ['name' => $item->name],
                     ],
                     'quantity' => 1,
@@ -125,7 +129,7 @@ class PurchaseController extends Controller
 
                 // 成功・キャンセル時のルートにセッションIDを渡す
                 'success_url' => route('purchase_success') . '?session_id={CHECKOUT_SESSION_ID}',
-                'cancel_url' => route('purchase.cancel'),
+                'cancel_url' => route('purchase_cancel'),
             ]);
 
             // Stripe Checkoutへリダイレクト
@@ -138,107 +142,81 @@ class PurchaseController extends Controller
     }
 
     // -------------------------------------------------------------
-    // ★★★ success メソッド (購入記録の作成) ★★★
+    // ★★★ success メソッド (購入記録の作成) - 修正済み ★★★
     // -------------------------------------------------------------
 
-    /**
-     * 決済成功後の処理
-     */
     public function success(Request $request)
     {
-        // ----------------------------------------------------
         // 1. StripeセッションIDの取得
-        // ----------------------------------------------------
         $sessionId = $request->get('session_id');
 
         if (!$sessionId) {
             Log::error('SUCCESS METHOD ERROR: Session IDがありません。');
-            // セッションIDがない場合は、トップページなどにリダイレクト
             return redirect()->route('items.index')->with('error', '決済情報が見つかりません。');
         }
 
-        // ----------------------------------------------------
-        // 1.5. ★★★ 購入者ユーザーの取得（修正点1） ★★★
-        // ----------------------------------------------------
-        $user = Auth::user(); // 現在ログインしているユーザー（購入者）
-        if (!$user) {
-             // ログインしていない場合はエラー
-            Log::error('購入確定エラー: 認証済みユーザーが見つかりません。');
-            return redirect()->route('login')->with('error', 'ログインしてから再度お試しください。');
-        }
-
-        // ----------------------------------------------------
-        // 2. Stripeクライアントの初期化とセッション情報の取得
-        // ----------------------------------------------------
         try {
-            // .envからシークレットキーを読み込む
-            $secretKey = env('STRIPE_SECRET_KEY');
+            // 2. Stripeクライアントの初期化とセッション情報の取得
+            $secretKey = config('services.stripe.secret');
             if (empty($secretKey)) {
-                // キーが空の場合は、明確な例外を投げるか、エラー処理を行う
                 throw new \Exception("Stripe Secret Keyが設定されていません。");
             }
-
             $stripe = new StripeClient($secretKey);
             $session = $stripe->checkout->sessions->retrieve($sessionId);
 
-            // ----------------------------------------------------
+            // 3. メタデータから購入者IDと商品IDを取得
+            $metadata = $session->metadata;
+            $buyerId = $metadata['buyer_id'] ?? null;
+            $itemId = $metadata['item_id'] ?? null;
+
+            // 購入者ユーザーの取得
+            if (!$buyerId || !($user = User::find($buyerId))) {
+                Log::error('購入確定エラー: メタデータに無効な購入者IDが見つかりました。ID: ' . $buyerId);
+                return redirect()->route('items.index')->with('error', '購入者情報が見つからなかったため、処理を中断しました。');
+            }
+
             // 4. DBトランザクション処理
-            // ----------------------------------------------------
             DB::beginTransaction();
 
-            // (A) ItemモデルとユーザーIDの取得
-            $itemId = Session::get('purchasing_item_id');
+            // (A) Itemモデルの取得とロック
             $item = Item::lockForUpdate()->find($itemId);
 
             // 念のため商品が存在し、かつ未販売であることを確認
             if (!$item || $item->is_sold) {
                 DB::rollBack();
                 Log::error('購入処理失敗: 商品IDが見つからないか、既に販売済みです。Item ID: ' . $itemId);
-                return redirect()->route('items.index')->with('error', 'この商品は購入できませんでした。');
+                return redirect()->route('items.index')->with('error', 'この商品は購入できませんでした。（販売済み）');
             }
 
-            // (B) PaymentMethodのIDを動的に決定
-            $stripePaymentType = $session->payment_method_types[0]; // Stripeから取得した値を使う
-            // ... $dbPaymentName の決定ロジックは $stripePaymentType を使う ...
-            // 'payment_method_type' => $stripePaymentType, // Stripeの値を使用
-
-            // ★★★ 修正箇所2: セッションからユーザー選択の支払いタイプを取得 ★★★
-            $selectedPaymentType = Session::get('selected_payment_type');
-            // 予期せぬエラーでセッションがない場合、Stripeから取得した値を使う
-            if (!$selectedPaymentType) {
-                $selectedPaymentType = $stripePaymentType;
-            }
-
-            // DBの payment_methods テーブルからIDを取得
-            // stripePaymentTypeが 'card' または 'konbini' であることを前提とする
-            if ($stripePaymentType === 'konbini') {
-                $dbPaymentName = 'konbini';
-            } elseif ($stripePaymentType === 'card') {
-                $dbPaymentName = 'card'; // DBに合わせて 'card'
-            } else {
-                // 予期せぬ支払いタイプの場合のフォールバック処理 (エラーログを出すなど)
-                Log::error("予期せぬStripe支払いタイプを受信しました: " . $stripePaymentType);
-                // とりあえず 'カード支払い' に設定するか、エラーを投げる
-                $dbPaymentName = 'card';
-            }
+            // (B) PaymentMethodのIDの決定
+            $stripePaymentType = $session->payment_method_types[0];
+            $dbPaymentName = ($stripePaymentType === 'konbini') ? 'konbini' : 'card';
             $paymentMethod = PaymentMethod::where('name', $dbPaymentName)->first();
 
-            // ★★★ ここに、配送先情報の整形コードを挿入 ★★★
-
+            // 配送先情報の取得
             $shippingData = Session::get('purchase_shipping');
+
+            // セッションに配送先情報がない場合のフォールバック（ユーザーの基本情報を使う）
+            if (empty($shippingData)) {
+                $shippingData = [
+                    'shipping_post_code' => $user->post_code ?? null,
+                    'shipping_address' => $user->address ?? null,
+                    'shipping_building' => $user->building_name ?? null,
+                ];
+            }
 
             // (C) 購入記録の作成 (purchasesテーブル)
             Purchase::create([
-                'user_id' => $user->id, // 出品者のID
+                'user_id' => $user->id,
                 'item_id' => $item->id,
-                // ★★★ 必須カラムを個別に追加します ★★★
+                // ★★★ 配送先情報 ★★★
+                // purchasesテーブルのカラム名に合わせる
                 'shipping_post_code' => $shippingData['shipping_post_code'] ?? null,
                 'shipping_address' => $shippingData['shipping_address'] ?? null,
-                'shipping_building_name' => $shippingData['shipping_building'] ?? null, // purchasesテーブルのカラム名に合わせる
+                'shipping_building_name' => $shippingData['shipping_building'] ?? null,
                 'payment_method_id' => $paymentMethod->id,
-                'price' => $session->amount_total / 100, // 合計金額をセントから円に戻す
-
-                // ★★★ 修正箇所: transaction_status を 1 (完了) で新規作成 ★★★
+                'price' => $session->amount_total / 100,
+                // 合計金額をセントから円に戻す (Stripeの価格表現に対応)
                 'transaction_status' => 1,
             ]);
 
@@ -253,17 +231,14 @@ class PurchaseController extends Controller
 
             $lastKeywordForView = session('last_search_keyword') ?? '';
 
-            // ----------------------------------------------------
             // 5. 成功ビューの表示
-            // ----------------------------------------------------
-            // ビューファイル名が purchase_success に変更されている前提
             return view('purchase_success')
-                ->with('success', '決済手続きが完了しました。') // 成功メッセージを渡す
-                ->with('lastKeyword', $lastKeywordForView);    // ← これをチェーンで追加
+                ->with('success', '決済手続きが完了しました。')
+                ->with('lastKeyword', $lastKeywordForView);
 
         } catch (\Exception $e) {
             if (DB::transactionLevel() > 0) {
-                DB::rollBack(); // エラー時はロールバック
+                DB::rollBack();
             }
             Log::error('購入確定エラー: ' . $e->getMessage() . ' on line ' . $e->getLine());
 
@@ -282,4 +257,3 @@ class PurchaseController extends Controller
         return redirect()->route('items.index')->with('error', 'Stripeでの決済がキャンセルされました。');
     }
 }
-
