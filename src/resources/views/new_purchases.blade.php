@@ -209,8 +209,8 @@
         });
 
         // 3. ドロップダウンの外側をクリックしたときに閉じる
-        document.addEventListener('click', function(e) {
-            if (!selectElement.contains(e.target) && !optionsList.contains(e.target)) {
+        document.addEventListener('click', function(event) {
+            if (!selectElement.contains(event.target) && !optionsList.contains(event.target)) {
                 optionsList.style.display = 'none';
                 selectElement.classList.remove('active');
             }

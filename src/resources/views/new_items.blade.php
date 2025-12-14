@@ -203,10 +203,10 @@
 
                 {{-- ブランド名 --}}
                 <div class="form-group">
-                    <label for="brands">ブランド名</label>
-                    <input id="brands" type="text" class="form-control" name="brands" required placeholder="ブランド名を入力" value="{{ old('brands') }}">
+                    <label for="brand">ブランド名</label>
+                    <input id="brand" type="text" class="form-control" name="brand" required placeholder="ブランド名を入力" value="{{ old('brand') }}">
                     <p class="new_items-form__error-message">
-                        @error('brands')
+                        @error('brand')
                         {{ $message }}
                         @enderror
                     </p>
@@ -215,7 +215,7 @@
                 {{-- 商品の説明 --}}
                 <div class="form-group">
                     <label for="description">商品の説明</label>
-                    <textarea id="description" class="form-control" name="description" required placeholder="商品の説明を入力" value="{{ old('description') }}"></textarea>
+                    <textarea id="description" class="form-control" name="description" required placeholder="商品の説明を入力"{{ old('description') }}></textarea>
                     <p class="new_items-form__error-message">
                         @error('description')
                         {{ $message }}
@@ -267,8 +267,8 @@
                     const file = this.files[0];
                     const reader = new FileReader();
 
-                    reader.onload = function(e) {
-                        imagePreview.src = e.target.result;
+                    reader.onload = function(event) {
+                        imagePreview.src = event.target.result;
                         imagePreview.style.display = 'block'; // プレビューを表示
                         // プレビュー表示時にボタンを隠す（またはその逆の処理を行う）
                         // 今回は、プレビューが表示されてもボタンは中央に表示されたままにします。
@@ -296,9 +296,9 @@
             const hiddenInput = document.getElementById('condition_input');
 
             // 1. ドロップダウンの表示/非表示を切り替える
-            selectElement.addEventListener('click', function(e) { // ★修正: e を引数として受け取る★
+            selectElement.addEventListener('click', function(event) { // ★修正: event を引数として受け取る★
                 // 外側クリックで閉じないよう、このクリックイベントの伝播を停止
-                e.stopPropagation(); // ★修正: 正しい e.stopPropagation() の構文を使用★
+                event.stopPropagation(); // ★修正: 正しい event.stopPropagation() の構文を使用★
 
                 // 現在の表示状態をチェック
                 const isHidden = optionsList.style.display === 'none' || optionsList.style.display === '';

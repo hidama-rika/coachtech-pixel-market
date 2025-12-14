@@ -141,7 +141,7 @@
                             @endforeach
                         @else
                             <div class="w-full text-center p-8">
-                                <p>出品した商品がまだありません。</p>
+                                <p>出品した商品はまだありません。</p>
                             </div>
                         @endif
                     </div>
@@ -180,7 +180,7 @@
                             @endforeach
                         @else
                             <div class="w-full text-center p-8">
-                                <p>購入した商品がまだありません。</p>
+                                <p>購入した商品はまだありません。</p>
                             </div>
                         @endif
                     </div>

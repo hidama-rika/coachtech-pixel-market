@@ -106,7 +106,7 @@
                     <span class="item-count-text">{{ $items->total() }} items found</span>
                 @elseif (isset($items))
                     {{-- total() が使えない（Paginatorではない）場合は、count() で対応 --}}
-                    <span class="item-count-text">{{ $items->count() }} items found</span>
+                    <span class="item-count-text">{{ $items->count() }} 件のアイテム</span>
                 @endif
             </div>
 

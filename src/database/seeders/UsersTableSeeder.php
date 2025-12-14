@@ -21,6 +21,7 @@ class UsersTableSeeder extends Seeder
                 'email' => 'test@example.com',
                 'password' => Hash::make('test1106'),
                 'email_verified_at' => now(), // ★検証済みとして追加★
+                'profile_image' => 'img/grapes.png',
                 'post_code' => '100-0001', // ダミーの郵便番号を追加
                 'address' => '東京都千代田区', // ダミーの住所を追加
                 'building_name' => 'テストビル101', // (もしあれば) ダミーの建物名を追加
@@ -32,6 +33,7 @@ class UsersTableSeeder extends Seeder
                 'email' => 'rika@example.com',
                 'password' => Hash::make('rika0930'),
                 'email_verified_at' => now(), // ★検証済みとして追加★
+                'profile_image' => 'img/peach.jpg',
                 'post_code' => '100-0002', // ダミーの郵便番号を追加
                 'address' => '神奈川県横浜市', // ダミーの住所を追加
                 'building_name' => 'もみじ103', // (もしあれば) ダミーの建物名を追加
