@@ -193,27 +193,32 @@ class PurchaseController extends Controller
             $dbPaymentName = ($stripePaymentType === 'konbini') ? 'konbini' : 'card';
             $paymentMethod = PaymentMethod::where('name', $dbPaymentName)->first();
 
+            // ★★★ 修正: PaymentMethodが見つからなかった場合のガード処理を追加 ★★★
+            if (!$paymentMethod) {
+                throw new \Exception("PaymentMethodテーブルに'{$dbPaymentName}'が見つかりません。");
+            }
+
             // 配送先情報の取得
             $shippingData = Session::get('purchase_shipping');
 
             // セッションに配送先情報がない場合のフォールバック（ユーザーの基本情報を使う）
             if (empty($shippingData)) {
                 $shippingData = [
-                    'shipping_post_code' => $user->post_code ?? null,
-                    'shipping_address' => $user->address ?? null,
+                    'shipping_post_code' => $user->post_code ?? '',
+                    'shipping_address' => $user->address ?? '',
                     'shipping_building' => $user->building_name ?? null,
                 ];
             }
 
             // (C) 購入記録の作成 (purchasesテーブル)
-            Purchase::create([
+            $purchase = Purchase::create([
                 'user_id' => $user->id,
                 'item_id' => $item->id,
                 // ★★★ 配送先情報 ★★★
                 // purchasesテーブルのカラム名に合わせる
-                'shipping_post_code' => $shippingData['shipping_post_code'] ?? null,
-                'shipping_address' => $shippingData['shipping_address'] ?? null,
-                'shipping_building_name' => $shippingData['shipping_building'] ?? null,
+                'shipping_post_code' => $shippingData['shipping_post_code'] ?? '',
+                'shipping_address' => $shippingData['shipping_address'] ?? '',
+                'shipping_building' => $shippingData['shipping_building'] ?? null,
                 'payment_method_id' => $paymentMethod->id,
                 'price' => $session->amount_total / 100,
                 // 合計金額をセントから円に戻す (Stripeの価格表現に対応)

@@ -18,12 +18,12 @@ class CommentController extends Controller
      */
     public function store(CommentRequest $request, $item_id)
     {
-        // バリデーション（コメント内容が必須であることなどを確認）
-        $request->validate([
-            'comment' => 'required|string|max:255',
-        ]);
+        // 1. バリデーション（CommentRequest側で実行されるため、ここで記述しない）
+        // $request->validate([
+        //     'comment' => 'required|string|max:255',
+        // ]);
 
-        // コメントを作成し、保存する
+        // 2. コメントを作成し、保存する
         Comment::create([
             'user_id' => Auth::id(), // 認証ユーザーのID
             'item_id' => $item_id,   // コメント対象のアイテムID

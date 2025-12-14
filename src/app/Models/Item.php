@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+// ★★★ 修正: Illuminateの名前空間のHasOneを使用することを明示
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
 
 class Item extends Model
@@ -53,15 +55,37 @@ class Item extends Model
                     ->withTimestamps();
     }
 
+    // =======================================================
+    // アクセサ/ミューテタ定義
+    // =======================================================
+
     /**
-     * 商品が販売済みかどうかを判定します。
-     * itemsテーブルのis_soldカラム（boolean）を参照します。
+     * 商品が購入済みかどうかを示すアクセサ（$item->is_sold としてアクセス）
+     * Purchaseリレーションの有無に基づいて動的に判定します。
+     * * @return bool
+     */
+    public function getIsSoldAttribute(): bool // Laravel 8 互換の古い記法
+    {
+        // relationLoaded('purchase')：リレーションが事前にEager Loadされているかチェック
+        if ($this->relationLoaded('purchase')) {
+            // リレーションがロードされていれば、リレーションインスタンスの有無で判定
+            return !is_null($this->purchase);
+        }
+
+        // ロードされていない場合はDBクエリを実行して判定
+        // Purchaseリレーションの有無を確認
+        return (bool) $this->purchase()->exists();
+    }
+
+    /**
+     * ビューからの $item->is_sold() の呼び出しに対応するためのシムメソッド。
+     * 既存のアクセサ ($this->is_sold) の値を利用します。
      *
      * @return bool
      */
-    public function is_sold()
+    public function is_sold(): bool
     {
-        // データベースのis_soldカラムの値（true/false）をそのまま返します
+        // アクセサの値をプロパティとして取得
         return $this->is_sold;
     }
 
@@ -112,12 +136,15 @@ class Item extends Model
         return $this->hasMany(Comment::class, 'item_id');
     }
 
+    // --- 参照先 (1 対 1) ---
+    // isSoldアクセサが依存する、購入レコード (単数形) を取得するためのリレーション
     /**
-     * 商品の購入履歴 (1 対 多)
+     * 商品の購入履歴 (1 対 1) - 商品が一度だけ購入されることを前提
      * items.id が purchases.item_id を参照
      */
-    public function purchases(): HasMany
+    public function purchase(): HasOne // ★HasOneに変更
     {
-        return $this->hasMany(Purchase::class, 'item_id');
+        // Itemは一つのPurchaseを持つ（HasOne）
+        return $this->hasOne(Purchase::class, 'item_id');
     }
 }

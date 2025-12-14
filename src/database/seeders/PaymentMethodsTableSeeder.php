@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema; // ★これを追記★
+use Illuminate\Support\Facades\Schema;
 
 class PaymentMethodsTableSeeder extends Seeder
 {
@@ -15,32 +15,17 @@ class PaymentMethodsTableSeeder extends Seeder
      */
     public function run()
     {
-        // 【修正点 1】外部キーチェックを無効にする
-        Schema::disableForeignKeyConstraints();
+        // purchases.payment_method_idのNOT NULL制約と外部キー制約を満たすため、
+        // 少なくともID=1のレコードを挿入します。
+        $paymentMethods = [
+            // payment_status (1:有効, 0:無効) カラムに合わせて、デフォルトで有効(1)を設定
+            ['id' => 1, 'name' => 'konbini', 'payment_status' => 1], // コンビニ決済
+            ['id' => 2, 'name' => 'card', 'payment_status' => 1],    // カード決済
+            // IDを明示的に指定することで、ファクトリ(payment_method_id => 1)との整合性を保証します。
+        ];
 
-        // 既存のデータを全て削除してから投入します
-        DB::table('payment_methods')->truncate();
-
-        DB::table('payment_methods')->insert([
-            // ここでは、Stripeが定義する支払い情報に合わせたnameにする
-            // ID指定を外します。これが ID: 1 として投入されます
-            [
-                'name' => 'konbini',
-                'payment_status' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-
-            // ID指定を外します。これが ID: 2 として投入されます
-            [
-                'name' => 'card',
-                'payment_status' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-        ]);
-
-        // 【修正点 2】外部キーチェックを元に戻す
-        Schema::enableForeignKeyConstraints();
+        // insertOrIgnore() を使用することで、テーブルにデータが存在しても重複エラーを回避し、
+        // テスト環境で安全に実行できます。
+        DB::table('payment_methods')->insertOrIgnore($paymentMethods);
     }
 }

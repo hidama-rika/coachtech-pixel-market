@@ -28,8 +28,6 @@ class Purchase extends Model
         'shipping_building',
         'transaction_status',
         'price',
-        'stripe_payment_intent_id',
-        'payment_method_type',
     ];
 
     // =======================================================

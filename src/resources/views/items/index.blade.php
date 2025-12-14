@@ -99,6 +99,17 @@
                 </div>
             </div>
 
+            {{-- ★機能テスト中の修正箇所: 商品件数表示エリアをロバストなロジックに修正 ★ --}}
+            <div class="item-count-area">
+                {{-- $items が存在し、Illuminate\Pagination\LengthAwarePaginator クラス（LaravelのPaginator）の場合に total() メソッドで件数を取得できます --}}
+                @if (isset($items) && is_object($items) && method_exists($items, 'total'))
+                    <span class="item-count-text">{{ $items->total() }} items found</span>
+                @elseif (isset($items))
+                    {{-- total() が使えない（Paginatorではない）場合は、count() で対応 --}}
+                    <span class="item-count-text">{{ $items->count() }} items found</span>
+                @endif
+            </div>
+
             {{-- 商品一覧グリッド (image_6e1b35.png を参考に作成) --}}
             <div class="index-grid-container">
                 <div class="item-grid">

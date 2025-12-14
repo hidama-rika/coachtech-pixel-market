@@ -84,6 +84,13 @@
                         <h1 class="item-name">{{ $item->name }}</h1>
                         <p class="item-brand">{{ empty($item->brand) ? '' : $item->brand }}</p>
                         <p class="item-price">¥{{ number_format($item->price) }}<span class="tax-info">(税込)</span></p>
+
+                        {{-- 💡 修正案: テスト用に出品者情報を追加 💡 --}}
+                        {{-- $item モデルが出品者情報（例：userリレーション）を持っていることを前提とします --}}
+                        <div class="seller-info">
+                            <!-- <p class="seller-label">出品者</p> -->
+                            <p class="seller-name">{{ $item->user->name ?? '不明' }}</p>
+                        </div>
                     </div>
 
                     {{-- いいね/コメントアイコン --}}
@@ -149,8 +156,8 @@
                         <div class="metadata-row">
                             <span class="metadata-label">カテゴリー</span>
                             {{-- ❗ 修正: metadata-valueにタグを並べるためのflex-wrapクラスを追加 ❗--}}
+                            {{-- 多対多のリレーションなので、categoriesコレクションをループして表示します --}}
                             <span class="metadata-value category-tags-wrapper">
-                                {{-- 多対多のリレーションなので、categoriesコレクションをループして表示します --}}
                                 @forelse ($item->categories as $category)
                                     {{-- ❗ 修正: 各カテゴリを独立したタグ要素で囲む ❗ --}}
                                     <span class="category-tag">

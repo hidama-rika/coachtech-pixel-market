@@ -57,9 +57,8 @@ class ItemController extends Controller
             // ログインユーザーが「いいね」した商品のIDを取得
             $likedItemIds = Like::where('user_id', $userId)->pluck('item_id');
 
-            // 基本クエリ: いいねした商品のみに絞り込む (販売済みは除く)
-            $query->whereIn('id', $likedItemIds)
-                ->where('is_sold', false);
+            // 基本クエリ: いいねした商品のみに絞り込む (販売済み商品も表示される)
+            $query->whereIn('id', $likedItemIds);
         } else {
             // デフォルトの「おすすめ」タブの場合 (tab=mylist ではない場合)
 
@@ -207,7 +206,7 @@ class ItemController extends Controller
 
             DB::commit(); // トランザクションをコミット
 
-            // 5. 処理成功後、新しく作成された商品詳細ページにリダイレクト
+            // 5. 処理成功後、新しく作成されたマイページにリダイレクト
             return redirect()->route('mypage', ['tab' => 'listed'])
                 ->with('success', '商品が正常に出品されました！');
 
