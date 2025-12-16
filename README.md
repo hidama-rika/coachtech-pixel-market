@@ -29,8 +29,16 @@ Laravel のパッケージのインストール
 
     ・　cp .env.example .env
 
-    ・　.envファイルの編集
+    ・　.envファイルの編集（以下の環境変数を追加）
             （Laravelのプロジェクトとデータベースを接続⇒修正後はキャッシュクリア）
+        ``` text
+        DB_CONNECTION=mysql
+        DB_HOST=mysql
+        DB_PORT=3306
+        DB_DATABASE=laravel_db
+        DB_USERNAME=laravel_user
+        DB_PASSWORD=laravel_pass
+        ```
 
 view ファイルの作成
 
@@ -60,6 +68,16 @@ view ファイルの作成
     ・　作成したシーダーファイルをDatabaseSeeder.phpに登録
 
     ・　php artisan db:seed
+
+テスト環境の準備と実行
+
+    全テスト実行
+
+    ・　vendor/bin/phpunit
+
+    ・
+
+    ・
 
 ## 使用技術
 
