@@ -64,7 +64,7 @@ class RegisterRequest extends FormRequest
 {
     return [
         // name (仕様書 FN004 - 1. お名前を入力してください)
-        'name.required' => 'お名前を入力してください',
+        'name.required' => 'ユーザー名を入力してください',
         'name.string' => 'ユーザー名は文字列で入力してください。',
         'name.max' => 'ユーザー名は20文字以下で入力してください',
 

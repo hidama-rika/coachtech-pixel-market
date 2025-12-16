@@ -93,11 +93,6 @@ class ID_10_PurchaseTest extends TestCase
         $this->item->categories()->sync([1, 3]); // ★ 修正: attachからsyncに変更 ★
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     // ----------------------------------------------------
     // 正常系テストケース
     // ----------------------------------------------------

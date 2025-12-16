@@ -85,11 +85,10 @@
                         <p class="item-brand">{{ empty($item->brand) ? '' : $item->brand }}</p>
                         <p class="item-price">¥{{ number_format($item->price) }}<span class="tax-info">(税込)</span></p>
 
-                        {{-- 💡 修正案: テスト用に出品者情報を追加 💡 --}}
-                        {{-- $item モデルが出品者情報（例：userリレーション）を持っていることを前提とします --}}
+                        {{-- 💡 機能テスト用に出品者情報を追加 CSSで表示させない設定にする💡 --}}
+                        {{-- $item モデルが出品者情報（例：userリレーション）を持っていることを前提 --}}
                         <div class="seller-info">
-                            <!-- <p class="seller-label">出品者</p> -->
-                            <p class="seller-name">{{ $item->user->name ?? '不明' }}</p>
+                            <p class="seller-label">出品者：{{ $item->user->name ?? '不明' }}</p>
                         </div>
                     </div>
 

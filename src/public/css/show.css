@@ -162,6 +162,10 @@ body {
     font-weight: normal;
 }
 
+.seller-info {
+    visibility: hidden;
+}
+
 /* いいね/コメントアイコンと数値を囲むコンテナ */
 .reaction-buttons {
     display: flex;

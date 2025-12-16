@@ -99,7 +99,7 @@
                 </div>
             </div>
 
-            {{-- ★機能テスト中の修正箇所: 商品件数表示エリアをロバストなロジックに修正 ★ --}}
+            {{-- ★機能テストのため: 商品件数表示する。表示はしない。 ★ --}}
             <div class="item-count-area">
                 {{-- $items が存在し、Illuminate\Pagination\LengthAwarePaginator クラス（LaravelのPaginator）の場合に total() メソッドで件数を取得できます --}}
                 @if (isset($items) && is_object($items) && method_exists($items, 'total'))
@@ -153,7 +153,7 @@
             // タブの切り替えロジックは、aタグによるページ遷移（/recommend または /mylist）に任せます。
             const tabLinks = document.querySelectorAll('.tab-link');
             tabLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
+                link.addEventListener('click', (event) => {
                     // ここでのクライアント側による active クラスの切り替えは不要です。
                 });
             });

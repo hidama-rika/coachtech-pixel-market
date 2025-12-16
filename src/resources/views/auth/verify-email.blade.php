@@ -35,7 +35,7 @@
             <div class="action-area">
                 {{-- 認証はこちらからボタン --}}
                 {{-- Fortifyの仕様上、このボタンはメール内のリンクを押すことを誘導するだけの表示にすることが多いです --}}
-                <a href="#" class="verify-email-btn">
+                <a href="http://localhost:8025" class="verify-email-btn">
                     認証はこちらから
                 </a>
 

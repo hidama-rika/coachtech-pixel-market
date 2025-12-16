@@ -27,7 +27,7 @@ class LoginRequest extends FormRequest
     {
         return [
             // メールアドレス: 必須、メール形式、usersテーブル内でユニークであること
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:20'],
 
             // パスワード: 必須、8文字以上。要件定義書に合わせて 'min:8' を削除
             'password' => ['required', 'string'],

@@ -79,9 +79,6 @@ class ID_7_ShowTest extends TestCase
             'item_id' => $this->item->id,
             'comment' => '最初のテストコメントです。'
         ]);
-
-        // 8. 購入済みデータを作成（今回は表示確認がメインなので省略）
-        // Purchase::factory()->create(['item_id' => $this->item->id]);
     }
 
     // ----------------------------------------------------

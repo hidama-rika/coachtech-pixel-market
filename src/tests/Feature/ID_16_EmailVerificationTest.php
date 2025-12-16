@@ -87,7 +87,8 @@ class ID_16_EmailVerificationTest extends TestCase
         $response->assertSee('登録していただいたメールアドレスに認証メールを送付しました。');
 
         // 「認証はこちらから」ボタン（aタグ）が表示されていることを確認
-        $response->assertSee('<a href="#" class="verify-email-btn">', false);
+        // Viewの出力に合わせて、href="http://localhost:8025" にする。
+        $response->assertSee('<a href="http://localhost:8025" class="verify-email-btn">', false);
 
         // 認証メールを再送するフォームが存在することを確認
         $response->assertSeeInOrder([

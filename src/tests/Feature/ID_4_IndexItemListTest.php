@@ -107,15 +107,6 @@ class ID_4_IndexItemListTest extends TestCase
         $this->sold_item_id = $sold_item->id;
     }
 
-    /**
-     * テスト終了後にDB接続を切断し、インメモリDBを破棄します。
-     * * ★★★ 修正ポイント2: MySQL環境ではDB切断は不要なので削除します ★★★
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     // ----------------------------------------------------
     // テストケース
     // ----------------------------------------------------
@@ -137,7 +128,7 @@ class ID_4_IndexItemListTest extends TestCase
 
         // 作成した合計 7つの商品 (5 + 1 + 1) が表示されているかを確認
         // Item::count()と同じ数の商品がページに含まれていることを検証
-        $response->assertSee(Item::count() . ' items found'); // ページ上にアイテム数が表示されていると仮定
+        $response->assertSee(Item::count() . ' 件のアイテム'); // ページ上にアイテム数が表示されていると仮定
         $this->assertCount(Item::count(), $response->viewData('items')); // Viewに渡されたデータ数を検証
     }
 
