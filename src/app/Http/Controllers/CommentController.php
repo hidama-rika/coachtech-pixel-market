@@ -35,8 +35,5 @@ class CommentController extends Controller
         // リダイレクトではなく JSON レスポンス (200 OK) を返します。
         // これにより、フロントエンドの JavaScript が成功を検知してページをリロードします。
         return response()->json(['message' => 'コメントが投稿されました'], 200);
-
-        // コメント投稿後、商品詳細画面にリダイレクトする
-        // return redirect()->route('item.show', ['item' => $item_id])->with('message', 'コメントを投稿しました。');
     }
 }

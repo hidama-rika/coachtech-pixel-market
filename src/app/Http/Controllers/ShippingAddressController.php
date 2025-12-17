@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Session; // ★追加：セッションを使うために必要★
-// use App\Models\Purchase; // ★削除：このコントローラーでPurchaseモデルは不要になる★
 
 class ShippingAddressController extends Controller
 {
