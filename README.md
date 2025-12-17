@@ -134,7 +134,7 @@ view ファイルの作成
 
 ## テーブル仕様書
 
-![table1](users.png)
+![table-1](users.png)
 ![table2](items.png)
 ![table3](item_category.png)
 ![table4](categories.png)
