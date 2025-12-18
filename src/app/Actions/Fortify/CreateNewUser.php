@@ -37,9 +37,12 @@ class CreateNewUser implements CreatesNewUsers
             'password' => Hash::make($input['password']),
 
             // ★★★ 必須カラムに初期値を設定 ★★★
+            // プロフィール設定が必須であるため、NOT NULLのデータベース制約を満たす「空文字列」(nullじゃないよ)を設定
             'post_code' => '',
             'address' => '',
-            // usersテーブルの NOT NULL 制約を持つ全てのカラムに初期値を設定
+            'building_name' => '',
+            'profile_image' => '',
+            // email_verified_at は設定しないことで自動的に NULL となり、「メール認証」を強制するトリガーとなる。
         ]);
     }
 }
