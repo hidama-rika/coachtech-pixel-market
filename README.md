@@ -114,13 +114,13 @@ view ファイルの作成
 
     ・　cp .env .env.testing
 
-    ・　.envファイルの編集（以下の環境変数を追加）
+    ・　.env.testingファイルの編集（以下の環境変数を追加）
             （修正後は、必ずphp artisan config:clearでキャッシュクリア）
 
         APP_ENV=test
         APP_KEY=
             （一度キーを空にして、php artisan key:generate --env=testingを実行後、
-            php artisan config:clearを実行）
+            編集したらphp artisan config:clearを実行）
 
         DB_CONNECTION=mysql
         DB_HOST=mysql
@@ -128,19 +128,6 @@ view ファイルの作成
         DB_DATABASE=demo_test
         DB_USERNAME=root
         DB_PASSWORD=root
-
-        ### MailHogの設定（メール確認用）
-        MAIL_MAILER=smtp
-        MAIL_HOST=mailhog
-        MAIL_PORT=1025
-        MAIL_USERNAME=null
-        MAIL_PASSWORD=null
-        MAIL_FROM_ADDRESS="no-reply@verify-email-1.com" # 開発環境用のアドレスを設定
-        MAIL_FROM_NAME="${APP_NAME}"
-
-        ### Stripeキーの設定
-        STRIPE_PUBLIC_KEY="pk_test_**************************"
-        STRIPE_SECRET_KEY="sk_test_**************************"
 
     ・phpunit.xmlの編集
 
